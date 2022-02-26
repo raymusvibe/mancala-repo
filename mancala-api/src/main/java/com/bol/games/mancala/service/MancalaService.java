@@ -1,5 +1,6 @@
 package com.bol.games.mancala.service;
 
+import com.bol.games.mancala.controller.dto.RestartRequest;
 import com.bol.games.mancala.exception.IllegalRequestException;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.GameStatus;
@@ -27,6 +28,16 @@ public class MancalaService implements MancalaAPI {
     public MancalaGame createGame(Player playerOne) throws ValidationException {
         inputValidationService.validatePlayerName(playerOne.getPlayerName());
         MancalaGame mancala = new MancalaGame(playerOne);
+        mancalaRepository.save(mancala);
+        return mancala;
+    }
+
+    @Override
+    public MancalaGame restartGame(RestartRequest request) throws ValidationException {
+        inputValidationService.validateGameRestart(request);
+        MancalaGame mancala = new MancalaGame(request.getPlayerOne());
+        mancala.setPlayerTwo(request.getPlayerTwo());
+        mancala.setGamePlayStatus(GameStatus.IN_PROGRESS);
         mancalaRepository.save(mancala);
         return mancala;
     }
