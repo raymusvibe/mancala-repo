@@ -1,2 +1,3 @@
 mancala-api/target
 **/.DS_Store
+mancala-api/src/main/resources/logback.xml
