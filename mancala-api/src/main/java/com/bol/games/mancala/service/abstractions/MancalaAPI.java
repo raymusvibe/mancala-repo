@@ -1,15 +1,9 @@
 package com.bol.games.mancala.service.abstractions;
 
-import com.bol.games.mancala.controller.dto.RestartRequest;
-import com.bol.games.mancala.exception.IllegalRequestException;
 import com.bol.games.mancala.exception.ValidationException;
-import com.bol.games.mancala.model.Player;
-import com.bol.games.mancala.exception.InvalidGameException;
 import com.bol.games.mancala.exception.NotFoundException;
 
 public interface MancalaAPI<T> {
-    public <T> T createGame(Player playerOne) throws ValidationException;
-    public <T> T restartGame(RestartRequest request) throws ValidationException;
-    public <T> T connectToGame(Player playerTwo, String gameId) throws InvalidGameException, IllegalRequestException, ValidationException;
-    public <T> T connectToRandomGame(Player playerTwo) throws NotFoundException, ValidationException;
+    public <T> T createGame() throws ValidationException;
+    public <T> T connectToGame(String gameId) throws NotFoundException;
 }

@@ -34,4 +34,9 @@ public class StoneContainer implements Serializable {
         this.stones = 0;
         return stones;
     }
+
+    @Override
+    public String toString() {
+        return  mancalaGameIndex + ":" + stones ;
+    }
 }

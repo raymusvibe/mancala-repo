@@ -3,7 +3,6 @@ package com.bol.games.mancala.model;
 import com.bol.games.mancala.constants.MancalaConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,21 +16,25 @@ import java.util.UUID;
 @Setter
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class MancalaGame implements Serializable {
 
     @Id
     private String gameId;
 
-    private Player playerOne;
-    private Player playerTwo;
     private GameStatus gamePlayStatus;
     private List<StoneContainer> mancalaBoard;
+    private Player activePlayer;
     private Player winner;
-    private ActivePlayer activePlayer;
     private Integer selectedStoneContainerIndex;
 
-    public MancalaGame (Player playerOne) {
+    public MancalaGame () {
+        initialiseBoard();
+        this.activePlayer = Player.PLAYER_ONE;
+        this.gameId = UUID.randomUUID().toString();
+        this.gamePlayStatus = GameStatus.NEW;
+    }
+
+    public void initialiseBoard() {
         Integer totalNumberOfContainers = (MancalaConstants.CONTAINERS_PER_PLAYER + 1) * 2;
         ArrayList <StoneContainer> stoneContainers = new ArrayList<>();
         for (int i = 0; i < totalNumberOfContainers; i++) {
@@ -43,10 +46,6 @@ public class MancalaGame implements Serializable {
             }
         }
         this.mancalaBoard = stoneContainers;
-        this.playerOne = playerOne;
-        this.activePlayer = ActivePlayer.PLAYER_ONE;
-        this.gameId = UUID.randomUUID().toString();
-        this.gamePlayStatus = GameStatus.NEW;
     }
 
     public StoneContainer getStoneContainer(Integer stoneContainerIndex) {

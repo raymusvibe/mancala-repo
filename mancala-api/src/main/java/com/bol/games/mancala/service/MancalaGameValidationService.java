@@ -5,6 +5,7 @@ import com.bol.games.mancala.model.*;
 import com.bol.games.mancala.constants.MancalaConstants;
 import com.bol.games.mancala.data.MancalaRepository;
 import com.bol.games.mancala.service.abstractions.MancalaGameValidationAPI;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class MancalaGameValidationService implements MancalaGameValidationAPI {
 
     @Autowired
@@ -26,15 +28,20 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
             throw new ValidationException("Invalid game Id provided: " + gameFromFrontEnd.getGameId());
         }
 
-        //validate game status, must not be new
+        //players want to play a new game on the same gameId. Could keep track of restarts
         if (gameFromFrontEnd.getGamePlayStatus() == GameStatus.NEW ) {
-            throw new ValidationException("Invalid game state detected (Game play status)");
+            gameFromFrontEnd.initialiseBoard();
+            gameFromFrontEnd.setActivePlayer(Player.PLAYER_TWO);
+            gameFromFrontEnd.setWinner(null);
+            gameFromFrontEnd.setSelectedStoneContainerIndex(null);
+            mancalaRepository.save(gameFromFrontEnd);
+            return gameFromFrontEnd;
         }
 
         //first check if there is a winner
         MancalaGame gameFromStore = mancalaFromStore.get();
         if (gameFromFrontEnd.getWinner() != null) {
-            if (validateWinner (gameFromFrontEnd, gameFromStore.getPlayerOne(), gameFromStore.getPlayerTwo())) {
+            if (validateWinner (gameFromFrontEnd)) {
                 gameFromStore.setWinner(gameFromFrontEnd.getWinner());
                 gameFromStore.setGamePlayStatus(GameStatus.FINISHED);
                 mancalaRepository.save(gameFromStore);
@@ -56,20 +63,17 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
             return gameFromFrontEnd;
         }
 
-        //player turn is controlled from the backend
-        ActivePlayer playerFromFrontEnd = gameFromFrontEnd.getActivePlayer();
-        ActivePlayer playerFromStore = gameFromStore.getActivePlayer();
-        if (playerFromFrontEnd != playerFromStore) {
-            throw new ValidationException("Invalid game state detected (Active player misalignment)");
-        }
+        //validate stone count when there is no winner yet
+        validateStoneCount(gameFromFrontEnd.getMancalaBoard());
 
         //player cannot start from opponents side
-        if (gameFromFrontEnd.getActivePlayer() == ActivePlayer.PLAYER_ONE && containerIndex > MancalaConstants.PLAYER_ONE_HOUSE_INDEX
-                || gameFromFrontEnd.getActivePlayer() == ActivePlayer.PLAYER_TWO && containerIndex < MancalaConstants.PLAYER_ONE_HOUSE_INDEX
-                || gameFromFrontEnd.getActivePlayer() == ActivePlayer.PLAYER_TWO && containerIndex > MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
+        if (gameFromFrontEnd.getActivePlayer() == Player.PLAYER_ONE && containerIndex > MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                || gameFromFrontEnd.getActivePlayer() == Player.PLAYER_TWO && containerIndex < MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                || gameFromFrontEnd.getActivePlayer() == Player.PLAYER_TWO && containerIndex > MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
             throw new ValidationException("Invalid game state detected (Container selection index)");
         }
-        //simulate stone sowing from front-end and validate the result
+
+        //simulate stone sowing done in the front-end and validate the result
         gameFromStore.setSelectedStoneContainerIndex(containerIndex);
         MancalaGame simulatedResultFromStore = simulateGamePlay(gameFromStore);
         if (validateMancalaBoard(gameFromFrontEnd.getMancalaBoard(), simulatedResultFromStore.getMancalaBoard())) {
@@ -78,6 +82,15 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
         } else {
             throw new ValidationException("Error validating stone containers from client");
         }
+    }
+
+    private void validateStoneCount (List<StoneContainer> boardFromFrontEnd) throws ValidationException {
+        Integer sum = boardFromFrontEnd.stream()
+                .map(x -> x.getStones())
+                .reduce(0, Integer::sum);
+        int totalNumberOfStones = MancalaConstants.CONTAINERS_PER_PLAYER * MancalaConstants.STONES_PER_CONTAINER * 2;
+        if (totalNumberOfStones != sum)
+            throw new ValidationException("Error validating stone count");
     }
 
     private boolean validateMancalaBoard(List<StoneContainer> boardFromFrontEnd, List<StoneContainer> simulatedBoardFromStore) {
@@ -89,19 +102,18 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
         return true;
     }
 
-    private boolean validateWinner (MancalaGame gameFromFrontEnd, Player playerOne, Player playerTwo) throws ValidationException {
+    private boolean validateWinner (MancalaGame gameFromFrontEnd) throws ValidationException {
         int allocatedNumberOfStonesPerPlayer = MancalaConstants.CONTAINERS_PER_PLAYER * MancalaConstants.STONES_PER_CONTAINER;
         int playerOneStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PLAYER_ONE_HOUSE_INDEX).getStones();
         int playerTwoStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX).getStones();
         if (playerOneStones + playerTwoStones != allocatedNumberOfStonesPerPlayer * 2)
             throw new ValidationException("Error validating stone count");
-        Player winnerFromFrontEnd = gameFromFrontEnd.getWinner();
         if (playerOneStones > allocatedNumberOfStonesPerPlayer) {
             //player one should be the winner in this case
-            if (winnerFromFrontEnd.getPlayerName().equals(playerOne.getPlayerName()))
+            if (gameFromFrontEnd.getWinner().equals(Player.PLAYER_ONE))
                 return true;
         } else {
-            if (winnerFromFrontEnd.getPlayerName().equals(playerTwo.getPlayerName()))
+            if (gameFromFrontEnd.getWinner().equals(Player.PLAYER_TWO))
                 return true;
         }
         return false;
@@ -113,14 +125,14 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
 
         //start adding stones to the first container after the one selected
         int currentContainerIndex = (selectedContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
-        ActivePlayer activePlayer = gameFromStore.getActivePlayer();
+        Player activePlayer = gameFromStore.getActivePlayer();
 
         //distribute stones to containers based on game rules
         while (stoneCount > 0) {
             //cannot place stones on another player's house
-            if (activePlayer == ActivePlayer.PLAYER_ONE && currentContainerIndex == MancalaConstants.PLAYER_TWO_HOUSE_INDEX
-                    || activePlayer == ActivePlayer.PLAYER_TWO && currentContainerIndex == MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
-                currentContainerIndex = (currentContainerIndex++) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+            if (activePlayer == Player.PLAYER_ONE && currentContainerIndex == MancalaConstants.PLAYER_TWO_HOUSE_INDEX
+                    || activePlayer == Player.PLAYER_TWO && currentContainerIndex == MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
+                currentContainerIndex = (currentContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
                 continue;
             }
             StoneContainer targetContainer = gameFromStore.getStoneContainer(currentContainerIndex);
@@ -132,7 +144,7 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
                     StoneContainer oppositeContainer = gameFromStore
                             .getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX - currentContainerIndex - 1);
                     if (!oppositeContainer.isEmpty()) {
-                        int houseIndex = (activePlayer == ActivePlayer.PLAYER_ONE)?
+                        int houseIndex = (activePlayer == Player.PLAYER_ONE)?
                                 MancalaConstants.PLAYER_ONE_HOUSE_INDEX : MancalaConstants.PLAYER_TWO_HOUSE_INDEX;
                         int stonesFromOppositeContainer = oppositeContainer.getAllStonesAndEmptyContainer();
                         gameFromStore.getStoneContainer(houseIndex).addStones(stonesFromOppositeContainer + 1);
@@ -146,7 +158,7 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
             }
             targetContainer.addStone();
             stoneCount--;
-            currentContainerIndex = (currentContainerIndex++) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+            currentContainerIndex = (currentContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
         }
 
         //change player if you didn't place last stone in your own house, assisted by logic above
@@ -157,9 +169,9 @@ public class MancalaGameValidationService implements MancalaGameValidationAPI {
         return gameFromStore;
     }
 
-    private ActivePlayer changePlayer (ActivePlayer currentPlayer) {
-        if (currentPlayer == ActivePlayer.PLAYER_ONE)
-            return ActivePlayer.PLAYER_TWO;
-        return ActivePlayer.PLAYER_ONE;
+    private Player changePlayer (Player currentPlayer) {
+        if (currentPlayer == Player.PLAYER_ONE)
+            return Player.PLAYER_TWO;
+        return Player.PLAYER_ONE;
     }
 }
