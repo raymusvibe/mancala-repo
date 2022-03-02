@@ -1,7 +1,6 @@
 package com.bol.games.mancala.services;
 
 import com.bol.games.mancala.constants.MancalaConstants;
-import com.bol.games.mancala.data.MancalaRepository;
 import com.bol.games.mancala.exception.NotFoundException;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
@@ -12,9 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,21 +25,21 @@ import static org.mockito.Mockito.*;
 public class MancalaServiceTests {
 
     @Mock
-    MancalaRepository mancalaRepository;
+    private MongoTemplate mancalaGamesMongoTemplate;
+    @Mock
+    private MongoTemplate mancalaEventsMongoTemplate;
 
-    MancalaAPI mancalaService;
+    private MancalaAPI mancalaService;
 
     @BeforeEach
     public void setup() {
-        mancalaService = new MancalaService(mancalaRepository);
+        mancalaService = new MancalaService(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
     }
 
     String invalidGameId = "someGameId";
 
     @Test
     public void testGameCreation () throws Exception {
-        MancalaGame expectedGame = new MancalaGame();
-        doReturn(expectedGame).when(mancalaRepository).save(any(MancalaGame.class));
 
         MancalaGame game = (MancalaGame) mancalaService.createGame();
         assertThat(game.getGameId()).isNotNull();
@@ -63,8 +63,8 @@ public class MancalaServiceTests {
     @Test
     public void testGameConnection () throws Exception {
         MancalaGame expectedGame = new MancalaGame();
-        doReturn(Optional.of(expectedGame)).when(mancalaRepository).findById(expectedGame.getGameId());
-        doReturn(expectedGame).when(mancalaRepository).save(any(MancalaGame.class));
+        doReturn(expectedGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), Mockito.any(Class.class));
+        doReturn(expectedGame).when(mancalaGamesMongoTemplate).save(any(MancalaGame.class));
 
         MancalaGame game = (MancalaGame) mancalaService.connectToGame(expectedGame.getGameId());
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.IN_PROGRESS);
@@ -75,8 +75,7 @@ public class MancalaServiceTests {
 
     @Test
     public void testGameConnectionInvalidGameId () throws Exception {
-        doReturn(Optional.empty())
-                .when(mancalaRepository).findById(invalidGameId);
+        doReturn(null).when(mancalaGamesMongoTemplate).findOne(any(Query.class), Mockito.any(Class.class));
 
         assertThrows(NotFoundException.class, () -> {
             mancalaService.connectToGame(invalidGameId);

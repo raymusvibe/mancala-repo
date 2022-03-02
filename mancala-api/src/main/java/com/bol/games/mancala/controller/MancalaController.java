@@ -26,7 +26,6 @@ public class MancalaController {
     public ResponseEntity<MancalaGame> start() throws Exception {
         log.info("start game request");
         MancalaGame game = (MancalaGame) gameService.createGame();
-        log.info(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(game));
         return ResponseEntity.ok(game);
     }
 
@@ -35,17 +34,15 @@ public class MancalaController {
     public ResponseEntity<MancalaGame> connect(@RequestParam String gameId) throws Exception {
         log.info("connect request: {}", gameId);
         MancalaGame game = (MancalaGame) gameService.connectToGame(gameId);
-        log.info(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(game));
         return ResponseEntity.ok(game);
     }
 
     @PostMapping(value = "/gameplay", produces = "application/json", consumes = "application/json")
     @Operation(summary = "Gameplay validation and publishing game state to opponent")
     public ResponseEntity<MancalaGame> gamePlay(@RequestBody MancalaGame request) throws Exception {
-        log.info("gameplay: {}", request);
+        log.info("gameplay: {}", new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(request));
         MancalaGame game = validationService.validate(request);
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
-        log.info(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(game));
         return ResponseEntity.ok(game);
     }
 }

@@ -19,8 +19,9 @@ import java.util.UUID;
 public class MancalaGame implements Serializable {
 
     @Id
-    private String gameId;
+    private String id;
 
+    private String gameId;
     private GameStatus gamePlayStatus;
     private List<StoneContainer> mancalaBoard;
     private Player activePlayer;
