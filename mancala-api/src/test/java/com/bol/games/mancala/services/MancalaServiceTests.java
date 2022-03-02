@@ -64,7 +64,6 @@ public class MancalaServiceTests {
     public void testGameConnection () throws Exception {
         MancalaGame expectedGame = new MancalaGame();
         doReturn(expectedGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), Mockito.any(Class.class));
-        doReturn(expectedGame).when(mancalaGamesMongoTemplate).save(any(MancalaGame.class));
 
         MancalaGame game = (MancalaGame) mancalaService.connectToGame(expectedGame.getGameId());
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.IN_PROGRESS);
