@@ -4,43 +4,43 @@
   "mancalaBoard": [
     {
       "mancalaGameIndex": 0,
-      "stones": 4
+      "stones": 1
     },
     {
       "mancalaGameIndex": 1,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 2,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 3,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 4,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 5,
-      "stones": 2
+      "stones": 10
     },
     {
       "mancalaGameIndex": 6,
-      "stones": 30
+      "stones": 15
     },
     {
       "mancalaGameIndex": 7,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 8,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 9,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 10,
@@ -52,14 +52,14 @@
     },
     {
       "mancalaGameIndex": 12,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 13,
-      "stones": 34
+      "stones": 36
     }
   ],
-  "activePlayer": "PLAYER_TWO",
+  "activePlayer": "PLAYER_ONE",
   "winner": null,
-  "selectedStoneContainerIndex": 11
+  "selectedStoneContainerIndex": 0
 }

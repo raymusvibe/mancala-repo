@@ -1,6 +1,6 @@
 {
   "gameId": "3d7cdee7-b2f7-4b63-9d5f-55f262f6737f",
-  "gamePlayStatus": "FINISHED",
+  "gamePlayStatus": "IN_PROGRESS",
   "mancalaBoard": [
     {
       "mancalaGameIndex": 0,
@@ -44,7 +44,7 @@
     },
     {
       "mancalaGameIndex": 10,
-      "stones": 0
+      "stones": 1
     },
     {
       "mancalaGameIndex": 11,
@@ -56,7 +56,7 @@
     },
     {
       "mancalaGameIndex": 13,
-      "stones": 40
+      "stones": 39
     }
   ],
   "activePlayer": "PLAYER_TWO",

@@ -2,14 +2,13 @@ package com.bol.games.mancala.controller;
 
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.abstractions.MancalaAPI;
-import com.bol.games.mancala.service.abstractions.MancalaGameValidationAPI;
+import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @Slf4j
@@ -18,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MancalaController {
 
     private MancalaAPI gameService;
-    private MancalaGameValidationAPI validationService;
+    private MancalaGamePlayValidationAPI validationService;
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping(value = "/start", produces = "application/json")
@@ -40,7 +39,7 @@ public class MancalaController {
     @PostMapping(value = "/gameplay", produces = "application/json", consumes = "application/json")
     @Operation(summary = "Gameplay validation and publishing game state to opponent")
     public ResponseEntity<MancalaGame> gamePlay(@RequestBody MancalaGame request) throws Exception {
-        log.info("gameplay: {}", new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(request));
+        log.info("gameplay: {}", request.getGameId());
         MancalaGame game = validationService.validate(request);
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
         return ResponseEntity.ok(game);

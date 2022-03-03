@@ -5,7 +5,7 @@ import com.bol.games.mancala.exception.NotFoundException;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.abstractions.MancalaAPI;
-import com.bol.games.mancala.service.abstractions.MancalaGameValidationAPI;
+import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ public class MancalaControllerTests {
     private MancalaAPI service;
 
     @Mock
-    private MancalaGameValidationAPI validation;
+    private MancalaGamePlayValidationAPI validation;
 
     @Mock
     private SimpMessagingTemplate simpMessagingTemplate;
