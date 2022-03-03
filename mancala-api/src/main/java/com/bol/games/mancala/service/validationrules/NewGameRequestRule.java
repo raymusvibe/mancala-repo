@@ -12,9 +12,9 @@ public class NewGameRequestRule extends Rule {
     public void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
                                MongoTemplate mancalaGamesMongoTemplate) throws ValidationException {
-        if (gameFromFrontEnd.getGamePlayStatus() == GameStatus.NEW ) {
+        if (gameFromFrontEnd.getGamePlayStatus() == GameStatus.New) {
             gameFromStore.initialiseBoard();
-            gameFromStore.setActivePlayer(Player.PLAYER_TWO);
+            gameFromStore.setActivePlayer(Player.PlayerTwo);
             gameFromStore.setWinner(null);
             gameFromStore.setSelectedStoneContainerIndex(null);
             mancalaGamesMongoTemplate.save(gameFromStore);

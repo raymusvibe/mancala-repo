@@ -28,12 +28,12 @@ public class MancalaService implements MancalaAPI {
     @Override
     public MancalaGame connectToGame(String gameId) throws NotFoundException {
         Query query = new Query();
-        query.addCriteria(Criteria.where("gameId").is(gameId).and("gamePlayStatus").is(GameStatus.NEW));
+        query.addCriteria(Criteria.where("gameId").is(gameId).and("gamePlayStatus").is(GameStatus.New));
         MancalaGame game = mancalaGamesMongoTemplate.findOne(query, MancalaGame.class);
         if (game == null) {
             throw new NotFoundException("Invalid GameId or this game is already in progress");
         }
-        game.setGamePlayStatus(GameStatus.IN_PROGRESS);
+        game.setGamePlayStatus(GameStatus.InProgress);
         mancalaGamesMongoTemplate.save(game);
         return game;
     }

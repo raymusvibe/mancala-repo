@@ -36,28 +36,28 @@ public class StoneSowingRule extends Rule {
         int stoneCount = gameFromStore.getStoneContainer(selectedContainerIndex).getAllStonesAndEmptyContainer();
 
         //start adding stones to the first container after the one selected
-        int currentContainerIndex = (selectedContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+        int currentContainerIndex = (selectedContainerIndex + 1) % (MancalaConstants.PlayerTwoHouseIndex + 1);
         Player activePlayer = gameFromStore.getActivePlayer();
 
         //distribute stones to containers based on game rules
         while (stoneCount > 0) {
             //cannot place stones on another player's house
-            if (activePlayer == Player.PLAYER_ONE && currentContainerIndex == MancalaConstants.PLAYER_TWO_HOUSE_INDEX
-                    || activePlayer == Player.PLAYER_TWO && currentContainerIndex == MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
-                currentContainerIndex = (currentContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+            if (activePlayer == Player.PlayerOne && currentContainerIndex == MancalaConstants.PlayerTwoHouseIndex
+                    || activePlayer == Player.PlayerTwo && currentContainerIndex == MancalaConstants.PlayerOneHouseIndex) {
+                currentContainerIndex = (currentContainerIndex + 1) % (MancalaConstants.PlayerTwoHouseIndex + 1);
                 continue;
             }
             StoneContainer targetContainer = gameFromStore.getStoneContainer(currentContainerIndex);
             //placing the last stone in empty container when opposite container still has stones
             if (stoneCount == 1) {
                 if (targetContainer.isEmpty()
-                        && currentContainerIndex != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
-                        && currentContainerIndex != MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
+                        && currentContainerIndex != MancalaConstants.PlayerOneHouseIndex
+                        && currentContainerIndex != MancalaConstants.PlayerTwoHouseIndex) {
                     StoneContainer oppositeContainer = gameFromStore
-                            .getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX - currentContainerIndex - 1);
+                            .getStoneContainer(MancalaConstants.PlayerTwoHouseIndex - currentContainerIndex - 1);
                     if (!oppositeContainer.isEmpty()) {
-                        int houseIndex = (activePlayer == Player.PLAYER_ONE)?
-                                MancalaConstants.PLAYER_ONE_HOUSE_INDEX : MancalaConstants.PLAYER_TWO_HOUSE_INDEX;
+                        int houseIndex = (activePlayer == Player.PlayerOne)?
+                                MancalaConstants.PlayerOneHouseIndex : MancalaConstants.PlayerTwoHouseIndex;
                         int stonesFromOppositeContainer = oppositeContainer.getAllStonesAndEmptyContainer();
                         gameFromStore.getStoneContainer(houseIndex).addStones(stonesFromOppositeContainer + 1);
                         stoneCount--;
@@ -70,21 +70,21 @@ public class StoneSowingRule extends Rule {
             }
             targetContainer.addStone();
             stoneCount--;
-            currentContainerIndex = (currentContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+            currentContainerIndex = (currentContainerIndex + 1) % (MancalaConstants.PlayerTwoHouseIndex + 1);
         }
 
         //change player if you didn't place last stone in your own house, assisted by logic above
-        if (activePlayer == Player.PLAYER_ONE && currentContainerIndex != MancalaConstants.PLAYER_ONE_HOUSE_INDEX)
+        if (activePlayer == Player.PlayerOne && currentContainerIndex != MancalaConstants.PlayerOneHouseIndex
+                || activePlayer == Player.PlayerTwo && currentContainerIndex != MancalaConstants.PlayerTwoHouseIndex) {
             gameFromStore.setActivePlayer(changePlayer(activePlayer));
-        if (activePlayer == Player.PLAYER_TWO && currentContainerIndex != MancalaConstants.PLAYER_TWO_HOUSE_INDEX)
-            gameFromStore.setActivePlayer(changePlayer(activePlayer));
+        }
         return gameFromStore;
     }
 
     private Player changePlayer (Player currentPlayer) {
-        if (currentPlayer == Player.PLAYER_ONE)
-            return Player.PLAYER_TWO;
-        return Player.PLAYER_ONE;
+        if (currentPlayer == Player.PlayerOne) {
+            return Player.PlayerTwo;
+        }
+        return Player.PlayerOne;
     }
-
 }

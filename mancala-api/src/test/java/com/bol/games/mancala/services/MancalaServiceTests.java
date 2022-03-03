@@ -44,15 +44,15 @@ public class MancalaServiceTests {
         MancalaGame game = (MancalaGame) mancalaService.createGame();
         assertThat(game.getGameId()).isNotNull();
         assertThat(game.getWinner()).isNull();
-        assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.NEW);
-        assertThat(game.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
+        assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.New);
+        assertThat(game.getActivePlayer()).isEqualTo(Player.PlayerOne);
         assertThat(game.getSelectedStoneContainerIndex()).isNull();
 
         for (int i = 0; i < game.getMancalaBoard().size(); i++) {
-            if (i != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
-                    && i != MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
+            if (i != MancalaConstants.PlayerOneHouseIndex
+                    && i != MancalaConstants.PlayerTwoHouseIndex) {
                 assertThat(game.getStoneContainer(i).getStones())
-                        .isEqualTo(MancalaConstants.STONES_PER_CONTAINER);
+                        .isEqualTo(MancalaConstants.StonesPerPlayer);
             } else {
                 //house containers are empty
                 assertThat(game.getStoneContainer(i).isEmpty()).isEqualTo(true);
@@ -66,8 +66,8 @@ public class MancalaServiceTests {
         doReturn(expectedGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), Mockito.any(Class.class));
 
         MancalaGame game = (MancalaGame) mancalaService.connectToGame(expectedGame.getGameId());
-        assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.IN_PROGRESS);
-        assertThat(game.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
+        assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.InProgress);
+        assertThat(game.getActivePlayer()).isEqualTo(Player.PlayerOne);
         assertThat(game.getGameId()).isEqualTo(expectedGame.getGameId());
         assertThat(game.getWinner()).isNull();
     }

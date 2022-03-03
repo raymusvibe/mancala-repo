@@ -4,6 +4,7 @@ import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validationrules.GameIsFinishedRule;
 import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,8 @@ public class GameIsFinishedRuleTests {
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
 
-    Rule gameIsFinishedRule = new GameIsFinishedRule();
-
+    private Rule gameIsFinishedRule = new GameIsFinishedRule();
     private ObjectMapper mapper = new ObjectMapper();
-
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
     private final Resource playerTwoWinPriorMove = new ClassPathResource("test/playerTwoWinPriorMove.json");
     private final Resource playerTwoWinInvalidStoneCountMove = new ClassPathResource("test/playerTwoWinInvalidStoneCountMove.json");

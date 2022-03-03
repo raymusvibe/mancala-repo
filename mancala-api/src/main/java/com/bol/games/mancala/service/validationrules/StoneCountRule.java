@@ -12,12 +12,14 @@ public class StoneCountRule extends Rule {
     public void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
                                MongoTemplate mancalaGamesMongoTemplate) throws ValidationException {
-        Integer sum = gameFromFrontEnd.getMancalaBoard().stream()
+        Integer sum = gameFromFrontEnd.getMancalaBoard()
+                .stream()
                 .map(x -> x.getStones())
                 .reduce(0, Integer::sum);
-        int totalNumberOfStones = MancalaConstants.CONTAINERS_PER_PLAYER * MancalaConstants.STONES_PER_CONTAINER * 2;
-        if (totalNumberOfStones != sum)
+        int totalNumberOfStones = MancalaConstants.ContainersPerPlayer * MancalaConstants.StonesPerPlayer * 2;
+        if (totalNumberOfStones != sum) {
             throw new ValidationException("Error validating stone count");
+        }
 
         successor.processRequest(gameFromFrontEnd, gameFromStore, mancalaGamesMongoTemplate);
     }

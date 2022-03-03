@@ -1,6 +1,6 @@
 {
   "gameId": "3d7cdee7-b2f7-4b63-9d5f-55f262f6737f",
-  "gamePlayStatus": "FINISHED",
+  "gamePlayStatus": "Finished",
   "mancalaBoard": [
     {
       "mancalaGameIndex": 0,
@@ -59,7 +59,7 @@
       "stones": 48
     }
   ],
-  "activePlayer": "PLAYER_TWO",
-  "winner": "PLAYER_TWO",
+  "activePlayer": "PlayerTwo",
+  "winner": "PlayerTwo",
   "selectedStoneContainerIndex": 12
 }

@@ -12,21 +12,21 @@ import java.util.Optional;
 public class GameIsFinishedRule extends Rule {
 
     private boolean validateWinnerFromFrontEnd(MancalaGame gameFromFrontEnd) throws ValidationException {
-        int allocatedNumberOfStonesPerPlayer = MancalaConstants.CONTAINERS_PER_PLAYER * MancalaConstants.STONES_PER_CONTAINER;
-        int playerOneStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PLAYER_ONE_HOUSE_INDEX).getStones();
-        int playerTwoStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX).getStones();
+        int allocatedNumberOfStonesPerPlayer = MancalaConstants.ContainersPerPlayer * MancalaConstants.StonesPerPlayer;
+        int playerOneStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PlayerOneHouseIndex).getStones();
+        int playerTwoStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PlayerTwoHouseIndex).getStones();
         if (playerOneStones + playerTwoStones != allocatedNumberOfStonesPerPlayer * 2)
             throw new ValidationException("Error validating stone count for game winner");
         switch (gameFromFrontEnd.getWinner()) {
-            case PLAYER_ONE:
+            case PlayerOne:
                 if (playerOneStones > playerTwoStones)
                     return true;
                 break;
-            case PLAYER_TWO:
+            case PlayerTwo:
                 if (playerOneStones < playerTwoStones)
                     return true;
                 break;
-            case DRAW:
+            case Draw:
                 if (playerOneStones == playerTwoStones)
                     return true;
         }
@@ -41,19 +41,19 @@ public class GameIsFinishedRule extends Rule {
         if (gameFromFrontEnd.getWinner() != null) {
             if (validateWinnerFromFrontEnd(gameFromFrontEnd)) {
                 gameFromStore.setWinner(gameFromFrontEnd.getWinner());
-                gameFromStore.setGamePlayStatus(GameStatus.FINISHED);
+                gameFromStore.setGamePlayStatus(GameStatus.Finished);
                 gameFromStore.setSelectedStoneContainerIndex(null);
                 gameFromStore.setMancalaBoard(gameFromFrontEnd.getMancalaBoard());
                 mancalaGamesMongoTemplate.save(gameFromStore);
                 return;
             }
         }
-        //if frontend missed finding a winner, verify after checking stone count
+        //if frontend missed finding a winner, verify
         Optional<MancalaGame> finishedGameOption = gameFromFrontEnd.isGameFinished();
         if (!finishedGameOption.isEmpty()) {
             MancalaGame finishedGame = finishedGameOption.get();
             gameFromStore.setWinner(finishedGame.getWinner());
-            gameFromStore.setGamePlayStatus(GameStatus.FINISHED);
+            gameFromStore.setGamePlayStatus(GameStatus.Finished);
             gameFromStore.setSelectedStoneContainerIndex(null);
             gameFromStore.setMancalaBoard(finishedGame.getMancalaBoard());
             mancalaGamesMongoTemplate.save(gameFromStore);

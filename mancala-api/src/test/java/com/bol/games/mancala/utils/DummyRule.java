@@ -1,4 +1,4 @@
-package com.bol.games.mancala.services.validationrules;
+package com.bol.games.mancala.utils;
 
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;

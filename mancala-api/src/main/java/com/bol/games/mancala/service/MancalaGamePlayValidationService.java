@@ -19,18 +19,17 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
     private MongoTemplate mancalaEventsMongoTemplate;
 
     @Override
-    public MancalaGame validate(MancalaGame gameFromFrontEnd) throws ValidationException {
-        //event logging
+    public MancalaGame validate (MancalaGame gameFromFrontEnd) throws ValidationException {
+        //event log
         mancalaEventsMongoTemplate.insert(gameFromFrontEnd);
 
-        //validation rules
+        //rules and chain of responsibility
         Rule gameExistsInStoreRule = new GameExistsInStoreRule();
         Rule newGameRequestRule = new NewGameRequestRule();
         Rule stoneCountRule = new StoneCountRule();
         Rule gameIsFinishedRule = new GameIsFinishedRule();
         Rule selectedContainerIndexRule = new SelectedContainerIndexRule();
         Rule stoneSowingRule = new StoneSowingRule();
-        //chain of responsibility
         gameExistsInStoreRule.setSuccessor(newGameRequestRule);
         newGameRequestRule.setSuccessor(stoneCountRule);
         stoneCountRule.setSuccessor(gameIsFinishedRule);
@@ -38,6 +37,7 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);
 
         gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, mancalaGamesMongoTemplate);
+
         //If we got this far, correct game state is in DB
         Query query = new Query();
         query.addCriteria(Criteria.where("gameId").is(gameFromFrontEnd.getGameId()));

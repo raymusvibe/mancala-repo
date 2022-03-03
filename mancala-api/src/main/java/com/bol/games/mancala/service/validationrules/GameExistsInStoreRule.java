@@ -16,8 +16,9 @@ public class GameExistsInStoreRule extends Rule {
         Query query = new Query();
         query.addCriteria(Criteria.where("gameId").is(gameFromFrontEnd.getGameId()));
         MancalaGame gameFromRepo = mancalaGamesMongoTemplate.findOne(query, MancalaGame.class);
-        if (gameFromRepo == null)
+        if (gameFromRepo == null) {
             throw new ValidationException("Invalid game Id provided: " + gameFromFrontEnd.getGameId());
+        }
         successor.processRequest(gameFromFrontEnd, gameFromRepo, mancalaGamesMongoTemplate);
     }
 }

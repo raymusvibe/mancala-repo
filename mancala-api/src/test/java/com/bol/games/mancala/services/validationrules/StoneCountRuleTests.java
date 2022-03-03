@@ -4,6 +4,7 @@ import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validationrules.StoneCountRule;
 import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +23,8 @@ public class StoneCountRuleTests {
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
 
-    Rule stoneCountRule = new StoneCountRule();
-
+    private Rule stoneCountRule = new StoneCountRule();
     private ObjectMapper mapper = new ObjectMapper();
-
     private final Resource playerOneFirstMoveInvalidStoneCountMove = new ClassPathResource("test/playerOneFirstMoveInvalidStoneCountMove.json");
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
 

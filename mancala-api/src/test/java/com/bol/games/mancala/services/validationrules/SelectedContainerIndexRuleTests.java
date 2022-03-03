@@ -3,6 +3,7 @@ package com.bol.games.mancala.services.validationrules;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validationrules.SelectedContainerIndexRule;
 import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,10 +22,8 @@ public class SelectedContainerIndexRuleTests {
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
 
-    Rule selectedContainerIndexRule = new SelectedContainerIndexRule();
-
+    private Rule selectedContainerIndexRule = new SelectedContainerIndexRule();
     private ObjectMapper mapper = new ObjectMapper();
-
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
     private final Resource playerTwoNewGameMove = new ClassPathResource("test/playerTwoNewGameMove.json");
 

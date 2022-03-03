@@ -4,6 +4,7 @@ import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validationrules.GameExistsInStoreRule;
 import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,10 +29,8 @@ public class GameExistsInStoreRuleTests {
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
 
-    Rule gameExistsInStoreRule = new GameExistsInStoreRule();
-
+    private Rule gameExistsInStoreRule = new GameExistsInStoreRule();
     private ObjectMapper mapper = new ObjectMapper();
-
     private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("test/playerTwoOppositeStoneCaptureMove.json");
     private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("test/playerTwoOppositeStoneCapturePriorMove.json");
 
