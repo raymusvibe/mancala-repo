@@ -1,23 +1,33 @@
-package com.bol.games.mancala.service.validationrules;
+package com.bol.games.mancala.service.validation;
 
 import com.bol.games.mancala.constants.MancalaConstants;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.model.StoneContainer;
-import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.service.validation.abstractions.Rule;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-//last rule in chain
+import java.util.Optional;
+
+/**
+ * Rule used to validate the sowing of stones and the state of the board after sowing in the frontend.
+ * It runs a simulation using the selected container index and the previous state of the game stored in the database
+ * and compares that with the input from the frontend.
+ */
 public class StoneSowingRule extends Rule {
 
     @Override
     public void processRequest(MancalaGame gameFromFrontEnd,
-                               MancalaGame gameFromStore,
+                               Optional<MancalaGame> gameFromStore,
                                MongoTemplate mancalaGamesMongoTemplate) throws ValidationException {
+
+        if (gameFromFrontEnd.getActivePlayer() != gameFromStore.get().getActivePlayer()) {
+            throw new ValidationException("You cannot sow stones out of turn");
+        }
         Integer containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
-        gameFromStore.setSelectedStoneContainerIndex(containerIndex);
-        MancalaGame simulatedResultFromStore = simulateGamePlayOnStoreGame(gameFromStore);
+        gameFromStore.get().setSelectedStoneContainerIndex(containerIndex);
+        MancalaGame simulatedResultFromStore = simulateGamePlayOnStoreGame(gameFromStore.get());
         validateMancalaBoard(gameFromFrontEnd, simulatedResultFromStore);
         mancalaGamesMongoTemplate.save(simulatedResultFromStore);
     }

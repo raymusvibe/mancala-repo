@@ -87,7 +87,7 @@
 						<exclude>com/bol/games/mancala/constants/*</exclude>
 						<exclude>com/bol/games/mancala/model/*</exclude>
 						<exclude>com/bol/games/mancala/*</exclude>
-						<exclude>com/bol/games/mancala/service/validationrules/abstractions/*</exclude>
+						<exclude>com/bol/games/mancala/service/validation/abstractions/*</exclude>
 					</excludes>
 				</configuration>
 				<executions>

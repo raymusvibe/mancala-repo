@@ -6,6 +6,7 @@ import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class MancalaController {
 
+    @Autowired
     private MancalaAPI gameService;
+    @Autowired
     private MancalaGamePlayValidationAPI validationService;
+    @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping(value = "/start", produces = "application/json")

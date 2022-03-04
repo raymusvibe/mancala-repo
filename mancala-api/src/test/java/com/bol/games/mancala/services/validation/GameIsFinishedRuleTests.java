@@ -1,9 +1,9 @@
-package com.bol.games.mancala.services.validationrules;
+package com.bol.games.mancala.services.validation;
 
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
-import com.bol.games.mancala.service.validationrules.GameIsFinishedRule;
-import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.service.validation.GameIsFinishedRule;
+import com.bol.games.mancala.service.validation.abstractions.Rule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.Optional;
 
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -42,7 +44,7 @@ public class GameIsFinishedRuleTests {
         MancalaGame playerTwoWinPriorMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
 
         assertDoesNotThrow(() -> {
-            gameIsFinishedRule.processRequest(playerTwoWinMoveGame, playerTwoWinPriorMoveGame, mancalaGamesMongoTemplate);
+            gameIsFinishedRule.processRequest(playerTwoWinMoveGame, Optional.of(playerTwoWinPriorMoveGame), mancalaGamesMongoTemplate);
         }, "ValidationException not thrown");
     }
 
@@ -52,7 +54,7 @@ public class GameIsFinishedRuleTests {
         MancalaGame playerTwoWinPriorMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
 
         assertThrows(ValidationException.class, () -> {
-            gameIsFinishedRule.processRequest(playerTwoWinInvalidStoneCountMoveGame, playerTwoWinPriorMoveGame, mancalaGamesMongoTemplate);
+            gameIsFinishedRule.processRequest(playerTwoWinInvalidStoneCountMoveGame, Optional.of(playerTwoWinPriorMoveGame), mancalaGamesMongoTemplate);
         }, "ValidationException was expected");
     }
 }

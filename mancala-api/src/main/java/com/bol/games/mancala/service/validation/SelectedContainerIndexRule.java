@@ -1,20 +1,26 @@
-package com.bol.games.mancala.service.validationrules;
+package com.bol.games.mancala.service.validation;
 
 import com.bol.games.mancala.constants.MancalaConstants;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.model.StoneContainer;
-import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.service.validation.abstractions.Rule;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.Optional;
+
+/**
+ * Rule used to validate the selected container index.
+ */
 
 public class SelectedContainerIndexRule extends Rule {
     @Override
     public void processRequest(MancalaGame gameFromFrontEnd,
-                               MancalaGame gameFromStore,
+                               Optional<MancalaGame> gameFromStore,
                                MongoTemplate mancalaGamesMongoTemplate) throws ValidationException {
         Integer containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
-        StoneContainer selectedStoneContainer = gameFromStore.getStoneContainer(containerIndex);
+        StoneContainer selectedStoneContainer = gameFromStore.get().getStoneContainer(containerIndex);
         //no action required for selecting an empty container or house containers
         if (selectedStoneContainer.isEmpty()
                 || containerIndex == MancalaConstants.PlayerOneHouseIndex

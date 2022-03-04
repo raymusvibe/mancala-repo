@@ -6,10 +6,9 @@ import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.service.MancalaService;
-import com.bol.games.mancala.service.abstractions.MancalaAPI;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,24 +23,19 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class MancalaServiceTests {
 
+    @InjectMocks
+    private MancalaService mancalaService;
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
-
-    private MancalaAPI mancalaService;
-
-    @BeforeEach
-    public void setup() {
-        mancalaService = new MancalaService(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
-    }
 
     String invalidGameId = "someGameId";
 
     @Test
     public void testGameCreation () throws Exception {
 
-        MancalaGame game = (MancalaGame) mancalaService.createGame();
+        MancalaGame game = mancalaService.createGame();
         assertThat(game.getGameId()).isNotNull();
         assertThat(game.getWinner()).isNull();
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.New);
@@ -64,8 +58,9 @@ public class MancalaServiceTests {
     public void testGameConnection () throws Exception {
         MancalaGame expectedGame = new MancalaGame();
         doReturn(expectedGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), Mockito.any(Class.class));
-
-        MancalaGame game = (MancalaGame) mancalaService.connectToGame(expectedGame.getGameId());
+        //Mock injections doesn't seem to work for coverage plugin
+        mancalaService = new MancalaService(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
+        MancalaGame game = mancalaService.connectToGame(expectedGame.getGameId());
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.InProgress);
         assertThat(game.getActivePlayer()).isEqualTo(Player.PlayerOne);
         assertThat(game.getGameId()).isEqualTo(expectedGame.getGameId());
@@ -74,8 +69,6 @@ public class MancalaServiceTests {
 
     @Test
     public void testGameConnectionInvalidGameId () throws Exception {
-        doReturn(null).when(mancalaGamesMongoTemplate).findOne(any(Query.class), Mockito.any(Class.class));
-
         assertThrows(NotFoundException.class, () -> {
             mancalaService.connectToGame(invalidGameId);
         }, "NotFoundException was expected");

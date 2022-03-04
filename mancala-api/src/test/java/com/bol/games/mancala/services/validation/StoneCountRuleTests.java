@@ -1,9 +1,9 @@
-package com.bol.games.mancala.services.validationrules;
+package com.bol.games.mancala.services.validation;
 
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
-import com.bol.games.mancala.service.validationrules.StoneCountRule;
-import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.service.validation.StoneCountRule;
+import com.bol.games.mancala.service.validation.abstractions.Rule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.Optional;
 
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,7 +42,7 @@ public class StoneCountRuleTests {
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
         assertThrows(ValidationException.class, () -> {
-            stoneCountRule.processRequest(playerOneFirstMoveInvalidStoneCountMoveGame, playerTwoWinMoveGame, mancalaGamesMongoTemplate);
+            stoneCountRule.processRequest(playerOneFirstMoveInvalidStoneCountMoveGame, Optional.of(playerTwoWinMoveGame), mancalaGamesMongoTemplate);
         }, "ValidationException was expected");
     }
 }

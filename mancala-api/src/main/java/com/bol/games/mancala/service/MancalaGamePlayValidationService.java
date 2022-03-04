@@ -3,21 +3,35 @@ package com.bol.games.mancala.service;
 import com.bol.games.mancala.exception.*;
 import com.bol.games.mancala.model.*;
 import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
-import com.bol.games.mancala.service.validationrules.*;
-import com.bol.games.mancala.service.validationrules.abstractions.Rule;
+import com.bol.games.mancala.service.validation.*;
+import com.bol.games.mancala.service.validation.abstractions.Rule;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
+/**
+ * Service used to validate gameplay from the frontend and enforce game rules.
+ */
 @Service
 @AllArgsConstructor
 public class MancalaGamePlayValidationService implements MancalaGamePlayValidationAPI {
 
+    @Autowired
     private MongoTemplate mancalaGamesMongoTemplate;
+    @Autowired
     private MongoTemplate mancalaEventsMongoTemplate;
 
+    /**
+     * Game play validation method used to validate game play from the frontend.
+     * The chain of responsibility pattern is used to enforce the various rules.
+     * @param gameFromFrontEnd the mancala game object send from the frontend after a player's move.
+     * @return the validated game instance, modified according to game rules.
+     */
     @Override
     public MancalaGame validate (MancalaGame gameFromFrontEnd) throws ValidationException {
         //event log
@@ -36,7 +50,7 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
         gameIsFinishedRule.setSuccessor(selectedContainerIndexRule);
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);
 
-        gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, mancalaGamesMongoTemplate);
+        gameExistsInStoreRule.processRequest(gameFromFrontEnd, Optional.empty(), mancalaGamesMongoTemplate);
 
         //If we got this far, correct game state is in DB
         Query query = new Query();
