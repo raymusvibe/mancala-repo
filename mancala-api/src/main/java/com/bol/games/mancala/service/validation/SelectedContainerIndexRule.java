@@ -5,7 +5,7 @@ import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.model.StoneContainer;
-import com.bol.games.mancala.service.validation.abstractions.Rule;
+import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Optional;
@@ -13,26 +13,25 @@ import java.util.Optional;
 /**
  * Rule used to validate the selected container index.
  */
-
-public class SelectedContainerIndexRule extends Rule {
+public class SelectedContainerIndexRule extends GameRule {
     @Override
-    public void processRequest(MancalaGame gameFromFrontEnd,
+    public final void processRequest(MancalaGame gameFromFrontEnd,
                                Optional<MancalaGame> gameFromStore,
-                               MongoTemplate mancalaGamesMongoTemplate) throws ValidationException {
-        Integer containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
-        StoneContainer selectedStoneContainer = gameFromStore.get().getStoneContainer(containerIndex);
+                               MongoTemplate mongoTemplate) throws ValidationException {
+        int containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
+        StoneContainer targetContainer = gameFromStore.get().getStoneContainer(containerIndex);
         //no action required for selecting an empty container or house containers
-        if (selectedStoneContainer.isEmpty()
-                || containerIndex == MancalaConstants.PlayerOneHouseIndex
-                || containerIndex == MancalaConstants.PlayerTwoHouseIndex) {
+        if (targetContainer.isEmpty()
+                || containerIndex == MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                || containerIndex == MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
             return;
         }
         //player cannot start from opponents side
-        if (gameFromFrontEnd.getActivePlayer() == Player.PlayerOne && containerIndex > MancalaConstants.PlayerOneHouseIndex
-                || gameFromFrontEnd.getActivePlayer() == Player.PlayerTwo && containerIndex < MancalaConstants.PlayerOneHouseIndex
-                || gameFromFrontEnd.getActivePlayer() == Player.PlayerTwo && containerIndex > MancalaConstants.PlayerTwoHouseIndex) {
+        if (gameFromFrontEnd.getActivePlayer() == Player.PLAYER_ONE && containerIndex > MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                || gameFromFrontEnd.getActivePlayer() == Player.PLAYER_TWO && containerIndex < MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                || gameFromFrontEnd.getActivePlayer() == Player.PLAYER_TWO && containerIndex > MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
             throw new ValidationException("Invalid game state detected (Container selection index)");
         }
-        successor.processRequest(gameFromFrontEnd, gameFromStore, mancalaGamesMongoTemplate);
+        successor.processRequest(gameFromFrontEnd, gameFromStore, mongoTemplate);
     }
 }

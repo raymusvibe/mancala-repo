@@ -3,7 +3,7 @@ package com.bol.games.mancala.services.validation;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.StoneCountRule;
-import com.bol.games.mancala.service.validation.abstractions.Rule;
+import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,28 +21,28 @@ import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class StoneCountRuleTests {
+class StoneCountRuleTests {
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
 
-    private Rule stoneCountRule = new StoneCountRule();
-    private ObjectMapper mapper = new ObjectMapper();
+    private final GameRule stoneCountRule = new StoneCountRule();
+    private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerOneFirstMoveInvalidStoneCountMove = new ClassPathResource("test/playerOneFirstMoveInvalidStoneCountMove.json");
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
 
     @BeforeEach
     public void setUp () {
-        Rule dummyRule = new DummyRule();
+        GameRule dummyRule = new DummyRule();
         stoneCountRule.setSuccessor(dummyRule);
     }
 
     @Test
-    public void testValidationStoneCount () throws Exception {
+    void testValidationStoneCount () throws Exception {
         MancalaGame playerOneFirstMoveInvalidStoneCountMoveGame = mapper.readValue(resourceAsInputStream(playerOneFirstMoveInvalidStoneCountMove), MancalaGame.class);
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
-        assertThrows(ValidationException.class, () -> {
-            stoneCountRule.processRequest(playerOneFirstMoveInvalidStoneCountMoveGame, Optional.of(playerTwoWinMoveGame), mancalaGamesMongoTemplate);
-        }, "ValidationException was expected");
+        assertThrows(ValidationException.class, () -> stoneCountRule
+                .processRequest(playerOneFirstMoveInvalidStoneCountMoveGame, Optional.of(playerTwoWinMoveGame), mancalaGamesMongoTemplate),
+                "ValidationException was expected");
     }
 }

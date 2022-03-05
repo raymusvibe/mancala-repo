@@ -1,7 +1,7 @@
 package com.bol.games.mancala.model;
 
 public enum GameStatus {
-    New,
-    InProgress,
-    Finished
+    NEW,
+    IN_PROGRESS,
+    FINISHED
 }

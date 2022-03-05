@@ -3,7 +3,8 @@ package com.bol.games.mancala.service.validation;
 import com.bol.games.mancala.constants.MancalaConstants;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
-import com.bol.games.mancala.service.validation.abstractions.Rule;
+import com.bol.games.mancala.model.StoneContainer;
+import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Optional;
@@ -11,21 +12,21 @@ import java.util.Optional;
 /**
  * Rule used to validate the stone count.
  */
-public class StoneCountRule extends Rule {
+public class StoneCountRule extends GameRule {
 
     @Override
-    public void processRequest(MancalaGame gameFromFrontEnd,
+    public final void processRequest(MancalaGame gameFromFrontEnd,
                                Optional<MancalaGame> gameFromStore,
-                               MongoTemplate mancalaGamesMongoTemplate) throws ValidationException {
+                               MongoTemplate mongoTemplate) throws ValidationException {
         Integer sum = gameFromFrontEnd.getMancalaBoard()
                 .stream()
-                .map(x -> x.getStones())
+                .map(StoneContainer::getStones)
                 .reduce(0, Integer::sum);
-        int totalNumberOfStones = MancalaConstants.ContainersPerPlayer * MancalaConstants.StonesPerPlayer * 2;
-        if (totalNumberOfStones != sum) {
+        int stoneCount = MancalaConstants.CONTAINERS_PER_PLAYER * MancalaConstants.STONES_PER_PLAYER * 2;
+        if (stoneCount != sum) {
             throw new ValidationException("Error validating stone count");
         }
 
-        successor.processRequest(gameFromFrontEnd, gameFromStore, mancalaGamesMongoTemplate);
+        successor.processRequest(gameFromFrontEnd, gameFromStore, mongoTemplate);
     }
 }

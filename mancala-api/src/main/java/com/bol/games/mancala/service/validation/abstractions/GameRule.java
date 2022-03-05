@@ -6,13 +6,13 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Optional;
 
-public abstract class Rule {
+public abstract class GameRule {
 
-    protected Rule successor;
-    public void setSuccessor(Rule successor) {
+    protected GameRule successor;
+    public final void setSuccessor(GameRule successor) {
         this.successor = successor;
     }
     public abstract void processRequest(MancalaGame gameFromFrontEnd,
                                         Optional<MancalaGame> gameFromStore,
-                                        MongoTemplate mancalaGamesMongoTemplate) throws ValidationException;
+                                        MongoTemplate mongoTemplate) throws ValidationException;
 }

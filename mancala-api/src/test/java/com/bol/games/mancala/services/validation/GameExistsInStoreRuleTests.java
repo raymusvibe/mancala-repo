@@ -3,7 +3,7 @@ package com.bol.games.mancala.services.validation;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.GameExistsInStoreRule;
-import com.bol.games.mancala.service.validation.abstractions.Rule;
+import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,40 +26,42 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
-public class GameExistsInStoreRuleTests {
+class GameExistsInStoreRuleTests {
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
 
-    private Rule gameExistsInStoreRule = new GameExistsInStoreRule();
-    private ObjectMapper mapper = new ObjectMapper();
+    private final GameRule gameExistsInStoreRule = new GameExistsInStoreRule();
+    private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("test/playerTwoOppositeStoneCaptureMove.json");
     private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("test/playerTwoOppositeStoneCapturePriorMove.json");
 
     @BeforeEach
     public void setUp () {
-        Rule dummyRule = new DummyRule();
+        GameRule dummyRule = new DummyRule();
         gameExistsInStoreRule.setSuccessor(dummyRule);
     }
 
     @Test
-    public void testValidationIncorrectGameId () throws Exception {
+    void testValidationIncorrectGameId () throws Exception {
         MancalaGame playerTwoOppositeStoneCapturePriorGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCapturePriorMove), MancalaGame.class);
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
 
-        assertThrows(ValidationException.class, () -> {
-            gameExistsInStoreRule.processRequest(playerTwoOppositeStoneCaptureGame, Optional.of(playerTwoOppositeStoneCapturePriorGame), mancalaGamesMongoTemplate);
-        }, "ValidationException was expected");
+        assertThrows(ValidationException.class, () -> gameExistsInStoreRule
+                .processRequest(playerTwoOppositeStoneCaptureGame, Optional.of(playerTwoOppositeStoneCapturePriorGame), mancalaGamesMongoTemplate),
+                "ValidationException was expected");
     }
 
     @Test
-    public void testValidationCorrectGameId () throws Exception {
+    void testValidationCorrectGameId () throws Exception {
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
         MancalaGame playerTwoOppositeStoneCapturePriorGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCapturePriorMove), MancalaGame.class);
 
         doReturn(playerTwoOppositeStoneCapturePriorGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), Mockito.any(Class.class));
 
-        assertDoesNotThrow(() -> {
-            gameExistsInStoreRule.processRequest(playerTwoOppositeStoneCaptureGame, Optional.of(playerTwoOppositeStoneCapturePriorGame), mancalaGamesMongoTemplate);
-        }, "ValidationException not thrown");
+        assertDoesNotThrow(() -> gameExistsInStoreRule
+                .processRequest(playerTwoOppositeStoneCaptureGame,
+                        Optional.of(playerTwoOppositeStoneCapturePriorGame),
+                        mancalaGamesMongoTemplate),
+                "ValidationException not thrown");
     }
 }

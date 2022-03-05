@@ -32,81 +32,86 @@ public class MancalaGame implements Serializable {
 
     public MancalaGame () {
         initialiseBoard();
-        activePlayer = Player.PlayerOne;
+        activePlayer = Player.PLAYER_ONE;
         gameId = UUID.randomUUID().toString();
-        gamePlayStatus = GameStatus.New;
+        gamePlayStatus = GameStatus.NEW;
     }
 
-    public void initialiseBoard() {
+    @JsonIgnore
+    public final void initialiseBoard() {
         ArrayList <StoneContainer> stoneContainers = new ArrayList<>();
-        Integer totalNumberOfContainers = (MancalaConstants.ContainersPerPlayer + 1) * 2;
-        for (int i = 0; i < totalNumberOfContainers; i++) {
-            if (i != MancalaConstants.PlayerOneHouseIndex &&
-                    i != MancalaConstants.PlayerTwoHouseIndex) {
-                stoneContainers.add(new StoneContainer(i, MancalaConstants.StonesPerPlayer));
-            } else {
+        int numberOfContainers = (MancalaConstants.CONTAINERS_PER_PLAYER + 1) * 2;
+        for (int i = 0; i < numberOfContainers; i++) {
+            if (i == MancalaConstants.PLAYER_ONE_HOUSE_INDEX ||
+                    i == MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
                 stoneContainers.add(new HouseStoneContainer(i));
+            } else {
+                stoneContainers.add(new StoneContainer(i, MancalaConstants.STONES_PER_PLAYER));
             }
         }
         mancalaBoard = stoneContainers;
     }
 
     @JsonIgnore
-    public StoneContainer getStoneContainer(Integer stoneContainerIndex) {
+    public final StoneContainer getStoneContainer(Integer stoneContainerIndex) {
         return mancalaBoard.get(stoneContainerIndex);
     }
 
     @JsonIgnore
-    public Optional<MancalaGame> isGameFinished () {
-        int playerOneStoneCount = 0;
-        for (int i = 0; i < MancalaConstants.PlayerOneHouseIndex; i++) {
-            playerOneStoneCount += getStoneContainer(i).getStones();
-        }
-        if (playerOneStoneCount == 0) {
-            movePlayerStonesToHouse(Player.PlayerTwo);
-        } else {
-            int playerTwoStoneCount = 0;
-            for (int i = MancalaConstants.PlayerOneHouseIndex + 1; i < MancalaConstants.PlayerTwoHouseIndex; i++) {
-                playerTwoStoneCount += getStoneContainer(i).getStones();
-            }
-            if (playerTwoStoneCount == 0) {
-                movePlayerStonesToHouse(Player.PlayerOne);
+    public final Optional<MancalaGame> finishGame() {
+        Optional<MancalaGame> finishedGame = Optional.empty();
+        if (isGameFinished()) {
+            //Game has ended if we reach this section
+            int playerOneFinalStoneCount = getStoneContainer(MancalaConstants.PLAYER_ONE_HOUSE_INDEX).getStones();
+            int playerTwoFinalStoneCount = getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX).getStones();
+
+            if (playerOneFinalStoneCount > playerTwoFinalStoneCount) {
+                setWinner(GameWinner.PLAYER_ONE);
+            } else if (playerOneFinalStoneCount < playerTwoFinalStoneCount) {
+                setWinner(GameWinner.PLAYER_TWO);
             } else {
-                //game isn't finished
-                return Optional.empty();
+                setWinner(GameWinner.DRAW);
             }
+
+            setGamePlayStatus(GameStatus.FINISHED);
+            finishedGame = Optional.of(this);
         }
-
-        //Game has ended if we reach this section
-        int playerOneFinalStoneCount = getStoneContainer(MancalaConstants.PlayerOneHouseIndex).getStones();
-        int playerTwoFinalStoneCount = getStoneContainer(MancalaConstants.PlayerTwoHouseIndex).getStones();
-
-        if (playerOneFinalStoneCount > playerTwoFinalStoneCount) {
-            setWinner(GameWinner.PlayerOne);
-        } else if (playerOneFinalStoneCount < playerTwoFinalStoneCount) {
-            setWinner(GameWinner.PlayerTwo);
-        } else {
-            setWinner(GameWinner.Draw);
-        }
-
-        setGamePlayStatus(GameStatus.Finished);
-        return Optional.of(this);
+        return finishedGame;
     }
 
-    @JsonIgnore
+    private boolean isGameFinished () {
+        boolean isFinished = false;
+        int playerOneStoneCount = 0;
+        for (int i = 0; i < MancalaConstants.PLAYER_ONE_HOUSE_INDEX; i++) {
+            playerOneStoneCount += getStoneContainer(i).getStones();
+        }
+        if (playerOneStoneCount == MancalaConstants.EMPTY_STONE_COUNT) {
+            isFinished = true;
+            movePlayerStonesToHouse(Player.PLAYER_TWO);
+        } else {
+            int playerTwoStoneCount = 0;
+            for (int i = MancalaConstants.PLAYER_ONE_HOUSE_INDEX + 1; i < MancalaConstants.PLAYER_TWO_HOUSE_INDEX; i++) {
+                playerTwoStoneCount += getStoneContainer(i).getStones();
+            }
+            if (playerTwoStoneCount == MancalaConstants.EMPTY_STONE_COUNT) {
+                isFinished = true;
+                movePlayerStonesToHouse(Player.PLAYER_ONE);
+            }
+        }
+        return isFinished;
+    }
+
     private void movePlayerStonesToHouse (Player player) {
-        switch (player) {
-            case PlayerOne:
-                for (int i = 0; i < MancalaConstants.PlayerOneHouseIndex; i++) {
-                    mancalaBoard.get(MancalaConstants.PlayerOneHouseIndex)
-                            .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
-                }
-                break;
-            case PlayerTwo:
-                for (int i = MancalaConstants.PlayerOneHouseIndex + 1; i < MancalaConstants.PlayerTwoHouseIndex; i++) {
-                    mancalaBoard.get(MancalaConstants.PlayerTwoHouseIndex)
-                            .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
-                }
+        if (player == Player.PLAYER_ONE) {
+            for (int i = 0; i < MancalaConstants.PLAYER_ONE_HOUSE_INDEX; i++) {
+                mancalaBoard.get(MancalaConstants.PLAYER_ONE_HOUSE_INDEX)
+                        .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
+            }
+        } else {
+            for (int i = MancalaConstants.PLAYER_ONE_HOUSE_INDEX + 1; i < MancalaConstants.PLAYER_TWO_HOUSE_INDEX; i++) {
+                mancalaBoard.get(MancalaConstants.PLAYER_TWO_HOUSE_INDEX)
+                        .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
+            }
         }
     }
 }

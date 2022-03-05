@@ -15,10 +15,12 @@ public class StoneContainer implements Serializable {
     private int mancalaGameIndex;
     private int stones;
 
+    @JsonIgnore
     public void addStone () {
         this.stones++;
     }
 
+    @JsonIgnore
     public void addStones (Integer stones){
         this.stones+= stones;
     }

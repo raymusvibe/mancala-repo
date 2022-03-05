@@ -3,7 +3,7 @@ package com.bol.games.mancala.services.validation;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.StoneSowingRule;
-import com.bol.games.mancala.service.validation.abstractions.Rule;
+import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,40 +22,42 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class StoneSowingRuleTests {
+class StoneSowingRuleTests {
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
 
-    private Rule stoneSowingRule = new StoneSowingRule();
-    private ObjectMapper mapper = new ObjectMapper();
+    private final GameRule stoneSowingRule = new StoneSowingRule();
+    private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("test/playerTwoOppositeStoneCaptureMove.json");
     private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("test/playerTwoOppositeStoneCapturePriorMove.json");
     private final Resource playerOneFirstMove = new ClassPathResource("test/playerOneFirstMove.json");
 
     @BeforeEach
     public void setUp () {
-        Rule dummyRule = new DummyRule();
+        GameRule dummyRule = new DummyRule();
         stoneSowingRule.setSuccessor(dummyRule);
     }
 
     @Test
-    public void testValidationSimulationFailure () throws Exception {
+    void testValidationSimulationFailure () throws Exception {
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
         MancalaGame playerOneFirstMoveGame = mapper.readValue(resourceAsInputStream(playerOneFirstMove), MancalaGame.class);
 
 
-        assertThrows(ValidationException.class, () -> {
-            stoneSowingRule.processRequest(playerTwoOppositeStoneCaptureGame, Optional.of(playerOneFirstMoveGame), mancalaGamesMongoTemplate);
-        }, "ValidationException was expected");
+        assertThrows(ValidationException.class, () -> stoneSowingRule
+                .processRequest(playerTwoOppositeStoneCaptureGame,
+                        Optional.of(playerOneFirstMoveGame),
+                        mancalaGamesMongoTemplate),
+                "ValidationException was expected");
     }
 
     @Test
-    public void testValidationOppositeStone () throws Exception {
+    void testValidationOppositeStone () throws Exception {
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
         MancalaGame playerTwoOppositeStoneCapturePriorGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCapturePriorMove), MancalaGame.class);
 
-        assertDoesNotThrow(() -> {
-            stoneSowingRule.processRequest(playerTwoOppositeStoneCaptureGame, Optional.of(playerTwoOppositeStoneCapturePriorGame), mancalaGamesMongoTemplate);
-        }, "ValidationException not thrown");
+        assertDoesNotThrow(() -> stoneSowingRule
+                .processRequest(playerTwoOppositeStoneCaptureGame, Optional.of(playerTwoOppositeStoneCapturePriorGame), mancalaGamesMongoTemplate),
+                "ValidationException not thrown");
     }
 }

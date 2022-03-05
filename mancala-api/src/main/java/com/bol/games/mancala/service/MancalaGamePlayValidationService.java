@@ -4,7 +4,7 @@ import com.bol.games.mancala.exception.*;
 import com.bol.games.mancala.model.*;
 import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
 import com.bol.games.mancala.service.validation.*;
-import com.bol.games.mancala.service.validation.abstractions.Rule;
+import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -33,21 +33,21 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
      * @return the validated game instance, modified according to game rules.
      */
     @Override
-    public MancalaGame validate (MancalaGame gameFromFrontEnd) throws ValidationException {
+    public final MancalaGame validate (MancalaGame gameFromFrontEnd) throws ValidationException {
         //event log
         mancalaEventsMongoTemplate.insert(gameFromFrontEnd);
 
         //rules and chain of responsibility
-        Rule gameExistsInStoreRule = new GameExistsInStoreRule();
-        Rule newGameRequestRule = new NewGameRequestRule();
-        Rule stoneCountRule = new StoneCountRule();
-        Rule gameIsFinishedRule = new GameIsFinishedRule();
-        Rule selectedContainerIndexRule = new SelectedContainerIndexRule();
-        Rule stoneSowingRule = new StoneSowingRule();
+        GameRule gameExistsInStoreRule = new GameExistsInStoreRule();
+        GameRule newGameRequestRule = new NewGameRequestRule();
+        GameRule stoneCountRule = new StoneCountRule();
+        GameRule gameWinnerRule = new GameWinnerRule();
+        GameRule selectedContainerIndexRule = new SelectedContainerIndexRule();
+        GameRule stoneSowingRule = new StoneSowingRule();
         gameExistsInStoreRule.setSuccessor(newGameRequestRule);
         newGameRequestRule.setSuccessor(stoneCountRule);
-        stoneCountRule.setSuccessor(gameIsFinishedRule);
-        gameIsFinishedRule.setSuccessor(selectedContainerIndexRule);
+        stoneCountRule.setSuccessor(gameWinnerRule);
+        gameWinnerRule.setSuccessor(selectedContainerIndexRule);
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);
 
         gameExistsInStoreRule.processRequest(gameFromFrontEnd, Optional.empty(), mancalaGamesMongoTemplate);

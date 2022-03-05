@@ -29,7 +29,7 @@ public class MancalaService implements MancalaAPI {
      * @return a new game instance.
      */
     @Override
-    public MancalaGame createGame() {
+    public final MancalaGame createGame() {
         MancalaGame mancala = new MancalaGame();
         mancalaGamesMongoTemplate.insert(mancala);
         mancalaEventsMongoTemplate.insert(mancala);
@@ -43,14 +43,14 @@ public class MancalaService implements MancalaAPI {
      * @return the new game instance they've connected to.
      */
     @Override
-    public MancalaGame connectToGame(String gameId) throws NotFoundException {
+    public final MancalaGame connectToGame(String gameId) throws NotFoundException {
         Query query = new Query();
-        query.addCriteria(Criteria.where("gameId").is(gameId).and("gamePlayStatus").is(GameStatus.New));
+        query.addCriteria(Criteria.where("gameId").is(gameId).and("gamePlayStatus").is(GameStatus.NEW));
         MancalaGame game = mancalaGamesMongoTemplate.findOne(query, MancalaGame.class);
         if (game == null) {
             throw new NotFoundException("Invalid GameId or this game is already in progress");
         }
-        game.setGamePlayStatus(GameStatus.InProgress);
+        game.setGamePlayStatus(GameStatus.IN_PROGRESS);
         mancalaGamesMongoTemplate.save(game);
         return game;
     }

@@ -1,9 +1,9 @@
 package com.bol.games.mancala.service.abstractions;
 
-import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.exception.NotFoundException;
+import com.bol.games.mancala.model.MancalaGame;
 
-public interface MancalaAPI<T> {
-    public <T> T createGame() throws ValidationException;
-    public <T> T connectToGame(String gameId) throws NotFoundException;
+public interface MancalaAPI {
+    MancalaGame createGame();
+    MancalaGame connectToGame(String gameId) throws NotFoundException;
 }

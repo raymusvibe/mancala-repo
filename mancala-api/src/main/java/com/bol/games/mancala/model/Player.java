@@ -1,6 +1,6 @@
 package com.bol.games.mancala.model;
 
 public enum Player {
-    PlayerOne,
-    PlayerTwo
+    PLAYER_ONE,
+    PLAYER_TWO
 }

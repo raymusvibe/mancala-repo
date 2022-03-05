@@ -18,7 +18,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MancalaRepositoryIntegrationTests {
+class MancalaRepositoryIntegrationTests {
     //test against embedded instance
     private static final String DATABASE_NAME = "embedded";
 
@@ -30,7 +30,7 @@ public class MancalaRepositoryIntegrationTests {
     public void beforeEach() throws Exception {
         MongodStarter starter = MongodStarter.getDefaultInstance();
         String bindIp = "localhost";
-        int port = 12345;
+        int port = 12_345;
         MongodConfig mongodConfig = MongodConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(new Net(bindIp, port, Network.localhostIsIPv6()))
@@ -41,7 +41,7 @@ public class MancalaRepositoryIntegrationTests {
     }
 
     @AfterEach
-    public void afterEach() throws Exception {
+    public void afterEach() {
         if (this.mongod != null) {
             this.mongod.stop();
             this.mongodExecutable.stop();
@@ -49,11 +49,11 @@ public class MancalaRepositoryIntegrationTests {
     }
 
     @Test
-    public void shouldCreateNewObjectInEmbeddedMongoDb() {
-        MongoDatabase db = mongo.getDatabase(DATABASE_NAME);
-        db.createCollection("testCollection");
-        MongoCollection<BasicDBObject> col = db.getCollection("testCollection", BasicDBObject.class);
+    void shouldCreateNewObjectInEmbeddedMongoDb() {
+        MongoDatabase mongoDatabase = mongo.getDatabase(DATABASE_NAME);
+        mongoDatabase.createCollection("testCollection");
+        MongoCollection<BasicDBObject> col = mongoDatabase.getCollection("testCollection", BasicDBObject.class);
         col.insertOne(new BasicDBObject("testDoc", new Date()));
-        assertEquals(1L, col.countDocuments());
+        assertEquals(1L, col.countDocuments(), "There should only be one document");
     }
 }

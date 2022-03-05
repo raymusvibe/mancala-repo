@@ -26,24 +26,30 @@ public class MancalaController {
 
     @GetMapping(value = "/start", produces = "application/json")
     @Operation(summary = "Start a new game")
-    public ResponseEntity<MancalaGame> start() throws Exception {
-        log.info("start game request");
-        MancalaGame game = (MancalaGame) gameService.createGame();
+    public ResponseEntity<MancalaGame> start() {
+        if (log.isInfoEnabled()) {
+            log.info("start game request");
+        }
+        MancalaGame game = gameService.createGame();
         return ResponseEntity.ok(game);
     }
 
     @GetMapping (value = "/connect", produces = "application/json")
     @Operation(summary = "Connect to already existing game using a gameId")
     public ResponseEntity<MancalaGame> connect(@RequestParam String gameId) throws Exception {
-        log.info("connect request: {}", gameId);
-        MancalaGame game = (MancalaGame) gameService.connectToGame(gameId);
+        if (log.isInfoEnabled()) {
+            log.info("connect request: {}", gameId);
+        }
+        MancalaGame game = gameService.connectToGame(gameId);
         return ResponseEntity.ok(game);
     }
 
     @PostMapping(value = "/gameplay", produces = "application/json", consumes = "application/json")
     @Operation(summary = "Gameplay validation and publishing game state to opponent")
     public ResponseEntity<MancalaGame> gamePlay(@RequestBody MancalaGame request) throws Exception {
-        log.info("gameplay: {}", request.getGameId());
+        if (log.isInfoEnabled()) {
+            log.info("gameplay: {}", request.getGameId());
+        }
         MancalaGame game = validationService.validate(request);
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
         return ResponseEntity.ok(game);

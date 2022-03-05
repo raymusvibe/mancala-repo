@@ -1,7 +1,7 @@
 package com.bol.games.mancala.model;
 
 public enum GameWinner {
-    PlayerOne,
-    PlayerTwo,
-    Draw
+    PLAYER_ONE,
+    PLAYER_TWO,
+    DRAW
 }
