@@ -51,6 +51,7 @@ class MancalaGameValidationServiceTests {
     @BeforeEach
     public void setUp () {
         newGame = new MancalaGame();
+        newGame.initialiseBoard();
         newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
         validationService = new MancalaGamePlayValidationService(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
     }

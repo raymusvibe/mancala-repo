@@ -31,6 +31,7 @@ public class MancalaService implements MancalaAPI {
     @Override
     public final MancalaGame createGame() {
         MancalaGame mancala = new MancalaGame();
+        mancala.initialiseBoard();
         mancalaGamesMongoTemplate.insert(mancala);
         mancalaEventsMongoTemplate.insert(mancala);
         return mancala;

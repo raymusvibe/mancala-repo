@@ -20,15 +20,16 @@ public class StoneSowingRule extends GameRule {
 
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
-                               Optional<MancalaGame> gameFromStore,
+                               MancalaGame gameFromStore,
                                MongoTemplate mongoTemplate) throws ValidationException {
 
-        if (gameFromFrontEnd.getActivePlayer() != gameFromStore.get().getActivePlayer()) {
+        assert gameFromStore != null;
+        if (gameFromFrontEnd.getActivePlayer() != gameFromStore.getActivePlayer()) {
             throw new ValidationException("You cannot sow stones out of turn");
         }
         Integer containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
-        gameFromStore.get().setSelectedStoneContainerIndex(containerIndex);
-        MancalaGame simulationResult = simulateGamePlayAgainstStoreGame(gameFromStore.get());
+        gameFromStore.setSelectedStoneContainerIndex(containerIndex);
+        MancalaGame simulationResult = simulateGamePlayAgainstStoreGame(gameFromStore);
         validateMancalaBoard(gameFromFrontEnd, simulationResult);
         mongoTemplate.save(simulationResult);
     }

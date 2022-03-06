@@ -14,8 +14,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Optional;
-
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -41,7 +39,7 @@ class NewGameRequestRuleTests {
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
         assertDoesNotThrow(() -> newGameRequestRule
-                .processRequest(playerTwoNewGameMoveGame, Optional.of(playerTwoWinMoveGame), mancalaGamesMongoTemplate),
+                .processRequest(playerTwoNewGameMoveGame, playerTwoWinMoveGame, mancalaGamesMongoTemplate),
                 "ValidationException not thrown");
     }
 }

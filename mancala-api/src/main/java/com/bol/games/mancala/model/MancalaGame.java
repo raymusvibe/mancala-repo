@@ -31,7 +31,6 @@ public class MancalaGame implements Serializable {
     private Integer selectedStoneContainerIndex;
 
     public MancalaGame () {
-        initialiseBoard();
         activePlayer = Player.PLAYER_ONE;
         gameId = UUID.randomUUID().toString();
         gamePlayStatus = GameStatus.NEW;
@@ -61,7 +60,6 @@ public class MancalaGame implements Serializable {
     public final Optional<MancalaGame> finishGame() {
         Optional<MancalaGame> finishedGame = Optional.empty();
         if (isGameFinished()) {
-            //Game has ended if we reach this section
             int playerOneFinalStoneCount = getStoneContainer(MancalaConstants.PLAYER_ONE_HOUSE_INDEX).getStones();
             int playerTwoFinalStoneCount = getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX).getStones();
 
@@ -81,7 +79,7 @@ public class MancalaGame implements Serializable {
 
     private boolean isGameFinished () {
         boolean isFinished = false;
-        int playerOneStoneCount = 0;
+        int playerOneStoneCount = MancalaConstants.EMPTY_STONE_COUNT;
         for (int i = 0; i < MancalaConstants.PLAYER_ONE_HOUSE_INDEX; i++) {
             playerOneStoneCount += getStoneContainer(i).getStones();
         }
@@ -89,7 +87,7 @@ public class MancalaGame implements Serializable {
             isFinished = true;
             movePlayerStonesToHouse(Player.PLAYER_TWO);
         } else {
-            int playerTwoStoneCount = 0;
+            int playerTwoStoneCount = MancalaConstants.EMPTY_STONE_COUNT;
             for (int i = MancalaConstants.PLAYER_ONE_HOUSE_INDEX + 1; i < MancalaConstants.PLAYER_TWO_HOUSE_INDEX; i++) {
                 playerTwoStoneCount += getStoneContainer(i).getStones();
             }

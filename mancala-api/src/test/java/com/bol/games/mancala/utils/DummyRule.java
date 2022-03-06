@@ -9,8 +9,8 @@ import java.util.Optional;
 public class DummyRule extends GameRule {
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
-                               Optional<MancalaGame> gameFromStore,
-                               MongoTemplate mongoTemplate) {
+                                     MancalaGame gameFromStore,
+                                     MongoTemplate mongoTemplate) {
         //do nothing
     }
 }

@@ -7,23 +7,21 @@ import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Optional;
-
 /**
  * Rule used to create a new game in case players want to restart the same game.
  */
 public class NewGameRequestRule extends GameRule {
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
-                               Optional<MancalaGame> gameFromStore,
-                               MongoTemplate mongoTemplate) throws ValidationException {
+                                     MancalaGame gameFromStore,
+                                     MongoTemplate mongoTemplate) throws ValidationException {
         if (gameFromFrontEnd.getGamePlayStatus() == GameStatus.NEW) {
-            MancalaGame storeGame = gameFromStore.get();
-            storeGame.initialiseBoard();
-            storeGame.setActivePlayer(Player.PLAYER_TWO);
-            storeGame.setWinner(null);
-            storeGame.setSelectedStoneContainerIndex(null);
-            mongoTemplate.save(storeGame);
+            assert gameFromStore != null;
+            gameFromStore.initialiseBoard();
+            gameFromStore.setActivePlayer(Player.PLAYER_TWO);
+            gameFromStore.setWinner(null);
+            gameFromStore.setSelectedStoneContainerIndex(null);
+            mongoTemplate.save(gameFromStore);
         } else {
             successor.processRequest(gameFromFrontEnd, gameFromStore, mongoTemplate);
         }

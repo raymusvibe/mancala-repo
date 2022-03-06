@@ -16,7 +16,7 @@ public class GameExistsInStoreRule extends GameRule {
 
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
-                               Optional<MancalaGame> gameFromStore,
+                                     MancalaGame gameFromStore,
                                MongoTemplate mongoTemplate) throws ValidationException {
         Query query = new Query();
         query.addCriteria(Criteria.where("gameId").is(gameFromFrontEnd.getGameId()));
@@ -24,6 +24,6 @@ public class GameExistsInStoreRule extends GameRule {
         if (gameFromRepo == null) {
             throw new ValidationException("Invalid game Id provided: " + gameFromFrontEnd.getGameId());
         }
-        successor.processRequest(gameFromFrontEnd, Optional.of(gameFromRepo), mongoTemplate);
+        successor.processRequest(gameFromFrontEnd, gameFromRepo, mongoTemplate);
     }
 }

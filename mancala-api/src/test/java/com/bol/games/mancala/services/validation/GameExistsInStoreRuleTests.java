@@ -17,8 +17,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.Optional;
-
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,7 +45,7 @@ class GameExistsInStoreRuleTests {
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
 
         assertThrows(ValidationException.class, () -> gameExistsInStoreRule
-                .processRequest(playerTwoOppositeStoneCaptureGame, Optional.of(playerTwoOppositeStoneCapturePriorGame), mancalaGamesMongoTemplate),
+                .processRequest(playerTwoOppositeStoneCaptureGame, playerTwoOppositeStoneCapturePriorGame, mancalaGamesMongoTemplate),
                 "ValidationException was expected");
     }
 
@@ -60,7 +58,7 @@ class GameExistsInStoreRuleTests {
 
         assertDoesNotThrow(() -> gameExistsInStoreRule
                 .processRequest(playerTwoOppositeStoneCaptureGame,
-                        Optional.of(playerTwoOppositeStoneCapturePriorGame),
+                        playerTwoOppositeStoneCapturePriorGame,
                         mancalaGamesMongoTemplate),
                 "ValidationException not thrown");
     }

@@ -7,8 +7,6 @@ import com.bol.games.mancala.model.StoneContainer;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Optional;
-
 /**
  * Rule used to validate the stone count.
  */
@@ -16,7 +14,7 @@ public class StoneCountRule extends GameRule {
 
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
-                               Optional<MancalaGame> gameFromStore,
+                               MancalaGame gameFromStore,
                                MongoTemplate mongoTemplate) throws ValidationException {
         Integer sum = gameFromFrontEnd.getMancalaBoard()
                 .stream()

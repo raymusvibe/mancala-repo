@@ -14,8 +14,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Optional;
-
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -40,6 +38,6 @@ class SelectedContainerIndexRuleTests {
         MancalaGame playerTwoNewGameMoveGame = mapper.readValue(resourceAsInputStream(playerTwoNewGameMove), MancalaGame.class);
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
-        assertDoesNotThrow(() -> selectedContainerIndexRule.processRequest(playerTwoNewGameMoveGame, Optional.of(playerTwoWinMoveGame), mancalaGamesMongoTemplate), "ValidationException not thrown");
+        assertDoesNotThrow(() -> selectedContainerIndexRule.processRequest(playerTwoNewGameMoveGame, playerTwoWinMoveGame, mancalaGamesMongoTemplate), "ValidationException not thrown");
     }
 }

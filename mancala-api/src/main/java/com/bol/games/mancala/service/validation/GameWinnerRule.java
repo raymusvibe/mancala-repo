@@ -10,32 +10,32 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Optional;
 
 /**
- * Rule used to validate the finished state of a game and to determine this in case the front-end missed finding a winner.
+ * Rule used to validate the winner of a game and to determine a winner in case the front-end missed finding a winner.
  */
 public class GameWinnerRule extends GameRule {
 
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
-                               Optional<MancalaGame> gameFromStore,
-                               MongoTemplate mongoTemplate) throws ValidationException {
+                                     MancalaGame gameFromStore,
+                                     MongoTemplate mongoTemplate) throws ValidationException {
         if (gameFromFrontEnd.getWinner() != null && validateWinnerFromFrontEnd(gameFromFrontEnd)) {
-            MancalaGame storeGame = gameFromStore.get();
-            storeGame.setWinner(gameFromFrontEnd.getWinner());
-            storeGame.setGamePlayStatus(GameStatus.FINISHED);
-            storeGame.setSelectedStoneContainerIndex(null);
-            storeGame.setMancalaBoard(gameFromFrontEnd.getMancalaBoard());
-            mongoTemplate.save(storeGame);
+            assert gameFromStore != null;
+            gameFromStore.setWinner(gameFromFrontEnd.getWinner());
+            gameFromStore.setGamePlayStatus(GameStatus.FINISHED);
+            gameFromStore.setSelectedStoneContainerIndex(null);
+            gameFromStore.setMancalaBoard(gameFromFrontEnd.getMancalaBoard());
+            mongoTemplate.save(gameFromStore);
         } else {
             //if frontend missed finding a winner, verify
             Optional<MancalaGame> finishedGameOption = gameFromFrontEnd.finishGame();
             if (finishedGameOption.isPresent()) {
                 MancalaGame finishedGame = finishedGameOption.get();
-                MancalaGame storeGame = gameFromStore.get();
-                storeGame.setWinner(finishedGame.getWinner());
-                storeGame.setGamePlayStatus(GameStatus.FINISHED);
-                storeGame.setSelectedStoneContainerIndex(null);
-                storeGame.setMancalaBoard(finishedGame.getMancalaBoard());
-                mongoTemplate.save(storeGame);
+                assert gameFromStore != null;
+                gameFromStore.setWinner(finishedGame.getWinner());
+                gameFromStore.setGamePlayStatus(GameStatus.FINISHED);
+                gameFromStore.setSelectedStoneContainerIndex(null);
+                gameFromStore.setMancalaBoard(finishedGame.getMancalaBoard());
+                mongoTemplate.save(gameFromStore);
             } else {
                 successor.processRequest(gameFromFrontEnd, gameFromStore, mongoTemplate);
             }

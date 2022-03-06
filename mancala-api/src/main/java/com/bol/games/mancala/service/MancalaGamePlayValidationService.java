@@ -50,7 +50,7 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
         gameWinnerRule.setSuccessor(selectedContainerIndexRule);
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);
 
-        gameExistsInStoreRule.processRequest(gameFromFrontEnd, Optional.empty(), mancalaGamesMongoTemplate);
+        gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, mancalaGamesMongoTemplate);
 
         //If we got this far, correct game state is in DB
         Query query = new Query();

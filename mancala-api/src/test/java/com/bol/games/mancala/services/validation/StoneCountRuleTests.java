@@ -15,8 +15,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Optional;
-
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -42,7 +40,9 @@ class StoneCountRuleTests {
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
         assertThrows(ValidationException.class, () -> stoneCountRule
-                .processRequest(playerOneFirstMoveInvalidStoneCountMoveGame, Optional.of(playerTwoWinMoveGame), mancalaGamesMongoTemplate),
+                .processRequest(playerOneFirstMoveInvalidStoneCountMoveGame,
+                        playerTwoWinMoveGame,
+                        mancalaGamesMongoTemplate),
                 "ValidationException was expected");
     }
 }
