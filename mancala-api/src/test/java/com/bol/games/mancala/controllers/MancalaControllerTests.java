@@ -46,7 +46,7 @@ class MancalaControllerTests {
     @Autowired
     private JacksonTester<MancalaGame> jsonTestWriter;
 
-    private final String invalidGameId = "someGameId";
+    private static final String invalidGameId = "someGameId";
 
     @BeforeEach
     public void setup() {
@@ -82,7 +82,6 @@ class MancalaControllerTests {
     @Test
     void testGamePlayValidation() throws Exception {
         MancalaGame game = new MancalaGame();
-        reset(validation);
         doReturn(game).when(validation).validate(any(MancalaGame.class));
 
         MockHttpServletResponse response = mockMvc
@@ -97,11 +96,10 @@ class MancalaControllerTests {
 
     @Test
     void testGamePlayValidationException() throws Exception {
-        MancalaGame game = new MancalaGame();
-        reset(validation);
         doThrow(new ValidationException("Invalid game Id provided"))
                 .when(validation).validate(any(MancalaGame.class));
 
+        MancalaGame game = new MancalaGame();
         //validation exception is nested
         assertThrows(Exception.class, () -> mockMvc
                 .perform(post("/mancala/v1/gameplay")

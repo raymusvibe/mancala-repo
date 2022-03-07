@@ -18,11 +18,12 @@ import org.springframework.web.bind.annotation.*;
 public class MancalaController {
 
     @Autowired
-    private MancalaAPI gameService;
+    private MancalaAPI mancalaService;
     @Autowired
     private MancalaGamePlayValidationAPI validationService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
 
     @GetMapping(value = "/start", produces = "application/json")
     @Operation(summary = "Start a new game")
@@ -30,7 +31,7 @@ public class MancalaController {
         if (log.isInfoEnabled()) {
             log.info("start game request");
         }
-        MancalaGame game = gameService.createGame();
+        MancalaGame game = mancalaService.createGame();
         return ResponseEntity.ok(game);
     }
 
@@ -40,7 +41,7 @@ public class MancalaController {
         if (log.isInfoEnabled()) {
             log.info("connect request: {}", gameId);
         }
-        MancalaGame game = gameService.connectToGame(gameId);
+        MancalaGame game = mancalaService.connectToGame(gameId);
         return ResponseEntity.ok(game);
     }
 

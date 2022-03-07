@@ -1,5 +1,6 @@
 package com.bol.games.mancala.services.validation;
 
+import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.GameWinnerRule;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
@@ -19,8 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
 class GameWinnerRuleTests {
+
+    @InjectMocks
+    private MancalaRepository mancalaRepository;
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
+    @Mock
+    private MongoTemplate mancalaEventsMongoTemplate;
 
     private final GameRule gameWinnerRule = new GameWinnerRule();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -40,7 +47,7 @@ class GameWinnerRuleTests {
         MancalaGame playerTwoWinPriorMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
 
         assertDoesNotThrow(() -> gameWinnerRule.
-                processRequest(playerTwoWinMoveGame, playerTwoWinPriorMoveGame, mancalaGamesMongoTemplate),
+                processRequest(playerTwoWinMoveGame, playerTwoWinPriorMoveGame, mancalaRepository),
                 "ValidationException not thrown");
     }
 
@@ -50,7 +57,7 @@ class GameWinnerRuleTests {
         MancalaGame playerTwoWinPriorMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
 
         assertDoesNotThrow(() -> gameWinnerRule.
-                processRequest(playerTwoWinMissedMoveGame, playerTwoWinPriorMoveGame, mancalaGamesMongoTemplate),
+                processRequest(playerTwoWinMissedMoveGame, playerTwoWinPriorMoveGame, mancalaRepository),
                 "ValidationException not thrown");
     }
 }

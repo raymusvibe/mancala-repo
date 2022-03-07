@@ -2,13 +2,11 @@ package com.bol.games.mancala.service;
 
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
+import com.bol.games.mancala.repository.abstractions.MancalaRepositoryAPI;
 import com.bol.games.mancala.service.abstractions.MancalaAPI;
 import com.bol.games.mancala.exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,9 +17,7 @@ import org.springframework.stereotype.Service;
 public class MancalaService implements MancalaAPI {
 
     @Autowired
-    private MongoTemplate mancalaGamesMongoTemplate;
-    @Autowired
-    private MongoTemplate mancalaEventsMongoTemplate;
+    private MancalaRepositoryAPI mancalaRepository;
 
     /**
      * Service method called through constructor to create a new game.
@@ -32,8 +28,8 @@ public class MancalaService implements MancalaAPI {
     public final MancalaGame createGame() {
         MancalaGame mancala = new MancalaGame();
         mancala.initialiseBoard();
-        mancalaGamesMongoTemplate.insert(mancala);
-        mancalaEventsMongoTemplate.insert(mancala);
+        mancalaRepository.insertGame(mancala);
+        mancalaRepository.insertEvent(mancala);
         return mancala;
     }
 
@@ -45,14 +41,12 @@ public class MancalaService implements MancalaAPI {
      */
     @Override
     public final MancalaGame connectToGame(String gameId) throws NotFoundException {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("gameId").is(gameId).and("gamePlayStatus").is(GameStatus.NEW));
-        MancalaGame game = mancalaGamesMongoTemplate.findOne(query, MancalaGame.class);
+        MancalaGame game = mancalaRepository.findNewGame(gameId);
         if (game == null) {
             throw new NotFoundException("Invalid GameId or this game is already in progress");
         }
         game.setGamePlayStatus(GameStatus.IN_PROGRESS);
-        mancalaGamesMongoTemplate.save(game);
+        mancalaRepository.saveGame(game);
         return game;
     }
 }

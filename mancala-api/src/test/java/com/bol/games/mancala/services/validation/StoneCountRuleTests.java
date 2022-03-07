@@ -1,5 +1,6 @@
 package com.bol.games.mancala.services.validation;
 
+import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.StoneCountRule;
@@ -13,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class StoneCountRuleTests {
     @Mock
-    private MongoTemplate mancalaGamesMongoTemplate;
-
+    private MancalaRepository mancalaRepository;
     private final GameRule stoneCountRule = new StoneCountRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerOneFirstMoveInvalidStoneCountMove = new ClassPathResource("test/playerOneFirstMoveInvalidStoneCountMove.json");
@@ -42,7 +41,7 @@ class StoneCountRuleTests {
         assertThrows(ValidationException.class, () -> stoneCountRule
                 .processRequest(playerOneFirstMoveInvalidStoneCountMoveGame,
                         playerTwoWinMoveGame,
-                        mancalaGamesMongoTemplate),
+                        mancalaRepository),
                 "ValidationException was expected");
     }
 }

@@ -1,8 +1,8 @@
 package com.bol.games.mancala.service.validation.abstractions;
 
+import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 public abstract class GameRule {
 
@@ -12,5 +12,5 @@ public abstract class GameRule {
     }
     public abstract void processRequest(MancalaGame gameFromFrontEnd,
                                         MancalaGame gameFromStore,
-                                        MongoTemplate mongoTemplate) throws ValidationException;
+                                        MancalaRepository mancalaRepository) throws ValidationException;
 }

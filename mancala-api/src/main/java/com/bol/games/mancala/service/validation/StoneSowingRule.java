@@ -1,14 +1,12 @@
 package com.bol.games.mancala.service.validation;
 
 import com.bol.games.mancala.constants.MancalaConstants;
+import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.model.StoneContainer;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import java.util.Optional;
 
 /**
  * Rule used to validate the sowing of stones done in the frontend.
@@ -21,7 +19,7 @@ public class StoneSowingRule extends GameRule {
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
-                               MongoTemplate mongoTemplate) throws ValidationException {
+                               MancalaRepository mancalaRepository) throws ValidationException {
 
         assert gameFromStore != null;
         if (gameFromFrontEnd.getActivePlayer() != gameFromStore.getActivePlayer()) {
@@ -31,7 +29,7 @@ public class StoneSowingRule extends GameRule {
         gameFromStore.setSelectedStoneContainerIndex(containerIndex);
         MancalaGame simulationResult = simulateGamePlayAgainstStoreGame(gameFromStore);
         validateMancalaBoard(gameFromFrontEnd, simulationResult);
-        mongoTemplate.save(simulationResult);
+        mancalaRepository.saveGame(simulationResult);
     }
 
     /**

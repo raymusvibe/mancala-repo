@@ -1,18 +1,15 @@
 package com.bol.games.mancala.service;
 
+import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.*;
 import com.bol.games.mancala.model.*;
+import com.bol.games.mancala.repository.abstractions.MancalaRepositoryAPI;
 import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
 import com.bol.games.mancala.service.validation.*;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * Service used to validate gameplay from the frontend and enforce game rules.
@@ -22,9 +19,7 @@ import java.util.Optional;
 public class MancalaGamePlayValidationService implements MancalaGamePlayValidationAPI {
 
     @Autowired
-    private MongoTemplate mancalaGamesMongoTemplate;
-    @Autowired
-    private MongoTemplate mancalaEventsMongoTemplate;
+    private MancalaRepositoryAPI mancalaRepository;
 
     /**
      * Game play validation method used to validate game play from the frontend.
@@ -35,7 +30,7 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
     @Override
     public final MancalaGame validate (MancalaGame gameFromFrontEnd) throws ValidationException {
         //event log
-        mancalaEventsMongoTemplate.insert(gameFromFrontEnd);
+        mancalaRepository.insertEvent(gameFromFrontEnd);
 
         //rules and chain of responsibility
         GameRule gameExistsInStoreRule = new GameExistsInStoreRule();
@@ -50,11 +45,9 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
         gameWinnerRule.setSuccessor(selectedContainerIndexRule);
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);
 
-        gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, mancalaGamesMongoTemplate);
+        gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, (MancalaRepository) mancalaRepository);
 
         //If we got this far, correct game state is in DB
-        Query query = new Query();
-        query.addCriteria(Criteria.where("gameId").is(gameFromFrontEnd.getGameId()));
-        return mancalaGamesMongoTemplate.findOne(query, MancalaGame.class);
+        return mancalaRepository.findGame(gameFromFrontEnd.getGameId());
     }
 }

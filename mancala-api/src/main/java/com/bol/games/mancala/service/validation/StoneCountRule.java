@@ -1,11 +1,11 @@
 package com.bol.games.mancala.service.validation;
 
 import com.bol.games.mancala.constants.MancalaConstants;
+import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.StoneContainer;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * Rule used to validate the stone count.
@@ -15,7 +15,7 @@ public class StoneCountRule extends GameRule {
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
-                               MongoTemplate mongoTemplate) throws ValidationException {
+                               MancalaRepository mancalaRepository) throws ValidationException {
         Integer sum = gameFromFrontEnd.getMancalaBoard()
                 .stream()
                 .map(StoneContainer::getStones)
@@ -25,6 +25,6 @@ public class StoneCountRule extends GameRule {
             throw new ValidationException("Error validating stone count");
         }
 
-        successor.processRequest(gameFromFrontEnd, gameFromStore, mongoTemplate);
+        successor.processRequest(gameFromFrontEnd, gameFromStore, mancalaRepository);
     }
 }

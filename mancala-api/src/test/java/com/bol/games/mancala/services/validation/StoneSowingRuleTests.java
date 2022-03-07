@@ -1,5 +1,6 @@
 package com.bol.games.mancala.services.validation;
 
+import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.StoneSowingRule;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
@@ -21,8 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class StoneSowingRuleTests {
+    @InjectMocks
+    private MancalaRepository mancalaRepository;
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
+    @Mock
+    private MongoTemplate mancalaEventsMongoTemplate;
 
     private final GameRule stoneSowingRule = new StoneSowingRule();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -45,7 +51,7 @@ class StoneSowingRuleTests {
         assertThrows(ValidationException.class, () -> stoneSowingRule
                 .processRequest(playerTwoOppositeStoneCaptureGame,
                         playerOneFirstMoveGame,
-                        mancalaGamesMongoTemplate),
+                        mancalaRepository),
                 "ValidationException was expected");
     }
 
@@ -57,7 +63,7 @@ class StoneSowingRuleTests {
         assertDoesNotThrow(() -> stoneSowingRule
                 .processRequest(playerTwoOppositeStoneCaptureGame,
                         playerTwoOppositeStoneCapturePriorGame,
-                        mancalaGamesMongoTemplate),
+                        mancalaRepository),
                 "ValidationException not thrown");
     }
 }

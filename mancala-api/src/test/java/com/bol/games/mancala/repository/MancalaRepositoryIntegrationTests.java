@@ -1,4 +1,4 @@
-package com.bol.games.mancala.data;
+package com.bol.games.mancala.repository;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoClient;
