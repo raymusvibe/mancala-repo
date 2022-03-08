@@ -45,14 +45,11 @@ class MancalaServiceTests {
 
     @Test
     void testGameCreation () {
-
         doReturn(expectedGame).when(mancalaGamesMongoTemplate).insert(any(MancalaGame.class));
         MancalaGame game = mancalaService.createGame();
-        assertThat(game.getGameId()).isNotNull();
         assertThat(game.getWinner()).isNull();
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.NEW);
         assertThat(game.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
-        assertThat(game.getSelectedStoneContainerIndex()).isNull();
     }
 
     @Test

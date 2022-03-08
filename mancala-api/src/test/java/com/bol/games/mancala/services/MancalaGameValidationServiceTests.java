@@ -64,8 +64,6 @@ class MancalaGameValidationServiceTests {
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerOneHouseIndexSelected), MancalaGame.class);
 
         MancalaGame validationResult = validationService.validate(gameFromFrontEnd);
-        assertThat(validationResult.getMancalaBoard().toString())
-                .isEqualTo("[0:6, 1:6, 2:6, 3:6, 4:6, 5:6, 6:0, 7:6, 8:6, 9:6, 10:6, 11:6, 12:6, 13:0]");
         assertThat(validationResult.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
     }
 
@@ -75,8 +73,6 @@ class MancalaGameValidationServiceTests {
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerOneFirstMove), MancalaGame.class);
 
         MancalaGame validationResult = validationService.validate(gameFromFrontEnd);
-        assertThat(validationResult.getMancalaBoard().toString())
-                .isEqualTo("[0:0, 1:7, 2:7, 3:7, 4:7, 5:7, 6:1, 7:6, 8:6, 9:6, 10:6, 11:6, 12:6, 13:0]");
         assertThat(validationResult.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
     }
 
@@ -84,7 +80,8 @@ class MancalaGameValidationServiceTests {
     void testValidationPlayerOneFirstMoveStoneCountInvalid () throws Exception {
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerOneFirstMoveInvalidStoneCount), MancalaGame.class);
 
-        assertThrows(ValidationException.class, () -> validationService.validate(gameFromFrontEnd), "ValidationException was expected");
+        assertThrows(ValidationException.class, () -> validationService.validate(gameFromFrontEnd),
+                "ValidationException was expected");
     }
 
     @Test
@@ -95,8 +92,6 @@ class MancalaGameValidationServiceTests {
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerOneSecondMove), MancalaGame.class);
 
         MancalaGame validationResult = validationService.validate(gameFromFrontEnd);
-        assertThat(validationResult.getMancalaBoard().toString())
-                .isEqualTo("[0:0, 1:0, 2:8, 3:8, 4:8, 5:8, 6:2, 7:7, 8:7, 9:6, 10:6, 11:6, 12:6, 13:0]");
         assertThat(validationResult.getActivePlayer()).isEqualTo(Player.PLAYER_TWO);
     }
 
@@ -109,8 +104,6 @@ class MancalaGameValidationServiceTests {
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerTwoFirstMove), MancalaGame.class);
 
         MancalaGame validationResult = validationService.validate(gameFromFrontEnd);
-        assertThat(validationResult.getMancalaBoard().toString())
-                .isEqualTo("[0:1, 1:1, 2:9, 3:9, 4:8, 5:8, 6:2, 7:7, 8:7, 9:6, 10:6, 11:0, 12:7, 13:1]");
         assertThat(validationResult.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
     }
 
@@ -146,8 +139,6 @@ class MancalaGameValidationServiceTests {
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
 
         MancalaGame validationResult = validationService.validate(gameFromFrontEnd);
-        assertThat(validationResult.getMancalaBoard().toString())
-                .isEqualTo("[0:0, 1:0, 2:0, 3:0, 4:0, 5:2, 6:30, 7:0, 8:0, 9:0, 10:1, 11:0, 12:0, 13:39]");
         assertThat(validationResult.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
     }
 
