@@ -47,7 +47,7 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
 
         gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, (MancalaRepository) mancalaRepository);
 
-        //If we got this far, correct game state is in DB
+        //If we got this far, correct game state is in DB and the cache
         return mancalaRepository.findGame(gameFromFrontEnd.getGameId());
     }
 }

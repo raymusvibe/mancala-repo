@@ -29,7 +29,7 @@ class GameWinnerRuleTests {
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
 
-    private final GameRule gameWinnerRule = new GameWinnerRule();
+    private final GameWinnerRule gameWinnerRule = new GameWinnerRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
     private final Resource playerTwoWinMissedMove = new ClassPathResource("test/playerTwoWinMissedMove.json");

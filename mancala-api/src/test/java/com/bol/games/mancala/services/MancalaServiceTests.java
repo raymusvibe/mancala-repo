@@ -33,11 +33,10 @@ class MancalaServiceTests {
     private MancalaRepositoryAPI mancalaRepository;
 
     private static final String invalidGameId = "someGameId";
-    private MancalaGame expectedGame;
+    private final MancalaGame expectedGame = new MancalaGame();
 
     @BeforeEach
     public void setUp () {
-        expectedGame = new MancalaGame();
         expectedGame.initialiseBoard();
         expectedGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
         mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);

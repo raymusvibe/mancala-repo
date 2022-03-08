@@ -25,7 +25,7 @@ public class StoneSowingRule extends GameRule {
         if (gameFromFrontEnd.getActivePlayer() != gameFromStore.getActivePlayer()) {
             throw new ValidationException("You cannot sow stones out of turn");
         }
-        Integer containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
+        int containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
         gameFromStore.setSelectedStoneContainerIndex(containerIndex);
         MancalaGame simulationResult = simulateGamePlayAgainstStoreGame(gameFromStore);
         validateMancalaBoard(gameFromFrontEnd, simulationResult);

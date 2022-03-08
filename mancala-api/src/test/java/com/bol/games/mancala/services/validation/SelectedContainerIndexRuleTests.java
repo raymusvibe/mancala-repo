@@ -29,7 +29,7 @@ class SelectedContainerIndexRuleTests {
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
 
-    private final GameRule selectedContainerIndexRule = new SelectedContainerIndexRule();
+    private final SelectedContainerIndexRule selectedContainerIndexRule = new SelectedContainerIndexRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
     private final Resource playerTwoNewGameMove = new ClassPathResource("test/playerTwoNewGameMove.json");

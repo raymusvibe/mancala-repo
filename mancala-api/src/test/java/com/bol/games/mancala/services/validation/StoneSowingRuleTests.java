@@ -4,10 +4,7 @@ import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.StoneSowingRule;
-import com.bol.games.mancala.service.validation.abstractions.GameRule;
-import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,17 +27,11 @@ class StoneSowingRuleTests {
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
 
-    private final GameRule stoneSowingRule = new StoneSowingRule();
+    private final StoneSowingRule stoneSowingRule = new StoneSowingRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("test/playerTwoOppositeStoneCaptureMove.json");
     private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("test/playerTwoOppositeStoneCapturePriorMove.json");
     private final Resource playerOneFirstMove = new ClassPathResource("test/playerOneFirstMove.json");
-
-    @BeforeEach
-    public void setUp () {
-        GameRule dummyRule = new DummyRule();
-        stoneSowingRule.setSuccessor(dummyRule);
-    }
 
     @Test
     void testValidationSimulationFailure () throws Exception {

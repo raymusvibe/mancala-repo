@@ -29,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MancalaGameValidationServiceTests {
 
     private MancalaGamePlayValidationService validationService;
-    private MancalaRepository mancalaRepository;
     @Mock
     private MongoTemplate mancalaGamesMongoTemplate;
     @Mock
@@ -54,7 +53,7 @@ class MancalaGameValidationServiceTests {
     public void setUp () {
         newGame.initialiseBoard();
         newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
-        mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
+        MancalaRepository mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
         validationService = new MancalaGamePlayValidationService(mancalaRepository);
     }
 

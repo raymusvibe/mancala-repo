@@ -16,7 +16,7 @@ public class StoneCountRule extends GameRule {
     public final void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
                                MancalaRepository mancalaRepository) throws ValidationException {
-        Integer sum = gameFromFrontEnd.getMancalaBoard()
+        int sum = gameFromFrontEnd.getMancalaBoard()
                 .stream()
                 .map(StoneContainer::getStones)
                 .reduce(0, Integer::sum);

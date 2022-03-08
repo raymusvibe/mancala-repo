@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class StoneCountRuleTests {
     @Mock
     private MancalaRepository mancalaRepository;
-    private final GameRule stoneCountRule = new StoneCountRule();
+    private final StoneCountRule stoneCountRule = new StoneCountRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerOneFirstMoveInvalidStoneCountMove = new ClassPathResource("test/playerOneFirstMoveInvalidStoneCountMove.json");
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
