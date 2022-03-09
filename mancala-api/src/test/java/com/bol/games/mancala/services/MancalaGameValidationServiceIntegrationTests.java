@@ -26,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class MancalaGameValidationServiceTests {
+class MancalaGameValidationServiceIntegrationTests {
 
     private MancalaGamePlayValidationService validationService;
     @Mock
@@ -40,7 +40,6 @@ class MancalaGameValidationServiceTests {
     private final Resource playerOneFirstMove = new ClassPathResource("test/playerOneFirstMove.json");
     private final Resource playerOneFirstMoveInvalidStoneCount = new ClassPathResource("test/playerOneFirstMoveInvalidStoneCountMove.json");
     private final Resource playerOneSecondMove = new ClassPathResource("test/playerOneSecondMove.json");
-    private final Resource playerTwoFirstMove = new ClassPathResource("test/playerTwoFirstMove.json");
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
     private final Resource playerTwoWinInvalidStoneCountMove = new ClassPathResource("test/playerTwoWinInvalidStoneCountMove.json");
     private final Resource playerTwoWinPriorMove = new ClassPathResource("test/playerTwoWinPriorMove.json");
@@ -58,7 +57,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationPlayerOneHouseIndexSelection () throws Exception {
+    void ValidationService_WhenHouseIndexSelected_NoFurtherActionRequired () throws Exception {
         doReturn(newGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
 
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerOneHouseIndexSelected), MancalaGame.class);
@@ -68,7 +67,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationPlayerOneFirstMove () throws Exception {
+    void ValidationService_WhenLastStoneInHouse_PlayerPlaysAgain () throws Exception {
         doReturn(newGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerOneFirstMove), MancalaGame.class);
 
@@ -77,7 +76,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationPlayerOneFirstMoveStoneCountInvalid () throws Exception {
+    void ValidationService_WhenInvalidStoneCount_ValidationException () throws Exception {
         MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerOneFirstMoveInvalidStoneCount), MancalaGame.class);
 
         assertThrows(ValidationException.class, () -> validationService.validate(gameFromFrontEnd),
@@ -85,7 +84,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationPlayerOneSecondMove () throws Exception {
+    void ValidationService_WhenLastStoneNotInHouse_TurnChanges () throws Exception {
         MancalaGame playerOneFirstMoveGame = mapper.readValue(resourceAsInputStream(this.playerOneFirstMove), MancalaGame.class);
         doReturn(playerOneFirstMoveGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
 
@@ -96,19 +95,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationPlayerTwoFirstMove () throws Exception {
-        MancalaGame playerOneSecondMoveGame = mapper.readValue(resourceAsInputStream(playerOneSecondMove), MancalaGame.class);
-        playerOneSecondMoveGame.setActivePlayer(Player.PLAYER_TWO);
-        doReturn(playerOneSecondMoveGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
-
-        MancalaGame gameFromFrontEnd = mapper.readValue(resourceAsInputStream(playerTwoFirstMove), MancalaGame.class);
-
-        MancalaGame validationResult = validationService.validate(gameFromFrontEnd);
-        assertThat(validationResult.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
-    }
-
-    @Test
-    void testValidationWin () throws Exception {
+    void ValidationService_WhenPlayerWinsGenuinely_NoValidationException () throws Exception {
         MancalaGame playerTwoWinPriorGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
         doReturn(playerTwoWinPriorGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
 
@@ -120,7 +107,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationWinInvalidStoneCount () throws Exception {
+    void ValidationService_WhenPlayerWinsWithInvalidStoneCount_ValidationException () throws Exception {
         MancalaGame playerTwoWinPriorGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
         doReturn(playerTwoWinPriorGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
 
@@ -132,7 +119,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationOppositeStoneCapture () throws Exception {
+    void ValidationService_WhenOppositeStoneCaptured_TurnChanges () throws Exception {
         MancalaGame playerTwoOppositeStoneCapturePriorGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCapturePriorMove), MancalaGame.class);
         doReturn(playerTwoOppositeStoneCapturePriorGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
 
@@ -143,7 +130,7 @@ class MancalaGameValidationServiceTests {
     }
 
     @Test
-    void testValidationOpponentHouseSkip () throws Exception {
+    void ValidationService_WhenOpponentHouseSkipped_NoValidationException () throws Exception {
         MancalaGame playerOneOpponentHouseSkipPriorMoveGame = mapper.readValue(resourceAsInputStream(playerOneOpponentHouseSkipPriorMove), MancalaGame.class);
         doReturn(playerOneOpponentHouseSkipPriorMoveGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
 

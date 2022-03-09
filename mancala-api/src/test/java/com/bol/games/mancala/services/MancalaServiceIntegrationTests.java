@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MancalaServiceTests {
+class MancalaServiceIntegrationTests {
 
     private MancalaAPI mancalaService;
     @Mock
@@ -44,7 +44,7 @@ class MancalaServiceTests {
     }
 
     @Test
-    void testGameCreation () {
+    void MancalaService_WhenNewGameRequest_CreatesGame () {
         doReturn(expectedGame).when(mancalaGamesMongoTemplate).insert(any(MancalaGame.class));
         MancalaGame game = mancalaService.createGame();
         assertThat(game.getWinner()).isNull();
@@ -53,16 +53,15 @@ class MancalaServiceTests {
     }
 
     @Test
-    void testGameConnection () throws Exception {
+    void MancalaService_WhenNewGameConnectionRequest_ConnectsToGame () throws Exception {
         doReturn(expectedGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
         MancalaGame game = mancalaService.connectToGame(expectedGame.getGameId());
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.IN_PROGRESS);
         assertThat(game.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
-        assertThat(game.getGameId()).isEqualTo(expectedGame.getGameId());
     }
 
     @Test
-    void testGameConnectionInvalidGameId () {
+    void MancalaService_WhenInvalidGameId_NotFoundException () {
         assertThrows(NotFoundException.class, () -> mancalaService
                 .connectToGame(invalidGameId), "NotFoundException was expected");
     }

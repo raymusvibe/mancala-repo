@@ -27,10 +27,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest (classes = MancalaControllerTests.class)
+@SpringBootTest (classes = MancalaControllerIntegrationTests.class)
 @AutoConfigureJsonTesters
 @ExtendWith(MockitoExtension.class)
-class MancalaControllerTests {
+class MancalaControllerIntegrationTests {
 
     @Mock
     private MancalaAPI service;

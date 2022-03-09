@@ -2,7 +2,7 @@ package com.bol.games.mancala.services.validation;
 
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.MancalaGame;
-import com.bol.games.mancala.service.validation.NewGameRequestRule;
+import com.bol.games.mancala.service.validation.SelectedContainerIndexRule;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +20,7 @@ import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
-class NewGameRequestRuleTests {
+class SelectedContainerIndexRuleTests {
 
     @InjectMocks
     private MancalaRepository mancalaRepository;
@@ -29,7 +29,7 @@ class NewGameRequestRuleTests {
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
 
-    private final NewGameRequestRule newGameRequestRule = new NewGameRequestRule();
+    private final SelectedContainerIndexRule selectedContainerIndexRule = new SelectedContainerIndexRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
     private final Resource playerTwoNewGameMove = new ClassPathResource("test/playerTwoNewGameMove.json");
@@ -37,16 +37,14 @@ class NewGameRequestRuleTests {
     @BeforeEach
     public void setUp () {
         GameRule dummyRule = new DummyRule();
-        newGameRequestRule.setSuccessor(dummyRule);
+        selectedContainerIndexRule.setSuccessor(dummyRule);
     }
 
     @Test
-    void testValidationNewGame () throws Exception {
+    void SelectedContainerIndexRule_WhenValidContainerSelected_NoValidationException () throws Exception {
         MancalaGame playerTwoNewGameMoveGame = mapper.readValue(resourceAsInputStream(playerTwoNewGameMove), MancalaGame.class);
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
-        assertDoesNotThrow(() -> newGameRequestRule
-                .processRequest(playerTwoNewGameMoveGame, playerTwoWinMoveGame, mancalaRepository),
-                "ValidationException not thrown");
+        assertDoesNotThrow(() -> selectedContainerIndexRule.processRequest(playerTwoNewGameMoveGame, playerTwoWinMoveGame, mancalaRepository), "ValidationException not thrown");
     }
 }

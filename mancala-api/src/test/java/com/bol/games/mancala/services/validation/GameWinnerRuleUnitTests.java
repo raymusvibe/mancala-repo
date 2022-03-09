@@ -20,7 +20,7 @@ import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
-class GameWinnerRuleTests {
+class GameWinnerRuleUnitTests {
 
     @InjectMocks
     private MancalaRepository mancalaRepository;
@@ -42,7 +42,7 @@ class GameWinnerRuleTests {
     }
 
     @Test
-    void testValidationWinner () throws Exception {
+    void GameWinnerRule_WhenGenuineWinner_NoValidationException () throws Exception {
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
         MancalaGame playerTwoWinPriorMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
 
@@ -52,7 +52,7 @@ class GameWinnerRuleTests {
     }
 
     @Test
-    void testValidationFrontEndMissedWinner () throws Exception {
+    void GameWinnerRule_WhenFrontEndMissedWinner_DetermineWinner () throws Exception {
         MancalaGame playerTwoWinMissedMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMissedMove), MancalaGame.class);
         MancalaGame playerTwoWinPriorMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinPriorMove), MancalaGame.class);
 
