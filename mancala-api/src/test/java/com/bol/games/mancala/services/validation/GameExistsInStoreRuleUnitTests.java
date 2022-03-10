@@ -35,8 +35,8 @@ class GameExistsInStoreRuleUnitTests {
 
     private final GameExistsInStoreRule gameExistsInStoreRule = new GameExistsInStoreRule();
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("test/playerTwoOppositeStoneCaptureMove.json");
-    private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("test/playerTwoOppositeStoneCapturePriorMove.json");
+    private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("playerTwoOppositeStoneCaptureMove.json");
+    private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("playerTwoOppositeStoneCapturePriorMove.json");
 
     @BeforeEach
     public void setUp () {

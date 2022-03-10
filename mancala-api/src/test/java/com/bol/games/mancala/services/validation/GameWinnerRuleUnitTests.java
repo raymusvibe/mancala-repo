@@ -31,9 +31,9 @@ class GameWinnerRuleUnitTests {
 
     private final GameWinnerRule gameWinnerRule = new GameWinnerRule();
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
-    private final Resource playerTwoWinMissedMove = new ClassPathResource("test/playerTwoWinMissedMove.json");
-    private final Resource playerTwoWinPriorMove = new ClassPathResource("test/playerTwoWinPriorMove.json");
+    private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
+    private final Resource playerTwoWinMissedMove = new ClassPathResource("playerTwoWinMissedMove.json");
+    private final Resource playerTwoWinPriorMove = new ClassPathResource("playerTwoWinPriorMove.json");
 
     @BeforeEach
     public void setUp () {

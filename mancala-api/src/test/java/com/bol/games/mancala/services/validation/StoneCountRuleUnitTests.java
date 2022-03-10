@@ -24,8 +24,8 @@ class StoneCountRuleUnitTests {
     private MancalaRepository mancalaRepository;
     private final StoneCountRule stoneCountRule = new StoneCountRule();
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Resource playerOneFirstMoveInvalidStoneCountMove = new ClassPathResource("test/playerOneFirstMoveInvalidStoneCountMove.json");
-    private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
+    private final Resource playerOneFirstMoveInvalidStoneCountMove = new ClassPathResource("playerOneFirstMoveInvalidStoneCountMove.json");
+    private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
 
     @BeforeEach
     public void setUp () {

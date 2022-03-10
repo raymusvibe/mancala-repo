@@ -31,8 +31,8 @@ class NewGameRequestRuleUnitTests {
 
     private final NewGameRequestRule newGameRequestRule = new NewGameRequestRule();
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
-    private final Resource playerTwoNewGameMove = new ClassPathResource("test/playerTwoNewGameMove.json");
+    private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
+    private final Resource playerTwoNewGameMove = new ClassPathResource("playerTwoNewGameMove.json");
 
     @BeforeEach
     public void setUp () {

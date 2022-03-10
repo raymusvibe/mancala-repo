@@ -36,17 +36,17 @@ class MancalaGameValidationServiceIntegrationTests {
 
     private final MancalaGame newGame = new MancalaGame();
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Resource playerOneHouseIndexSelected = new ClassPathResource("test/playerOneHouseSelectedMove.json");
-    private final Resource playerOneFirstMove = new ClassPathResource("test/playerOneFirstMove.json");
-    private final Resource playerOneFirstMoveInvalidStoneCount = new ClassPathResource("test/playerOneFirstMoveInvalidStoneCountMove.json");
-    private final Resource playerOneSecondMove = new ClassPathResource("test/playerOneSecondMove.json");
-    private final Resource playerTwoWinMove = new ClassPathResource("test/playerTwoWinMove.json");
-    private final Resource playerTwoWinInvalidStoneCountMove = new ClassPathResource("test/playerTwoWinInvalidStoneCountMove.json");
-    private final Resource playerTwoWinPriorMove = new ClassPathResource("test/playerTwoWinPriorMove.json");
-    private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("test/playerTwoOppositeStoneCaptureMove.json");
-    private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("test/playerTwoOppositeStoneCapturePriorMove.json");
-    private final Resource playerOneOpponentHouseSkipPriorMove = new ClassPathResource("test/playerOneOpponentHouseSkipPriorMove.json");
-    private final Resource playerOneOpponentHouseSkipMove = new ClassPathResource("test/playerOneOpponentHouseSkipMove.json");
+    private final Resource playerOneHouseIndexSelected = new ClassPathResource("playerOneHouseSelectedMove.json");
+    private final Resource playerOneFirstMove = new ClassPathResource("playerOneFirstMove.json");
+    private final Resource playerOneFirstMoveInvalidStoneCount = new ClassPathResource("playerOneFirstMoveInvalidStoneCountMove.json");
+    private final Resource playerOneSecondMove = new ClassPathResource("playerOneSecondMove.json");
+    private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
+    private final Resource playerTwoWinInvalidStoneCountMove = new ClassPathResource("playerTwoWinInvalidStoneCountMove.json");
+    private final Resource playerTwoWinPriorMove = new ClassPathResource("playerTwoWinPriorMove.json");
+    private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("playerTwoOppositeStoneCaptureMove.json");
+    private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("playerTwoOppositeStoneCapturePriorMove.json");
+    private final Resource playerOneOpponentHouseSkipPriorMove = new ClassPathResource("playerOneOpponentHouseSkipPriorMove.json");
+    private final Resource playerOneOpponentHouseSkipMove = new ClassPathResource("playerOneOpponentHouseSkipMove.json");
 
     @BeforeEach
     public void setUp () {

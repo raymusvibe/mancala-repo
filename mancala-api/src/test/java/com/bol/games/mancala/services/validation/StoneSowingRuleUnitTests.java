@@ -29,9 +29,9 @@ class StoneSowingRuleUnitTests {
 
     private final StoneSowingRule stoneSowingRule = new StoneSowingRule();
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("test/playerTwoOppositeStoneCaptureMove.json");
-    private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("test/playerTwoOppositeStoneCapturePriorMove.json");
-    private final Resource playerOneFirstMove = new ClassPathResource("test/playerOneFirstMove.json");
+    private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("playerTwoOppositeStoneCaptureMove.json");
+    private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("playerTwoOppositeStoneCapturePriorMove.json");
+    private final Resource playerOneFirstMove = new ClassPathResource("playerOneFirstMove.json");
 
     @Test
     void StoneSowingRule_WhenStoneSowingError_ValidationException () throws Exception {
