@@ -19,9 +19,8 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MancalaRepositoryIntegrationTests {
-    //test against embedded instance
-    private static final String DATABASE_NAME = "embedded";
 
+    private static final String DATABASE_NAME = "embedded";
     private MongodExecutable mongodExecutable;
     private MongodProcess mongod;
     private MongoClient mongo;
@@ -49,7 +48,7 @@ class MancalaRepositoryIntegrationTests {
     }
 
     @Test
-    void shouldCreateNewObjectInEmbeddedMongoDb() {
+    void MancalaRepository_WhenCollectionInsert_Success() {
         MongoDatabase mongoDatabase = mongo.getDatabase(DATABASE_NAME);
         mongoDatabase.createCollection("testCollection");
         MongoCollection<BasicDBObject> col = mongoDatabase.getCollection("testCollection", BasicDBObject.class);

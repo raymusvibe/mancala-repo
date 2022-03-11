@@ -6,15 +6,13 @@ import com.bol.games.mancala.service.validation.NewGameRequestRule;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -22,21 +20,17 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ExtendWith(MockitoExtension.class)
 class NewGameRequestRuleUnitTests {
 
-    @InjectMocks
+    @Mock
     private MancalaRepository mancalaRepository;
-    @Mock
-    private MongoTemplate mancalaGamesMongoTemplate;
-    @Mock
-    private MongoTemplate mancalaEventsMongoTemplate;
 
-    private final NewGameRequestRule newGameRequestRule = new NewGameRequestRule();
+    private static final NewGameRequestRule newGameRequestRule = new NewGameRequestRule();
+    private static final GameRule dummyRule = new DummyRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
     private final Resource playerTwoNewGameMove = new ClassPathResource("playerTwoNewGameMove.json");
 
-    @BeforeEach
-    public void setUp () {
-        GameRule dummyRule = new DummyRule();
+    @BeforeAll
+    public static void setUp () {
         newGameRequestRule.setSuccessor(dummyRule);
     }
 

@@ -4,6 +4,7 @@ import com.bol.games.mancala.constants.MancalaConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MancalaGame implements Serializable {
 
     @Id
@@ -30,9 +32,9 @@ public class MancalaGame implements Serializable {
     private GameWinner winner;
     private Integer selectedStoneContainerIndex;
 
-    public MancalaGame () {
+    public MancalaGame (String gameId) {
+        this.gameId = (gameId == null)? UUID.randomUUID().toString() : gameId;
         activePlayer = Player.PLAYER_ONE;
-        gameId = UUID.randomUUID().toString();
         gamePlayStatus = GameStatus.NEW;
     }
 

@@ -8,6 +8,7 @@ import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.repository.abstractions.MancalaRepositoryAPI;
 import com.bol.games.mancala.service.MancalaService;
 import com.bol.games.mancala.service.abstractions.MancalaAPI;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,17 +30,19 @@ class MancalaServiceIntegrationTests {
     private MongoTemplate mancalaGamesMongoTemplate;
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
-    @Mock
-    private MancalaRepositoryAPI mancalaRepository;
 
     private static final String invalidGameId = "someGameId";
-    private final MancalaGame expectedGame = new MancalaGame();
+    private static final MancalaGame expectedGame = new MancalaGame(null);
+
+    @BeforeAll
+    public static void baseSetUp () {
+        expectedGame.initialiseBoard();
+        expectedGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
+    }
 
     @BeforeEach
     public void setUp () {
-        expectedGame.initialiseBoard();
-        expectedGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
-        mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
+        MancalaRepositoryAPI mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
         mancalaService = new MancalaService(mancalaRepository);
     }
 

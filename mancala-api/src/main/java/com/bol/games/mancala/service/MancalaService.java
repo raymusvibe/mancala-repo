@@ -26,7 +26,7 @@ public class MancalaService implements MancalaAPI {
      */
     @Override
     public final MancalaGame createGame() {
-        MancalaGame mancala = new MancalaGame();
+        MancalaGame mancala = new MancalaGame(null);
         mancala.initialiseBoard();
         mancalaRepository.insertGame(mancala);
         mancalaRepository.insertEvent(mancala);

@@ -7,16 +7,13 @@ import com.bol.games.mancala.service.validation.GameExistsInStoreRule;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -26,24 +23,18 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class GameExistsInStoreRuleUnitTests {
-
+    @Mock
     private MancalaRepository mancalaRepository;
-    @Mock
-    private MongoTemplate mancalaGamesMongoTemplate;
-    @Mock
-    private MongoTemplate mancalaEventsMongoTemplate;
 
-    private final GameExistsInStoreRule gameExistsInStoreRule = new GameExistsInStoreRule();
+    private static final GameExistsInStoreRule gameExistsInStoreRule = new GameExistsInStoreRule();
+    private static final GameRule dummyRule = new DummyRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoOppositeStoneCaptureMove = new ClassPathResource("playerTwoOppositeStoneCaptureMove.json");
     private final Resource playerTwoOppositeStoneCapturePriorMove = new ClassPathResource("playerTwoOppositeStoneCapturePriorMove.json");
 
-    @BeforeEach
-    public void setUp () {
-        GameRule dummyRule = new DummyRule();
+    @BeforeAll
+    public static void setUp () {
         gameExistsInStoreRule.setSuccessor(dummyRule);
-        //issues with mock injection
-        mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
     }
 
     @Test
@@ -63,7 +54,7 @@ class GameExistsInStoreRuleUnitTests {
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
         MancalaGame playerTwoOppositeStoneCapturePriorGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCapturePriorMove), MancalaGame.class);
 
-        doReturn(playerTwoOppositeStoneCapturePriorGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
+        doReturn(playerTwoOppositeStoneCapturePriorGame).when(mancalaRepository).findGame(any(String.class));
 
         assertDoesNotThrow(() -> gameExistsInStoreRule
                 .processRequest(playerTwoOppositeStoneCaptureGame,

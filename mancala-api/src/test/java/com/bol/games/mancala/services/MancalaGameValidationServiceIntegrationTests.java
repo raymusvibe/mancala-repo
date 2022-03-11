@@ -7,6 +7,7 @@ import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.service.MancalaGamePlayValidationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ class MancalaGameValidationServiceIntegrationTests {
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
 
-    private final MancalaGame newGame = new MancalaGame();
+    private static final MancalaGame newGame = new MancalaGame(null);
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerOneHouseIndexSelected = new ClassPathResource("playerOneHouseSelectedMove.json");
     private final Resource playerOneFirstMove = new ClassPathResource("playerOneFirstMove.json");
@@ -48,10 +49,14 @@ class MancalaGameValidationServiceIntegrationTests {
     private final Resource playerOneOpponentHouseSkipPriorMove = new ClassPathResource("playerOneOpponentHouseSkipPriorMove.json");
     private final Resource playerOneOpponentHouseSkipMove = new ClassPathResource("playerOneOpponentHouseSkipMove.json");
 
-    @BeforeEach
-    public void setUp () {
+    @BeforeAll
+    public static void baseSetUp () {
         newGame.initialiseBoard();
         newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
+    }
+
+    @BeforeEach
+    public void setUp () {
         MancalaRepository mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
         validationService = new MancalaGamePlayValidationService(mancalaRepository);
     }

@@ -7,12 +7,10 @@ import com.bol.games.mancala.service.validation.StoneSowingRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -20,12 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class StoneSowingRuleUnitTests {
-    @InjectMocks
+    @Mock
     private MancalaRepository mancalaRepository;
-    @Mock
-    private MongoTemplate mancalaGamesMongoTemplate;
-    @Mock
-    private MongoTemplate mancalaEventsMongoTemplate;
 
     private final StoneSowingRule stoneSowingRule = new StoneSowingRule();
     private final ObjectMapper mapper = new ObjectMapper();

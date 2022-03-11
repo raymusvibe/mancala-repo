@@ -7,7 +7,7 @@ import com.bol.games.mancala.service.validation.StoneCountRule;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.utils.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class StoneCountRuleUnitTests {
     @Mock
     private MancalaRepository mancalaRepository;
-    private final StoneCountRule stoneCountRule = new StoneCountRule();
+    private static final StoneCountRule stoneCountRule = new StoneCountRule();
+    private static final GameRule dummyRule = new DummyRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerOneFirstMoveInvalidStoneCountMove = new ClassPathResource("playerOneFirstMoveInvalidStoneCountMove.json");
     private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
 
-    @BeforeEach
-    public void setUp () {
-        GameRule dummyRule = new DummyRule();
+    @BeforeAll
+    public static void setUp () {
         stoneCountRule.setSuccessor(dummyRule);
     }
 
