@@ -1,2 +1,6 @@
-mancala-api/target
+**/HELP.md
 **/.DS_Store
+**/.idea
+**/target
+**/logs
+!**/.mvn/wrapper/maven-wrapper.jar
