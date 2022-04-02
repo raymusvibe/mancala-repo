@@ -31,7 +31,6 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
     public final MancalaGame validate (MancalaGame gameFromFrontEnd) throws ValidationException {
         //event log
         mancalaRepository.insertEvent(gameFromFrontEnd);
-
         //rules and chain of responsibility
         GameRule gameExistsInStoreRule = new GameExistsInStoreRule();
         GameRule newGameRequestRule = new NewGameRequestRule();
@@ -44,10 +43,9 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
         stoneCountRule.setSuccessor(gameWinnerRule);
         gameWinnerRule.setSuccessor(selectedContainerIndexRule);
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);
-
+        //rules execution
         gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, (MancalaRepository) mancalaRepository);
-
-        //If we got this far, correct game state is in DB and the cache
+        //if we got this far, correct game state is in the DB and the cache
         return mancalaRepository.findGame(gameFromFrontEnd.getGameId());
     }
 }

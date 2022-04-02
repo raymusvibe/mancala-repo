@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  eureka:
+    container_name: eureka
+    build: ./eureka
+    ports:
+      - '8761:8761'
+    hostname: eureka
+    networks:
+      - service-discovery-network
+
+  redisdb:
+    restart: on-failure
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    hostname: redisdb
+    networks:
+      - service-discovery-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'mongodb_data_container:/data/db'
+    command: mongod --quiet --logpath=/dev/null
+    hostname: mongodb
+    networks:
+      - service-discovery-network
+
+  rabbitmq:
+    container_name: rabbitmq
+    build: ./rabbitmq
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '61613:61613'
+    volumes:
+      - 'rabbitmq_data:/bitnami'
+    hostname: rabbitmq
+    networks:
+      - service-discovery-network
+
+  gateway:
+    container_name: gateway
+    build: ./gateway
+    ports:
+      - '8080:8080'
+    depends_on:
+      - eureka
+      - redisdb
+    links:
+      - eureka
+      - redisdb
+    environment:
+      - EUREKA_URI=http://eureka:8761/eureka
+      - SPRING_REDIS_HOST=redisdb
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_REPLENISH_RATE=25
+      - SPRING_REDIS_BURST_CAPACITY=30
+    hostname: gateway
+    networks:
+      - service-discovery-network
+    restart: on-failure
+
+volumes:
+  mongodb_data_container:
+  rabbitmq_data:
+
+networks:
+  service-discovery-network:
+    name: service-discovery-network
+    attachable: true
+    driver: bridge

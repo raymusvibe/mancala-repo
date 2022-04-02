@@ -51,7 +51,7 @@ class MancalaGameValidationServiceIntegrationTests {
 
     @BeforeAll
     public static void baseSetUp () {
-        newGame.initialiseBoard();
+        newGame.initialiseBoardToNewGame();
         newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
     }
 

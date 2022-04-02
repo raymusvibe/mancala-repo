@@ -1,6 +1,7 @@
 package com.bol.games.mancala.service.validation;
 
 import com.bol.games.mancala.constants.MancalaConstants;
+import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.GameStatus;
@@ -22,7 +23,6 @@ public class GameWinnerRule extends GameRule {
             assert gameFromStore != null;
             gameFromStore.setWinner(gameFromFrontEnd.getWinner());
             gameFromStore.setGamePlayStatus(GameStatus.FINISHED);
-            gameFromStore.setSelectedStoneContainerIndex(null);
             gameFromStore.setMancalaBoard(gameFromFrontEnd.getMancalaBoard());
             mancalaRepository.saveGame(gameFromStore);
         } else {
@@ -33,7 +33,6 @@ public class GameWinnerRule extends GameRule {
                 assert gameFromStore != null;
                 gameFromStore.setWinner(finishedGame.getWinner());
                 gameFromStore.setGamePlayStatus(GameStatus.FINISHED);
-                gameFromStore.setSelectedStoneContainerIndex(null);
                 gameFromStore.setMancalaBoard(finishedGame.getMancalaBoard());
                 mancalaRepository.saveGame(gameFromStore);
             } else {
@@ -48,6 +47,8 @@ public class GameWinnerRule extends GameRule {
      * @return boolean true if the frontend did not make an error
      */
     private boolean validateWinnerFromFrontEnd(MancalaGame gameFromFrontEnd) throws ValidationException {
+        gameFromFrontEnd.movePlayerStonesToHouse(Player.PLAYER_ONE);
+        gameFromFrontEnd.movePlayerStonesToHouse(Player.PLAYER_TWO);
         int playerOneStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PLAYER_ONE_HOUSE_INDEX).getStones();
         int playerTwoStones = gameFromFrontEnd.getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX).getStones();
         boolean statusIsCorrect = false;

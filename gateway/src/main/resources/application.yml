@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: gateway
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+  web:
+    resources:
+      static-locations[0]: file:src/main/resources/static/
+      static-locations[1]: classpath:/static/
+  cloud:
+    gateway:
+      routes:
+        - id: prometheus-query
+          uri: http://gateway:9090
+          predicates:
+            - Path=/api/**
+        - id: mancala-api
+          uri: lb://mancala-api
+          predicates:
+            - Path=/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@userKeyResolver}'
+                redis-rate-limiter.replenishRate: ${SPRING_REDIS_REPLENISH_RATE:25}
+                redis-rate-limiter.burstCapacity: ${SPRING_REDIS_BURST_CAPACITY:30}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    healthcheck:
+      enabled: true
+  instance:
+    prefer-ip-address: true

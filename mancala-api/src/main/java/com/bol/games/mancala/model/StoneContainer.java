@@ -3,6 +3,7 @@ package com.bol.games.mancala.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Data
 public class StoneContainer implements Serializable {
 
+    @Getter
     private int mancalaGameIndex;
     private int stones;
 

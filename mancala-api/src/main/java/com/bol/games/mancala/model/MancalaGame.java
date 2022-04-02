@@ -23,34 +23,35 @@ import java.util.UUID;
 public class MancalaGame implements Serializable {
 
     @Id
+    @JsonIgnore
     private String id;
 
     private String gameId;
     private GameStatus gamePlayStatus;
-    private List<StoneContainer> mancalaBoard;
     private Player activePlayer;
     private GameWinner winner;
     private Integer selectedStoneContainerIndex;
+    private List<StoneContainer> mancalaBoard;
 
     public MancalaGame (String gameId) {
         this.gameId = (gameId == null)? UUID.randomUUID().toString() : gameId;
         activePlayer = Player.PLAYER_ONE;
         gamePlayStatus = GameStatus.NEW;
+        selectedStoneContainerIndex = MancalaConstants.PLAYER_ONE_HOUSE_INDEX;
     }
 
     @JsonIgnore
-    public final void initialiseBoard() {
-        ArrayList <StoneContainer> stoneContainers = new ArrayList<>();
+    public final void initialiseBoardToNewGame() {
+        mancalaBoard = new ArrayList<>();
         int numberOfContainers = (MancalaConstants.CONTAINERS_PER_PLAYER + 1) * 2;
         for (int i = 0; i < numberOfContainers; i++) {
             if (i == MancalaConstants.PLAYER_ONE_HOUSE_INDEX ||
                     i == MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
-                stoneContainers.add(new HouseStoneContainer(i));
+                mancalaBoard.add(new HouseStoneContainer(i));
             } else {
-                stoneContainers.add(new StoneContainer(i, MancalaConstants.STONES_PER_PLAYER));
+                mancalaBoard.add(new StoneContainer(i, MancalaConstants.STONES_PER_PLAYER));
             }
         }
-        mancalaBoard = stoneContainers;
     }
 
     @JsonIgnore
@@ -59,12 +60,22 @@ public class MancalaGame implements Serializable {
     }
 
     @JsonIgnore
+    public final StoneContainer getNextContainerSowed(Integer currentIndex) {
+        int nextIndex = currentIndex;
+        //cannot place stones on another player's house
+        if (isOpponentHouse(nextIndex)) {
+            //avoid array out of bounds error
+            nextIndex = (nextIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+        }
+        return mancalaBoard.get(nextIndex);
+    }
+
+    @JsonIgnore
     public final Optional<MancalaGame> finishGame() {
         Optional<MancalaGame> finishedGame = Optional.empty();
         if (isGameFinished()) {
             int playerOneFinalStoneCount = getStoneContainer(MancalaConstants.PLAYER_ONE_HOUSE_INDEX).getStones();
             int playerTwoFinalStoneCount = getStoneContainer(MancalaConstants.PLAYER_TWO_HOUSE_INDEX).getStones();
-
             if (playerOneFinalStoneCount > playerTwoFinalStoneCount) {
                 setWinner(GameWinner.PLAYER_ONE);
             } else if (playerOneFinalStoneCount < playerTwoFinalStoneCount) {
@@ -72,11 +83,54 @@ public class MancalaGame implements Serializable {
             } else {
                 setWinner(GameWinner.DRAW);
             }
-
             setGamePlayStatus(GameStatus.FINISHED);
             finishedGame = Optional.of(this);
         }
         return finishedGame;
+    }
+
+    @JsonIgnore
+    public final boolean isNotMyContainer (int targetContainerIndex) {
+        boolean isNotMyContainer = false;
+        if (activePlayer == Player.PLAYER_ONE) {
+            if (targetContainerIndex > MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
+                isNotMyContainer = true;
+            }
+        } else {
+            if (targetContainerIndex <= MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
+                isNotMyContainer = true;
+            }
+        }
+        return isNotMyContainer;
+    }
+
+    @JsonIgnore
+    public final void movePlayerStonesToHouse (Player player) {
+        if (player == Player.PLAYER_ONE) {
+            for (int i = 0; i < MancalaConstants.PLAYER_ONE_HOUSE_INDEX; i++) {
+                mancalaBoard.get(MancalaConstants.PLAYER_ONE_HOUSE_INDEX)
+                        .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
+            }
+        } else {
+            for (int i = MancalaConstants.PLAYER_ONE_HOUSE_INDEX + 1; i < MancalaConstants.PLAYER_TWO_HOUSE_INDEX; i++) {
+                mancalaBoard.get(MancalaConstants.PLAYER_TWO_HOUSE_INDEX)
+                        .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
+            }
+        }
+    }
+
+    private boolean isOpponentHouse (Integer containerIndex) {
+        boolean isOpponentHouse = false;
+        if (activePlayer == Player.PLAYER_ONE) {
+            if (containerIndex == MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
+                isOpponentHouse = true;
+            }
+        } else {
+            if (containerIndex == MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
+                isOpponentHouse = true;
+            }
+        }
+        return isOpponentHouse;
     }
 
     private boolean isGameFinished () {
@@ -99,20 +153,6 @@ public class MancalaGame implements Serializable {
             }
         }
         return isFinished;
-    }
-
-    private void movePlayerStonesToHouse (Player player) {
-        if (player == Player.PLAYER_ONE) {
-            for (int i = 0; i < MancalaConstants.PLAYER_ONE_HOUSE_INDEX; i++) {
-                mancalaBoard.get(MancalaConstants.PLAYER_ONE_HOUSE_INDEX)
-                        .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
-            }
-        } else {
-            for (int i = MancalaConstants.PLAYER_ONE_HOUSE_INDEX + 1; i < MancalaConstants.PLAYER_TWO_HOUSE_INDEX; i++) {
-                mancalaBoard.get(MancalaConstants.PLAYER_TWO_HOUSE_INDEX)
-                        .addStones(mancalaBoard.get(i).getAllStonesAndEmptyContainer());
-            }
-        }
     }
 }
 
