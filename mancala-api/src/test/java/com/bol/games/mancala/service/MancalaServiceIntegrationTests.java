@@ -1,4 +1,4 @@
-package com.bol.games.mancala.services;
+package com.bol.games.mancala.service;
 
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.NotFoundException;
@@ -6,7 +6,6 @@ import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.repository.abstractions.MancalaRepositoryAPI;
-import com.bol.games.mancala.service.MancalaService;
 import com.bol.games.mancala.service.abstractions.MancalaAPI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

@@ -34,8 +34,8 @@ public class MancalaService implements MancalaAPI {
     }
 
     /**
-     * Service method called through constructor when a second player wants to join an existing game
-     * through a link send to them by a colleague.
+     * Service method called through constructor when a second player
+     * wants to join an existing game through a link send to them by a colleague.
      * @param gameId the id of the game they'll connect to
      * @return the new game instance they've connected to.
      */

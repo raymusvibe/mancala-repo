@@ -1,4 +1,4 @@
-package com.bol.games.mancala.utils;
+package com.bol.games.mancala.util;
 
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.MancalaGame;

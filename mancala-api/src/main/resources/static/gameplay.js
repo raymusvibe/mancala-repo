@@ -1,16 +1,16 @@
 var number_of_pots_per_player = 6;
 var number_of_beads_per_pot = 6;
-var playerOneHouseIndex = 6;
-var playerTwoHouseIndex = 13;
+var player_one_house_index = 6;
+var player_two_house_index = 13;
 var total_beads_count = 72;
-var last_pot_sown_on_completing_full_revolution;
+var last_pot_after_full_revolution;
 var initiated_game_restart = false;
 var isPlayerOne = null;
 
-let map_board_to_pots = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "mb"];
+var map_board_to_pots = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "mb"];
 
 /*Move's beads. Also updates game object in live play, but not for the simulations*/
-var move_bead = function(bead, src_pot, dest_pot, is_steal, is_live_play)
+function move_bead(bead, src_pot, dest_pot, is_steal, is_live_play)
 {
     if (is_live_play) {
       let src_index;
@@ -24,7 +24,7 @@ var move_bead = function(bead, src_pot, dest_pot, is_steal, is_live_play)
         if(dest_pot.isTop()) {
           if (dest_pot.isMan()){
             $(bead).attr('hasMoved', true);
-            dest_index = playerOneHouseIndex;
+            dest_index = player_one_house_index;
           } else {
             dest_index = dest_pot.getNumber() - 1;
           }
@@ -40,7 +40,7 @@ var move_bead = function(bead, src_pot, dest_pot, is_steal, is_live_play)
         if (dest_pot.isBottom()) {
           if (dest_pot.isMan()) {
             $(bead).attr('hasMoved', true);
-            dest_index = playerTwoHouseIndex;
+            dest_index = player_two_house_index;
           } else {
             dest_index = dest_pot.getNumber() + number_of_pots_per_player;
           }
@@ -56,7 +56,9 @@ var move_bead = function(bead, src_pot, dest_pot, is_steal, is_live_play)
       let dest_bead_count = game.mancalaBoard[dest_index].stones;
 
       if (source_bead_count == 0) {
-        throw "Trying to move beads from empty container!";
+        //ui is out of sync with game data, cannot move stones from empty container
+        sync_board_with_ui_beads ();
+        return;
       }
 
       source_bead_count--;
@@ -70,12 +72,12 @@ var move_bead = function(bead, src_pot, dest_pot, is_steal, is_live_play)
 }
 
 /*Run's at the end of each player's turn*/
-var complete_turn = function (src_pot, last_pot, is_live_play)
-{
-  last_pot_sown_on_completing_full_revolution = null;
-  update_counters(false);
+function complete_turn(src_pot, is_live_play) {
+  last_pot_after_full_revolution = null;
+  update_house_counters(false);
 
   if(board_total () != total_beads_count) {
+    game_error_message ();
     throw "Invalid board total";
   }
 
@@ -83,25 +85,21 @@ var complete_turn = function (src_pot, last_pot, is_live_play)
     determine_winner();
   } else {
     if (is_live_play) {
-        console.log ("Completing turn...");
-        console.log(JSON.stringify(game,null,'\t'));
         src_pot.$().css("background-color","rgba(255, 255, 255, 0.15)");
         game.selectedStoneContainerIndex = map_pots_to_board(src_pot);
         game_play();
     } else {
-        console.log("Completing simulation...");
         update_game_parameters();
     }
   }
 }
 
 /*Main method for sowing*/
-var sow_beads = function(src_pot, last_pot, is_live_play)
-{
+function sow_beads(src_pot, last_pot, is_live_play) {
   const children = src_pot.$().children();
   if(children.length === 0)
   {
-    complete_turn(src_pot, last_pot, is_live_play);
+    complete_turn(src_pot, is_live_play);
     return;
   }
   if(last_pot === null)
@@ -129,7 +127,7 @@ var sow_beads = function(src_pot, last_pot, is_live_play)
       //cater for last bead in the event it has already been moved
       if ($(selected_bead).attr('hasMoved') == "true") {
           $(selected_bead).attr('hasMoved', false);
-          complete_turn(src_pot, last_pot_sown_on_completing_full_revolution, is_live_play);
+          complete_turn(src_pot, is_live_play);
           return;
       } else {
           if (last_pot.id == src_pot.id) {
@@ -138,7 +136,7 @@ var sow_beads = function(src_pot, last_pot, is_live_play)
               {
                   steal(src_pot, last_pot, is_live_play, selected_bead);
               }
-              complete_turn(src_pot, last_pot, is_live_play);
+              complete_turn(src_pot, is_live_play);
               return;
           }
           move_bead(selected_bead, src_pot, last_pot, false, is_live_play);
@@ -150,12 +148,12 @@ var sow_beads = function(src_pot, last_pot, is_live_play)
           let next_bead = children.get(1);
           last_pot = last_pot.getNextSown(true);
           move_bead(next_bead, src_pot, last_pot, false, is_live_play);
-          last_pot_sown_on_completing_full_revolution = last_pot;
+          last_pot_after_full_revolution = last_pot;
         } else {
           if ($(selected_bead).attr('hasMoved') != "true") {
             move_bead(selected_bead, src_pot, last_pot, false, is_live_play);
             //keep track of variable in case player turn goes all way round
-            last_pot_sown_on_completing_full_revolution = last_pot;
+            last_pot_after_full_revolution = last_pot;
           }
         }
     }
@@ -163,15 +161,13 @@ var sow_beads = function(src_pot, last_pot, is_live_play)
   setTimeout(sow_beads,350,src_pot,last_pot,is_live_play)
 }
 
-/*Handle websocket update*/
-var action_response = function () {
-    console.log("Actioning game update...");
+function handle_gameplay_websocket_response() {
     if (game.gamePlayStatus == GameStatus.FINISHED) {
-        sow_beads(new Pot(map_board_to_pots[game.selectedStoneContainerIndex]), null, false);
+        determine_winner ();
         return;
     }
     if (game.gamePlayStatus == GameStatus.NEW && !initiated_game_restart) {
-        handle_new_game_request ();
+        handle_game_restart_request ();
         //restart set's player two as active
         if (player_name == Player.ONE) {
             player_one_restart_message ();
@@ -186,7 +182,7 @@ var action_response = function () {
     //three simulation scenario's. Condition one at the start of the game will run simulation on player two's board when player one makes first move
     let is_simulation = false;
     if (isPlayerOne === null) {
-        if (game.selectedStoneContainerIndex != playerOneHouseIndex && game.selectedStoneContainerIndex != playerTwoHouseIndex){
+        if (game.selectedStoneContainerIndex != player_one_house_index && game.selectedStoneContainerIndex != player_two_house_index){
             isPlayerOne = true;
             sow_beads(new Pot(map_board_to_pots[game.selectedStoneContainerIndex]), null, false);
             is_simulation =true;
@@ -214,11 +210,8 @@ var action_response = function () {
     }
 }
 
-var steal = function (src_pot, last_pot, is_live_play, selected_bead) {
+function steal(src_pot, last_pot, is_live_play, selected_bead) {
      let opposite_pot = last_pot.getOpposite();
-
-     console.log ("Stealing " + opposite_pot.$().children().length +
-           " from " + opposite_pot.id + " by " + last_pot.id);
 
      const house_pot = (isPlayerOne)? new Pot('mt') : new Pot('mb');
      opposite_pot.$().children().each(function(idx,stolen_bead)

@@ -1,11 +1,10 @@
-package com.bol.games.mancala.services.validation;
+package com.bol.games.mancala.service.validation;
 
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
-import com.bol.games.mancala.service.validation.StoneCountRule;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
-import com.bol.games.mancala.utils.DummyRule;
+import com.bol.games.mancala.util.DummyRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
+import static com.bol.games.mancala.util.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)

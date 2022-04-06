@@ -1,5 +1,6 @@
 package com.bol.games.mancala.service.validation;
 
+import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
@@ -18,6 +19,9 @@ public class GameExistsInStoreRule extends GameRule {
         if (gameFromRepo == null) {
             throw new ValidationException("Invalid game Id provided: " + gameFromFrontEnd.getGameId());
         }
-        successor.processRequest(gameFromFrontEnd, gameFromRepo, mancalaRepository);
+        //if game status is DISRUPTED, client is asking for correct game state after re-connection
+        if (gameFromFrontEnd.getGamePlayStatus() != GameStatus.DISRUPTED) {
+            successor.processRequest(gameFromFrontEnd, gameFromRepo, mancalaRepository);
+        }
     }
 }

@@ -39,6 +39,7 @@ services:
       kompose.service.type: nodeport
     ports:
       - '61613:61613'
+      - '15672:15672'
     volumes:
       - 'rabbitmq_data:/bitnami'
     hostname: rabbitmq
@@ -57,11 +58,11 @@ services:
       - eureka
       - redisdb
     environment:
-      - EUREKA_URI=http://eureka:8761/eureka
-      - SPRING_REDIS_HOST=redisdb
-      - SPRING_REDIS_PORT=6379
-      - SPRING_REDIS_REPLENISH_RATE=25
-      - SPRING_REDIS_BURST_CAPACITY=30
+      - EUREKA_URI=${EUREKA_URI}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
+      - SPRING_REDIS_REPLENISH_RATE=${SPRING_REDIS_REPLENISH_RATE}
+      - SPRING_REDIS_BURST_CAPACITY=${SPRING_REDIS_BURST_CAPACITY}
     hostname: gateway
     networks:
       - service-discovery-network
@@ -81,17 +82,17 @@ services:
       - rabbitmq
       - redisdb
     environment:
-      - EUREKA_URI=http://eureka:8761/eureka
-      - BROKER_RELAY_HOST=rabbitmq
-      - BROKER_RELAY_PORT=61613
-      - SPRING_DATA_MONGODB_HOST=mongodb
-      - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_NAME=mancala
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/mancala
-      - SPRING_REDIS_HOST=redisdb
-      - SPRING_REDIS_PORT=6379
+      - EUREKA_URI=${EUREKA_URI}
+      - BROKER_RELAY_HOST=${BROKER_RELAY_HOST}
+      - BROKER_RELAY_PORT=${BROKER_RELAY_PORT}
+      - SPRING_DATA_MONGODB_HOST=${SPRING_DATA_MONGODB_HOST}
+      - SPRING_DATA_MONGODB_PORT=${SPRING_DATA_MONGODB_PORT}
+      - SPRING_DATA_MONGODB_NAME=${SPRING_DATA_MONGODB_NAME}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - SPRING_APPLICATION_NAME=mancala-api
-      - SPRING_PROFILES_ACTIVE=development
     hostname: mancala-api-1
     networks:
       - service-discovery-network
@@ -111,17 +112,17 @@ services:
       - rabbitmq
       - redisdb
     environment:
-      - EUREKA_URI=http://eureka:8761/eureka
-      - BROKER_RELAY_HOST=rabbitmq
-      - BROKER_RELAY_PORT=61613
-      - SPRING_DATA_MONGODB_HOST=mongodb
-      - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_NAME=mancala
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/mancala
-      - SPRING_REDIS_HOST=redisdb
-      - SPRING_REDIS_PORT=6379
+      - EUREKA_URI=${EUREKA_URI}
+      - BROKER_RELAY_HOST=${BROKER_RELAY_HOST}
+      - BROKER_RELAY_PORT=${BROKER_RELAY_PORT}
+      - SPRING_DATA_MONGODB_HOST=${SPRING_DATA_MONGODB_HOST}
+      - SPRING_DATA_MONGODB_PORT=${SPRING_DATA_MONGODB_PORT}
+      - SPRING_DATA_MONGODB_NAME=${SPRING_DATA_MONGODB_NAME}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - SPRING_APPLICATION_NAME=mancala-api
-      - SPRING_PROFILES_ACTIVE=development
     hostname: mancala-api-2
     networks:
       - service-discovery-network

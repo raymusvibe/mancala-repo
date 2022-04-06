@@ -1,4 +1,4 @@
-package com.bol.games.mancala.utils;
+package com.bol.games.mancala.util;
 
 import org.springframework.core.io.Resource;
 

@@ -11,10 +11,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: prometheus-query
-          uri: http://gateway:9090
-          predicates:
-            - Path=/api/**
         - id: mancala-api
           uri: lb://mancala-api
           predicates:
@@ -34,3 +30,11 @@ eureka:
       enabled: true
   instance:
     prefer-ip-address: true
+
+server:
+  ssl:
+    enabled: true
+  ssl.key-store-type: PKCS12
+  ssl.key-store: classpath:keystore/applications.p12
+  ssl.key-store-password: 123456
+  ssl.key-alias: applications

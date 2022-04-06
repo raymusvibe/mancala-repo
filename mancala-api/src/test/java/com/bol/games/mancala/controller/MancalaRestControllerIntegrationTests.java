@@ -1,6 +1,5 @@
-package com.bol.games.mancala.controllers;
+package com.bol.games.mancala.controller;
 
-import com.bol.games.mancala.controller.MancalaRestController;
 import com.bol.games.mancala.exception.NotFoundException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.abstractions.MancalaAPI;
@@ -24,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@SpringBootTest (classes = MancalaControllerIntegrationTests.class)
+@SpringBootTest (classes = MancalaRestControllerIntegrationTests.class)
 @AutoConfigureJsonTesters
 @ExtendWith(MockitoExtension.class)
-class MancalaControllerIntegrationTests {
+class MancalaRestControllerIntegrationTests {
     @InjectMocks
     MancalaRestController mancalaController;
     @Mock

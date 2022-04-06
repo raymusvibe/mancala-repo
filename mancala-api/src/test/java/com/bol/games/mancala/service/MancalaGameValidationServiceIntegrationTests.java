@@ -1,11 +1,10 @@
-package com.bol.games.mancala.services;
+package com.bol.games.mancala.service;
 
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
-import com.bol.games.mancala.service.MancalaGamePlayValidationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-import static com.bol.games.mancala.utils.TestUtils.resourceAsInputStream;
+import static com.bol.games.mancala.util.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

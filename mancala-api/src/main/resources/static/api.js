@@ -1,7 +1,11 @@
-const url = 'http://localhost:8080';
+const url = 'https://localhost:8080';
 
 let stomp_client;
 let player_triggered_connection = false;
+let retry_count = 0;
+let retry_limit = 10;
+let retry_back_off = 2000;
+let nominal_retry_back_off = 500;
 
 var game_id;
 var game;
@@ -12,28 +16,53 @@ function connect_to_socket() {
     let socket = new SockJS(url + "/websocket");
     stomp_client = Stomp.over(socket);
     stomp_client.connect({}, function (frame) {
-        enable_chat();
-        console.log('Connected: ' + frame);
         stomp_client.subscribe('/topic/game-messaging.' + game_id, function (response) {
             append_chat_message(JSON.parse(response.body));
         });
         stomp_client.subscribe("/topic/game-progress." + game_id, function (response) {
             game = JSON.parse(response.body);
-            action_response();
+            handle_gameplay_websocket_response();
         });
+        enable_chat();
         //to notify other player to start
         if (player_triggered_connection) {
             player_triggered_connection = false;
-            game_play ();
+            game_play();
+        }
+        //error scenario
+        if (retry_count > 0) {
+            game.gamePlayStatus = GameStatus.DISRUPTED;
+            game_play();
+            add_pot_handlers();
+            update_game_parameters();
+            retry_count = 0;
         }
     }, function(error) {
-        game_error_updates ();
-        stomp_client.disconnect();
+        error_connect_retry ();
    });
-    socket.onclose = function() {
+   socket.onclose = function() {
+        //server occasionally closes the connection abruptly
+        error_connect_retry ();
+   };
+}
+
+function error_connect_retry () {
+    //allow game to disconnect if game status is FINISHED or when retry limit is reached
+    if (game.gamePlayStatus != GameStatus.FINISHED) {
+        if (retry_count < retry_limit) {
+            disable_chat ();
+            removePotHandlers ();
+            connect_retry_message ();
+            setTimeout(connect_to_socket, nominal_retry_back_off + retry_back_off * retry_count);
+            retry_count++;
+        } else {
+            game_error_updates ();
+            stomp_client.disconnect();
+        }
+    } else {
         game_error_updates ();
         stomp_client.disconnect();
-    };
+    }
 }
 
 function create_game() {
@@ -46,12 +75,13 @@ function create_game() {
             game = data;
             player_name = Player.ONE;
             opponent_name = Player.TWO;
+            retry_count = 0;
             connect_to_socket();
-            initialise_new_game ();
-            clear_chat_messages ();
+            start_new_game();
+            clear_chat_messages();
         },
         error: function (error) {
-            game_error_updates ();
+            game_error_updates();
             stomp_client.disconnect();
         }
     })
@@ -60,7 +90,7 @@ function create_game() {
 function connect_to_specific_game() {
     game_id = document.getElementById("game_id").value;
     if (game_id == null || game_id === '') {
-        missing_game_id_message ();
+        missing_game_id_message();
         return;
     }
     $.ajax({
@@ -74,9 +104,10 @@ function connect_to_specific_game() {
             opponent_name = Player.ONE;
             isPlayerOne = null;
             player_triggered_connection = true;
+            retry_count = 0;
             connect_to_socket();
-            initialise_new_game_connection();
-            clear_chat_messages ();
+            connect_to_game ();
+            clear_chat_messages();
         },
         error: function (error) {
             alert("Connection to game failed. Please use a valid game ID or start a new game.");
