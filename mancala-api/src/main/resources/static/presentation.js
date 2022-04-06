@@ -100,7 +100,7 @@ function Pot(id_in)
       }
     } else {
       if(this.getNumber() === 6) {
-        if(isPlayerOne) {
+        if(is_player_one) {
           if(this.isTop()) {
             return new Pot('mt');
           } else {
@@ -199,26 +199,25 @@ function place_new_bead(id, c)
 }
 
 function add_listeners(class_list) {
-    $(class_list)
-        .mouseenter(function()
-      {
-        $(this).css( {
-          "background-color":"rgba(255, 255, 255, 0.40)",
-          "cursor":"pointer"
-        });
-      }).mouseleave(function()
-      {
-        $(this).css( {
-          "background-color":"rgba(255, 255, 255, 0.15)",
-          "cursor":"arrow"
-        });
-      }).click(function()
-      {
-        // check if move is valid
-        $(class_list).off();
-        game.selectedStoneContainerIndex = map_pots_to_board(new Pot($(this).attr("id")));
-        sow_beads (new Pot($(this).attr("id")), null, true);
-      });
+  $(class_list).mouseenter(function()
+  {
+    $(this).css( {
+      "background-color":"rgba(255, 255, 255, 0.40)",
+      "cursor":"pointer"
+    });
+  }).mouseleave(function()
+  {
+    $(this).css( {
+      "background-color":"rgba(255, 255, 255, 0.15)",
+      "cursor":"arrow"
+    });
+  }).click(function()
+  {
+    // check if move is valid
+    $(class_list).off();
+    game.selectedStoneContainerIndex = map_pots_to_board(new Pot($(this).attr("id")));
+    sow_beads (new Pot($(this).attr("id")), null, true);
+  });
 }
 
 function remove_action_handlers(class_list) {
@@ -228,60 +227,60 @@ function remove_action_handlers(class_list) {
 }
 
 function add_pot_handlers() {
-  if (isPlayerOne) {
+  if (is_player_one) {
     if (player_name == Player.ONE) {
-        remove_action_handlers (".topmid .pot");
-        add_listeners (".topmid .pot");
+      remove_action_handlers (".topmid .pot");
+      add_listeners (".topmid .pot");
     } else {
-        remove_action_handlers (".botmid .pot");
+      remove_action_handlers (".botmid .pot");
     }
   } else {
     if (player_name == Player.TWO) {
-        remove_action_handlers (".botmid .pot");
-        add_listeners (".botmid .pot");
+      remove_action_handlers (".botmid .pot");
+      add_listeners (".botmid .pot");
     } else {
-        remove_action_handlers (".topmid .pot");
+      remove_action_handlers (".topmid .pot");
     }
   }
 };
 
-function removePotHandlers() {
-    remove_action_handlers (".topmid .pot");
-    remove_action_handlers (".botmid .pot");
+function remove_pot_handlers() {
+  remove_action_handlers (".topmid .pot");
+  remove_action_handlers (".botmid .pot");
 };
 
 function toggle_player_buttons_selection() {
-  if (isPlayerOne) {
+  if (is_player_one) {
     if (player_name == Player.ONE) {
-        player_one_button.classList.remove("button2");
-        player_one_button.classList.add("button2_selected");
-        player_two_button.classList.remove("button2_selected");
-        player_two_button.classList.add("button2");
+      player_one_button.classList.remove("button2");
+      player_one_button.classList.add("button2_selected");
+      player_two_button.classList.remove("button2_selected");
+      player_two_button.classList.add("button2");
     } else {
-        player_two_button.classList.remove("button2_selected");
-        player_two_button.classList.add("button2");
+      player_two_button.classList.remove("button2_selected");
+      player_two_button.classList.add("button2");
     }
   } else {
     if (player_name == Player.TWO) {
-        player_two_button.classList.remove("button2");
-        player_two_button.classList.add("button2_selected");
-        player_one_button.classList.remove("button2_selected");
-        player_one_button.classList.add("button2");
+      player_two_button.classList.remove("button2");
+      player_two_button.classList.add("button2_selected");
+      player_one_button.classList.remove("button2_selected");
+      player_one_button.classList.add("button2");
     } else {
-        player_one_button.classList.remove("button2_selected");
-        player_one_button.classList.add("button2");
+      player_one_button.classList.remove("button2_selected");
+      player_one_button.classList.add("button2");
     }
   }
 }
 
 function append_chat_message(response) {
-    let display_name = (response.sender == Player.ONE)? "Player One#" : "Player Two#";
-    let content = "<div class=\"message\">"
-                    +    "<p class=\"chat_display\">" + display_name + " :> " + response.message + "</p>"
-                    + "</div>"
+  let display_name = (response.sender == Player.ONE)? "Player One#" : "Player Two#";
+  let content = "<div class=\"message\">"
+                + "<p class=\"chat_display\">" + display_name + " :> " + response.message + "</p>"
+                + "</div>"
 
-    $("#chat_messages").append(content);
-    chat_message_input.value = "";
+  $("#chat_messages").append(content);
+  chat_message_input.value = "";
 }
 
 function populate_row(row) {

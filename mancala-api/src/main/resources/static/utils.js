@@ -13,7 +13,7 @@ const game_id_input = document.getElementById("game_id");
 const player_one_restart_string = "Restarting the game. Player two will start.";
 const on_page_load_string = "Please start a new game or enter a game id from a friend to play.";
 const missing_game_id_string = "Please enter game id to connect.";
-const game_error_string = "An unexpected error occurred. Please start a new game or join another.";
+const game_error_string = "Unable to continue with previous game. Please start a new game or join another.";
 const connect_retry_string = "Connection to service lost. Trying to reconnect, please wait...";
 const connect_to_game_string = "Success! Waiting for player one to start, you're player two."
 const winning_message_string = "Congratulations, you won with a total of "
@@ -24,31 +24,38 @@ const player_two_turn_message_string = "It is your turn, player two."
 const opponent_turn_message_string = "Waiting on the other player to complete their turn."
 
 const chat_key_down = (event) => {
-    if (event.key === "Enter") {
-      send_chat_message();
-    }
+  if (event.key === "Enter") {
+    send_chat_message();
+  }
 }
 
 const game_connect_key_down = (event) => {
-    if (event.key === "Enter") {
-      connect_to_specific_game();
-      game_id_input.value = "";
-    }
+  if (event.key === "Enter") {
+    connect_to_specific_game();
+    game_id_input.value = "";
+  }
 }
 
 function enable_game_connect_key_down() {
-    game_id_input.addEventListener("keydown", game_connect_key_down);
+  game_id_input.addEventListener("keydown", game_connect_key_down);
 }
 
 function start_new_game() {
-    new_game_button.classList.add("disable");
-    connect_to_game_button.classList.add("disable");
-    game_restart_button.classList.add("disable");
-    game_id_input.disabled = true;
-    game_status_message.innerHTML = "Ask friend to join with " + game_id;
+  player_name = Player.ONE;
+  opponent_name = Player.TWO;
+  
+  new_game_button.classList.add("disable");
+  connect_to_game_button.classList.add("disable");
+  game_restart_button.classList.add("disable");
+  game_id_input.disabled = true;
+  game_status_message.innerHTML = "Ask friend to join with " + game_id;
 }
 
 function connect_to_game () {
+    player_name = Player.TWO;
+    opponent_name = Player.ONE;
+    is_player_one = null;
+
     new_game_button.classList.add("disable");
     connect_to_game_button.classList.add("disable");
     game_restart_button.classList.add("disable");
@@ -58,7 +65,8 @@ function connect_to_game () {
 }
 
 function restart_game() {
-  initiated_game_restart = true;
+  player_initiated_game_restart = true;
+  
   new_game_button.classList.add("disable");
   connect_to_game_button.classList.add("disable");
   game_restart_button.classList.add("disable");
@@ -71,18 +79,18 @@ function restart_game() {
 }
 
 function handle_game_restart_request() {
-    new_game_button.classList.add("disable");
-    connect_to_game_button.classList.add("disable");
-    game_restart_button.classList.add("disable");
-    game_id_input.disabled = true;
+  new_game_button.classList.add("disable");
+  connect_to_game_button.classList.add("disable");
+  game_restart_button.classList.add("disable");
+  game_id_input.disabled = true;
 
-    reset_board();
-    game.gamePlayStatus = GameStatus.IN_PROGRESS;
+  reset_board();
+  game.gamePlayStatus = GameStatus.IN_PROGRESS;
 }
 
 function reset_board() {
   $("div.bead").remove();
-  isPlayerOne = false;
+  is_player_one = false;
   game.activePlayer = Player.TWO;
   update_house_counters(true);
   populate_row("pt");
@@ -90,13 +98,13 @@ function reset_board() {
 }
 
 function reset_stones() {
-    for (let i = 0; i <= player_two_house_index; i++) {
-        if (i == player_one_house_index || i == player_two_house_index) {
-            game.mancalaBoard[i].stones = 0;
-        } else {
-            game.mancalaBoard[i].stones = number_of_beads_per_pot;
-        }
+  for (let i = 0; i <= player_two_house_index; i++) {
+    if (i == player_one_house_index || i == player_two_house_index) {
+      game.mancalaBoard[i].stones = 0;
+    } else {
+      game.mancalaBoard[i].stones = number_of_beads_per_pot;
     }
+  }
 }
 
 function update_house_counters(is_new_game) {
@@ -110,20 +118,20 @@ function update_house_counters(is_new_game) {
 }
 
 function update_game_parameters() {
-    if(game.gamePlayStatus != GameStatus.FINISHED) {
-        let message;
-        if (game.activePlayer == Player.ONE) {
-            isPlayerOne = true;
-            message = (player_name == Player.ONE)? player_one_turn_message_string : opponent_turn_message_string;
-            game_status_message.innerHTML = message;
-        } else {
-            isPlayerOne = false;
-            message = (player_name == Player.TWO)? player_two_turn_message_string : opponent_turn_message_string;
-            game_status_message.innerHTML = message;
-        }
-        toggle_player_buttons_selection();
-        add_pot_handlers();
+  if(game.gamePlayStatus != GameStatus.FINISHED) {
+    let message;
+    if (game.activePlayer == Player.ONE) {
+      is_player_one = true;
+      message = (player_name == Player.ONE)? player_one_turn_message_string : opponent_turn_message_string;
+      game_status_message.innerHTML = message;
+    } else {
+      is_player_one = false;
+      message = (player_name == Player.TWO)? player_two_turn_message_string : opponent_turn_message_string;
+      game_status_message.innerHTML = message;
     }
+    toggle_player_buttons_selection();
+    add_pot_handlers();
+  }
 }
 
 function is_game_over() {
@@ -148,8 +156,7 @@ function is_game_over() {
 }
 
 function determine_winner() {
-  remove_action_handlers (".botmid .pot");
-  remove_action_handlers (".topmid .pot");
+  remove_pot_handlers();
   let player_one_count = 0;
   for (let i = 0; i <= player_one_house_index; i++) {
     player_one_count += game.mancalaBoard[i].stones;
@@ -177,7 +184,7 @@ function determine_winner() {
         if (player_name == Player.TWO) {
             winner_string = construct_game_winner_message(winning_total);
         } else {
-            winner_string = construct_game_loser_message (winning_total);
+            winner_string = construct_game_loser_message(winning_total);
         }
      }
     game_status_message.innerHTML = winner_string;
@@ -186,16 +193,9 @@ function determine_winner() {
     game.gamePlayStatus = GameStatus.FINISHED;
     game.winner = winner;
     game.selectedStoneContainerIndex = player_one_house_index;
-    game_play ();
+    game_play();
   }
   game_over_updates();
-}
-
-function construct_game_winner_message (winning_total) {
-    return winning_message_string + winning_total + "!";
-}
-function construct_game_loser_message (winning_total) {
-    return losing_message_string + winning_total + ".";
 }
 
 function game_over_updates() {
@@ -204,6 +204,17 @@ function game_over_updates() {
     game_restart_button.classList.remove("disable");
     game_id_input.disabled = false;
     reset_board();
+}
+
+function game_error_updates() {
+    $("div.message").remove();
+    new_game_button.classList.remove("disable");
+    connect_to_game_button.classList.remove("disable");
+    game_restart_button.classList.add("disable");
+    game_id_input.disabled = false;
+    reset_board();
+    disable_chat();
+    game_error_message();
 }
 
 function enable_chat() {
@@ -223,16 +234,6 @@ function disable_chat() {
 
 function clear_chat_messages() {
     $("div.message").remove();
-}
-
-function game_error_updates() {
-    $("div.message").remove();
-    new_game_button.classList.remove("disable");
-    connect_to_game_button.classList.remove("disable");
-    game_id_input.disabled = false;
-    game_error_message();
-    reset_board ();
-    disable_chat();
 }
 
 function map_pots_to_board(src_pot) {
@@ -273,4 +274,11 @@ function game_error_message() {
 
 function connect_retry_message() {
     game_status_message.innerHTML = connect_retry_string;
+}
+
+function construct_game_winner_message (winning_total) {
+    return winning_message_string + winning_total + "!";
+}
+function construct_game_loser_message (winning_total) {
+    return losing_message_string + winning_total + ".";
 }

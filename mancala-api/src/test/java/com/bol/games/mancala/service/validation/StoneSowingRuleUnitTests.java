@@ -31,7 +31,6 @@ class StoneSowingRuleUnitTests {
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
         MancalaGame playerOneFirstMoveGame = mapper.readValue(resourceAsInputStream(playerOneFirstMove), MancalaGame.class);
 
-
         assertThrows(ValidationException.class, () -> stoneSowingRule
                 .processRequest(playerTwoOppositeStoneCaptureGame,
                         playerOneFirstMoveGame,
