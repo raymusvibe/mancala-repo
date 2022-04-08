@@ -152,8 +152,8 @@ mancala-api-package:jdk11:
   artifacts:
     paths:
       - target/*.jar
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
 
 
 mancala-gateway-package:jdk11:
@@ -169,8 +169,8 @@ mancala-gateway-package:jdk11:
   artifacts:
     paths:
       - target/*.jar
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
 
 mancala-service-discovery-package:jdk11:
   stage: package
@@ -185,8 +185,8 @@ mancala-service-discovery-package:jdk11:
   artifacts:
     paths:
       - target/*.jar
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
 
 mancala-api-deploy:
   stage: deploy
@@ -195,6 +195,8 @@ mancala-api-deploy:
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
     - echo "TODO... for deploying the mancala-api application..."
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
 
 mancala-gateway-deploy:
   stage: deploy
@@ -203,6 +205,8 @@ mancala-gateway-deploy:
   script:
     - cd ${CI_PROJECT_DIR}/gateway
     - echo "TODO... for deploying the mancala-gateway application..."
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
 
 mancala-service-discovery-deploy:
   stage: deploy
@@ -211,6 +215,8 @@ mancala-service-discovery-deploy:
   script:
     - cd ${CI_PROJECT_DIR}/eureka
     - echo "TODO... for deploying the mancala-service-discovery application..."
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
 
 mancala-frontend-deploy:
   stage: deploy
@@ -219,4 +225,6 @@ mancala-frontend-deploy:
   script:
     - cd ${CI_PROJECT_DIR}/mancala-frontend/interactive
     - echo "TODO... for deploying the mancala-frontend application..."
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
 
