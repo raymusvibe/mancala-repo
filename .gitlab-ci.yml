@@ -65,7 +65,7 @@ mancala-api-build:jdk11:
   needs: []
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
-    - ./mvnw -ntp compile -P-mancalaApp -Dmaven.repo.local=$MAVEN_USER_HOME
+    - ./mvnw -DskipTests clean install
   artifacts:
     paths:
       - target/classes/
@@ -78,7 +78,7 @@ mancala-gateway-build:jdk11:
   needs: []
   script:
     - cd ${CI_PROJECT_DIR}/gateway
-    - ./mvnw -ntp compile -P-mancalaGatewayApp -Dmaven.repo.local=$MAVEN_USER_HOME
+    - ./mvnw -DskipTests clean install
   artifacts:
     paths:
       - target/classes/
@@ -91,7 +91,7 @@ mancala-service-discovery-build:jdk11:
   needs: []
   script:
     - cd ${CI_PROJECT_DIR}/eureka
-    - ./mvnw -ntp compile -P-mancalaServiceDiscoveryApp -Dmaven.repo.local=$MAVEN_USER_HOME
+    - ./mvnw -DskipTests clean install
   artifacts:
     paths:
       - target/classes/
@@ -117,7 +117,7 @@ mancala-api-test:jdk11:
   needs: ["mancala-api-build:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
-    - mvn clean test
+    - ./mvnw clean test
   artifacts:
     when: always
     paths:
@@ -145,7 +145,7 @@ mancala-api-package:jdk11:
   needs: ["mancala-api-test:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
-    - mvn -DskipTests spring-boot:repackage
+    - ./mvnw -DskipTests package
     - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
     - docker build -f Dockerfile --tag latest .
     - docker push latest
@@ -162,7 +162,7 @@ mancala-gateway-package:jdk11:
   needs: ["mancala-gateway-build:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/gateway
-    - mvn -DskipTests spring-boot:repackage
+    - ./mvnw -DskipTests package
     - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
     - docker build -f Dockerfile --tag latest .
     - docker push latest
@@ -178,7 +178,7 @@ mancala-service-discovery-package:jdk11:
   needs: ["mancala-service-discovery-build:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/eureka
-    - mvn -DskipTests spring-boot:repackage
+    - ./mvnw -DskipTests package
     - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
     - docker build -f Dockerfile --tag latest .
     - docker push latest
