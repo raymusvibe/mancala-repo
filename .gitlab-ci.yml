@@ -114,7 +114,7 @@ include:
 mancala-api-test:jdk11:
   stage: test
   extends: .mancala-api
-  needs: ["mancala-api-build"]
+  needs: ["mancala-api-build:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
     - mvn clean test
@@ -142,7 +142,7 @@ mancala-frontend-test:
 mancala-api-package:jdk11:
   stage: package
   extends: .mancala-api
-  needs: ["mancala-api-test"]
+  needs: ["mancala-api-test:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
     - mvn -DskipTests spring-boot:repackage
@@ -159,7 +159,7 @@ mancala-api-package:jdk11:
 mancala-gateway-package:jdk11:
   stage: package
   extends: .mancala-gateway
-  needs: ["mancala-gateway-build"]
+  needs: ["mancala-gateway-build:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/gateway
     - mvn -DskipTests spring-boot:repackage
@@ -175,7 +175,7 @@ mancala-gateway-package:jdk11:
 mancala-service-discovery-package:jdk11:
   stage: package
   extends: .mancala-service-discovery
-  needs: ["mancala-service-discovery-build"]
+  needs: ["mancala-service-discovery-build:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/eureka
     - mvn -DskipTests spring-boot:repackage
@@ -191,7 +191,7 @@ mancala-service-discovery-package:jdk11:
 mancala-api-deploy:
   stage: deploy
   extends: .mancala-api
-  needs: ["mancala-api-test"]
+  needs: ["mancala-api-package:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
     - echo "TODO... for deploying the mancala-api application..."
@@ -201,7 +201,7 @@ mancala-api-deploy:
 mancala-gateway-deploy:
   stage: deploy
   extends: .mancala-gateway
-  needs: ["mancala-gateway-package"]
+  needs: ["mancala-gateway-package:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/gateway
     - echo "TODO... for deploying the mancala-gateway application..."
@@ -211,7 +211,7 @@ mancala-gateway-deploy:
 mancala-service-discovery-deploy:
   stage: deploy
   extends: .mancala-service-discovery
-  needs: ["mancala-service-discovery-package"]
+  needs: ["mancala-service-discovery-package:jdk11"]
   script:
     - cd ${CI_PROJECT_DIR}/eureka
     - echo "TODO... for deploying the mancala-service-discovery application..."
