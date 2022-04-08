@@ -16,7 +16,7 @@ stages:
 
 variables:
   RULES_CHANGES_PATH: "**/*"
-  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   SPRING_PROFILES_ACTIVE: gitlab-ci
 
@@ -64,7 +64,7 @@ mancala-api-build:jdk11:
   extends: .mancala-api
   needs: []
   script:
-    - cd "$CI_PROJECT_DIR/mancala-api"
+    - cd ${CI_PROJECT_DIR}/mancala-api
     - ./mvnw -ntp compile -P-mancalaApp -Dmaven.repo.local=$MAVEN_USER_HOME
     artifacts:
       paths:
@@ -77,7 +77,7 @@ mancala-gateway-build:jdk11:
   extends: .mancala-gateway
   needs: []
   script:
-    - cd "$CI_PROJECT_DIR/gateway"
+    - cd ${CI_PROJECT_DIR}/gateway
     - ./mvnw -ntp compile -P-mancalaGatewayApp -Dmaven.repo.local=$MAVEN_USER_HOME
     artifacts:
       paths:
@@ -90,7 +90,7 @@ mancala-service-discovery-build:jdk11:
   extends: .mancala-service-discovery
   needs: []
   script:
-    - cd "$CI_PROJECT_DIR/eureka"
+    - cd ${CI_PROJECT_DIR}/eureka
     - ./mvnw -ntp compile -P-mancalaServiceDiscoveryApp -Dmaven.repo.local=$MAVEN_USER_HOME
     artifacts:
       paths:
@@ -103,7 +103,7 @@ mancala-frontend-build:
   extends: .mancala-frontend
   needs: []
   script:
-    - cd "$CI_PROJECT_DIR/mancala-frontend/interactive"
+    - cd ${CI_PROJECT_DIR}/mancala-frontend/interactive
     - echo "TODO... for compiling the mancala-frontend code..."
 
 sast:
@@ -116,7 +116,7 @@ mancala-api-test:jdk11:
   extends: .mancala-api
   needs: ["mancala-api-build"]
   script:
-    - cd "$CI_PROJECT_DIR/mancala-api"
+    - cd ${CI_PROJECT_DIR}/mancala-api
     - mvn clean test
   artifacts:
     when: always
@@ -135,7 +135,7 @@ mancala-frontend-test:
   extends: .mancala-api
   needs: ["mancala-frontend-build"]
   script:
-    - cd "$CI_PROJECT_DIR/mancala-frontend/interactive"
+    - cd ${CI_PROJECT_DIR}/mancala-frontend/interactive
     - echo "TODO... for testing the mancala-frontend code..."
   when: always
 
@@ -144,7 +144,7 @@ mancala-api-package:jdk11:
   extends: .mancala-api
   needs: ["mancala-api-test"]
   script:
-    - cd "$CI_PROJECT_DIR/mancala-api"
+    - cd ${CI_PROJECT_DIR}/mancala-api
     - mvn -DskipTests spring-boot:repackage
     - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
     - docker build -f Dockerfile --tag latest .
@@ -161,7 +161,7 @@ mancala-gateway-package:jdk11:
   extends: .mancala-gateway
   needs: ["mancala-gateway-build"]
   script:
-    - cd "$CI_PROJECT_DIR/gateway"
+    - cd ${CI_PROJECT_DIR}/gateway
     - mvn -DskipTests spring-boot:repackage
     - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
     - docker build -f Dockerfile --tag latest .
@@ -177,7 +177,7 @@ mancala-service-discovery-package:jdk11:
   extends: .mancala-service-discovery
   needs: ["mancala-service-discovery-build"]
   script:
-    - cd "$CI_PROJECT_DIR/eureka"
+    - cd ${CI_PROJECT_DIR}/eureka
     - mvn -DskipTests spring-boot:repackage
     - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
     - docker build -f Dockerfile --tag latest .
@@ -193,7 +193,7 @@ mancala-api-deploy:
   extends: .mancala-api
   needs: ["mancala-api-test"]
   script:
-    - cd "$CI_PROJECT_DIR/mancala-api"
+    - cd ${CI_PROJECT_DIR}/mancala-api
     - echo "TODO... for deploying the mancala-api application..."
 
 mancala-gateway-deploy:
@@ -201,7 +201,7 @@ mancala-gateway-deploy:
   extends: .mancala-gateway
   needs: ["mancala-gateway-package"]
   script:
-    - cd "$CI_PROJECT_DIR/gateway"
+    - cd ${CI_PROJECT_DIR}/gateway
     - echo "TODO... for deploying the mancala-gateway application..."
 
 mancala-service-discovery-deploy:
@@ -209,7 +209,7 @@ mancala-service-discovery-deploy:
   extends: .mancala-service-discovery
   needs: ["mancala-service-discovery-package"]
   script:
-    - cd "$CI_PROJECT_DIR/eureka"
+    - cd ${CI_PROJECT_DIR}/eureka
     - echo "TODO... for deploying the mancala-service-discovery application..."
 
 mancala-frontend-deploy:
@@ -217,6 +217,6 @@ mancala-frontend-deploy:
   extends: .mancala-frontend
   needs: ["mancala-frontend-test"]
   script:
-    - cd "$CI_PROJECT_DIR/mancala-frontend/interactive"
+    - cd ${CI_PROJECT_DIR}/mancala-frontend/interactive
     - echo "TODO... for deploying the mancala-frontend application..."
 
