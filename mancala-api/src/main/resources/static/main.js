@@ -15,7 +15,69 @@ var opponent_name;
 
 var map_board_to_pots = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "mb"];
 
-/*Moves beads. Also updates game object in live play, but not for the simulations on opponents move*/
+/*Main method for sowing*/
+function sow_beads(src_pot, last_pot, is_live_play) {
+  const children = src_pot.$().children();
+  if(children.length === 0) {
+    complete_turn(src_pot, is_live_play);
+    return;
+  }
+  if(last_pot === null) {
+    last_pot = src_pot;
+  }
+  let selected_bead = children.get(0);
+  //reverse bead deque order when sowing has come all way back to same pot (Or simply skip bead at position zero)
+  if ($(selected_bead).attr('hasMoved') == "true" && children.length > 1) {
+    selected_bead = children.get(children.length - 1);
+  }
+  last_pot = last_pot.getNextSown(true);
+  // steal
+  if(children.length == 1 &&
+     is_player_one === last_pot.isTop() &&
+     last_pot.$().children().length === 0 &&
+     !last_pot.isMan())
+  {
+    steal(src_pot, last_pot, is_live_play, selected_bead);
+  } else {
+    if(children.length == 1) {
+      //cater for last bead in the event it has already been moved
+      if ($(selected_bead).attr('hasMoved') == "true") {
+        $(selected_bead).attr('hasMoved', false);
+        complete_turn(src_pot, is_live_play);
+        return;
+      } else {
+        if (last_pot.id == src_pot.id) {
+          if (is_player_one === last_pot.isTop() &&
+            !last_pot.isMan())
+          {
+            steal(src_pot, last_pot, is_live_play, selected_bead);
+          }
+          complete_turn(src_pot, is_live_play);
+          return;
+        }
+        move_bead(selected_bead, src_pot, last_pot, false, is_live_play);
+      }
+    } else {
+      if (last_pot.id == src_pot.id) {
+        //tag the selected bead and move the next bead
+        $(selected_bead).attr('hasMoved', true);
+        let next_bead = children.get(1);
+        last_pot = last_pot.getNextSown(true);
+        move_bead(next_bead, src_pot, last_pot, false, is_live_play);
+        last_pot_after_full_revolution = last_pot;
+      } else {
+        if ($(selected_bead).attr('hasMoved') != "true") {
+          move_bead(selected_bead, src_pot, last_pot, false, is_live_play);
+          //keep track of variable in case player turn goes all way round
+          last_pot_after_full_revolution = last_pot;
+        }
+      }
+    }
+  }
+  setTimeout(sow_beads,350,src_pot,last_pot,is_live_play)
+}
+
+/*Moves beads and updates game object in live play, but not for the simulation of opponents play*/
 function move_bead(bead, src_pot, dest_pot, is_steal, is_live_play)
 {
   if (is_live_play) {
@@ -98,68 +160,6 @@ function complete_turn(src_pot, is_live_play) {
         update_game_parameters();
     }
   }
-}
-
-/*Main method for sowing*/
-function sow_beads(src_pot, last_pot, is_live_play) {
-  const children = src_pot.$().children();
-  if(children.length === 0) {
-    complete_turn(src_pot, is_live_play);
-    return;
-  }
-  if(last_pot === null) {
-    last_pot = src_pot;
-  }
-  let selected_bead = children.get(0);
-  //reverse bead deque order when sowing has come all way back to same pot (Or simply skip bead at position zero)
-  if ($(selected_bead).attr('hasMoved') == "true" && children.length > 1) {
-    selected_bead = children.get(children.length - 1);
-  }
-  last_pot = last_pot.getNextSown(true);
-  // steal
-  if(children.length == 1 &&
-     is_player_one === last_pot.isTop() &&
-     last_pot.$().children().length === 0 &&
-     !last_pot.isMan())
-  {
-    steal(src_pot, last_pot, is_live_play, selected_bead);
-  } else {
-    if(children.length == 1) {
-      //cater for last bead in the event it has already been moved
-      if ($(selected_bead).attr('hasMoved') == "true") {
-        $(selected_bead).attr('hasMoved', false);
-        complete_turn(src_pot, is_live_play);
-        return;
-      } else {
-        if (last_pot.id == src_pot.id) {
-          if (is_player_one === last_pot.isTop() &&
-            !last_pot.isMan())
-          {
-            steal(src_pot, last_pot, is_live_play, selected_bead);
-          }
-          complete_turn(src_pot, is_live_play);
-          return;
-        }
-        move_bead(selected_bead, src_pot, last_pot, false, is_live_play);
-      }
-    } else {
-      if (last_pot.id == src_pot.id) {
-        //tag the selected bead and move the next bead
-        $(selected_bead).attr('hasMoved', true);
-        let next_bead = children.get(1);
-        last_pot = last_pot.getNextSown(true);
-        move_bead(next_bead, src_pot, last_pot, false, is_live_play);
-        last_pot_after_full_revolution = last_pot;
-      } else {
-        if ($(selected_bead).attr('hasMoved') != "true") {
-          move_bead(selected_bead, src_pot, last_pot, false, is_live_play);
-          //keep track of variable in case player turn goes all way round
-          last_pot_after_full_revolution = last_pot;
-        }
-      }
-    }
-  }
-  setTimeout(sow_beads,350,src_pot,last_pot,is_live_play)
 }
 
 function handle_gameplay_websocket_response() {

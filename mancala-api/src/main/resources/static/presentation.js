@@ -275,9 +275,9 @@ function toggle_player_buttons_selection() {
 
 function append_chat_message(response) {
   let display_name = (response.sender == Player.ONE)? "Player One#" : "Player Two#";
-  let content = "<div class=\"message\">"
-                + "<p class=\"chat_display\">" + display_name + " :> " + response.message + "</p>"
-                + "</div>"
+  let content = '<div class="message">'
+                + '<p class="chat_display">' + display_name + ' :> ' + response.message + '</p>'
+                + '</div>'
 
   $("#chat_messages").append(content);
   chat_message_input.value = "";

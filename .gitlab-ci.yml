@@ -5,9 +5,218 @@
 # Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+
+image: maven:3-jdk-11
+
 stages:
-- test
+  - build
+  - test
+  - package
+  - deploy
+
+variables:
+  RULES_CHANGES_PATH: "**/*"
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+
+cache:
+  paths:
+    - .m2/repository
+  key: "$CI_BUILD_REF_NAME"
+
+.base-rules:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - $RULES_CHANGES_PATH
+    - when: manual
+      allow_failure: true
+
+.mancala-api:
+  extends: .base-rules
+  variables:
+    RULES_CHANGES_PATH: "mancala-api/**/*"
+
+.mancala-gateway:
+  extends: .base-rules
+  variables:
+    RULES_CHANGES_PATH: "gateway/**/*"
+
+.mancala-service-discovery:
+  extends: .base-rules
+  variables:
+    RULES_CHANGES_PATH: "eureka/**/*"
+
+.mancala-frontend:
+  extends: .base-rules
+  variables:
+    RULES_CHANGES_PATH: "mancala-frontend/**/*"
+
+mancala-api-build:jdk11:
+  stage: build
+  extends: .mancala-api
+  needs: []
+  script:
+    - cd "$CI_PROJECT_DIR/mancala-api"
+    - ./mvnw -ntp compile -P-mancalaApp -Dmaven.repo.local=$MAVEN_USER_HOME
+    artifacts:
+      paths:
+        - target/classes/
+        - target/generated-sources/
+      expire_in: 1 day
+
+mancala-gateway-build:jdk11:
+  stage: build
+  extends: .mancala-gateway
+  needs: []
+  script:
+    - cd "$CI_PROJECT_DIR/gateway"
+    - ./mvnw -ntp compile -P-mancalaGatewayApp -Dmaven.repo.local=$MAVEN_USER_HOME
+    artifacts:
+      paths:
+        - target/classes/
+        - target/generated-sources/
+      expire_in: 1 day
+
+mancala-service-discovery-build:jdk11:
+  stage: build
+  extends: .mancala-service-discovery
+  needs: []
+  script:
+    - cd "$CI_PROJECT_DIR/eureka"
+    - ./mvnw -ntp compile -P-mancalaServiceDiscoveryApp -Dmaven.repo.local=$MAVEN_USER_HOME
+    artifacts:
+      paths:
+        - target/classes/
+        - target/generated-sources/
+      expire_in: 1 day
+
+mancala-frontend-build:
+  stage: build
+  extends: .mancala-frontend
+  needs: []
+  script:
+    - cd "$CI_PROJECT_DIR/mancala-frontend/interactive"
+    - echo "TODO... for compiling the mancala-frontend code..."
+
 sast:
   stage: test
 include:
-- template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
+mancala-api-test:jdk11:
+  stage: test
+  extends: .mancala-api
+  needs: ["mancala-api-build"]
+  script:
+    - cd "$CI_PROJECT_DIR/mancala-api"
+    - mvn clean test
+  artifacts:
+    when: always
+    paths:
+      - target/site/jacoco
+      - target/site
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
+    expire_in: 1 day
+  when: always
+
+mancala-frontend-test:
+  stage: test
+  extends: .mancala-api
+  needs: ["mancala-frontend-build"]
+  script:
+    - cd "$CI_PROJECT_DIR/mancala-frontend/interactive"
+    - echo "TODO... for testing the mancala-frontend code..."
+  when: always
+
+mancala-api-package:jdk11:
+  stage: package
+  extends: .mancala-api
+  needs: ["mancala-api-test"]
+  script:
+    - cd "$CI_PROJECT_DIR/mancala-api"
+    - mvn -DskipTests spring-boot:repackage
+    - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
+    - docker build -f Dockerfile --tag latest .
+    - docker push latest
+  artifacts:
+    paths:
+      - target/*.jar
+  only:
+    - master
+
+
+mancala-gateway-package:jdk11:
+  stage: package
+  extends: .mancala-gateway
+  needs: ["mancala-gateway-build"]
+  script:
+    - cd "$CI_PROJECT_DIR/gateway"
+    - mvn -DskipTests spring-boot:repackage
+    - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
+    - docker build -f Dockerfile --tag latest .
+    - docker push latest
+  artifacts:
+    paths:
+      - target/*.jar
+  only:
+    - master
+
+mancala-service-discovery-package:jdk11:
+  stage: package
+  extends: .mancala-service-discovery
+  needs: ["mancala-service-discovery-build"]
+  script:
+    - cd "$CI_PROJECT_DIR/eureka"
+    - mvn -DskipTests spring-boot:repackage
+    - docker login -u $DOCKER_USER -p $ACCESS_TOKEN $CI_REGISTRY
+    - docker build -f Dockerfile --tag latest .
+    - docker push latest
+  artifacts:
+    paths:
+      - target/*.jar
+  only:
+    - master
+
+mancala-api-deploy:
+  stage: deploy
+  extends: .mancala-api
+  needs: ["mancala-api-test"]
+  script:
+    - cd "$CI_PROJECT_DIR/mancala-api"
+    - echo "TODO... for deploying the mancala-api application..."
+
+mancala-gateway-deploy:
+  stage: deploy
+  extends: .mancala-gateway
+  needs: ["mancala-gateway-package"]
+  script:
+    - cd "$CI_PROJECT_DIR/gateway"
+    - echo "TODO... for deploying the mancala-gateway application..."
+
+mancala-service-discovery-deploy:
+  stage: deploy
+  extends: .mancala-service-discovery
+  needs: ["mancala-service-discovery-package"]
+  script:
+    - cd "$CI_PROJECT_DIR/eureka"
+    - echo "TODO... for deploying the mancala-service-discovery application..."
+
+mancala-frontend-deploy:
+  stage: deploy
+  extends: .mancala-frontend
+  needs: ["mancala-frontend-test"]
+  script:
+    - cd "$CI_PROJECT_DIR/mancala-frontend/interactive"
+    - echo "TODO... for deploying the mancala-frontend application..."
+
