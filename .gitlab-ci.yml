@@ -66,11 +66,11 @@ mancala-api-build:jdk11:
   script:
     - cd ${CI_PROJECT_DIR}/mancala-api
     - ./mvnw -ntp compile -P-mancalaApp -Dmaven.repo.local=$MAVEN_USER_HOME
-    artifacts:
-      paths:
-        - target/classes/
-        - target/generated-sources/
-      expire_in: 1 day
+  artifacts:
+    paths:
+      - target/classes/
+      - target/generated-sources/
+    expire_in: 1 day
 
 mancala-gateway-build:jdk11:
   stage: build
@@ -79,11 +79,11 @@ mancala-gateway-build:jdk11:
   script:
     - cd ${CI_PROJECT_DIR}/gateway
     - ./mvnw -ntp compile -P-mancalaGatewayApp -Dmaven.repo.local=$MAVEN_USER_HOME
-    artifacts:
-      paths:
-        - target/classes/
-        - target/generated-sources/
-      expire_in: 1 day
+  artifacts:
+    paths:
+      - target/classes/
+      - target/generated-sources/
+    expire_in: 1 day
 
 mancala-service-discovery-build:jdk11:
   stage: build
@@ -92,11 +92,11 @@ mancala-service-discovery-build:jdk11:
   script:
     - cd ${CI_PROJECT_DIR}/eureka
     - ./mvnw -ntp compile -P-mancalaServiceDiscoveryApp -Dmaven.repo.local=$MAVEN_USER_HOME
-    artifacts:
-      paths:
-        - target/classes/
-        - target/generated-sources/
-      expire_in: 1 day
+  artifacts:
+    paths:
+      - target/classes/
+      - target/generated-sources/
+    expire_in: 1 day
 
 mancala-frontend-build:
   stage: build
