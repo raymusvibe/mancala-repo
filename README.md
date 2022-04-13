@@ -13,11 +13,6 @@ The game UI looks as follows:
 
 ![Image of Mancala](documentation-images/mancala-frontend.png)
 
-## Fault Tolerance
-If at any time the connection to the service is lost (e.g. server restart), the frontend will try to re-establish a connection using a simple back-off algorithm for a short while before giving up. If a connection is re-established, the clients immediately request the correct game state from the service using a game object marked "DISRUPTED", after which players can resume play.
-
-The UI can get out of sync with the game object. If this occurs, the frontend first tries to resolve the issue by syncing with the local game object. If this fails, it requests the correct game state from the service and syncs with that.
-
 ## Technologies
 - `Spring Boot` , rapid application development framework used for building microservices applications in Java.
 - `JQuery/StompJS/CSS/HTML` , Technologies used to build the front-end and communicate with the backend.
@@ -86,6 +81,11 @@ To scan the application's docker images for vulnerabilities, run:
 The list of docker images can be obtained by the command:
 
 ```docker image list```
+
+## Fault Tolerance
+If at any time the connection to the service is lost (e.g. server restart), the frontend will try to re-establish a connection using a simple back-off algorithm for a short while before giving up. If a connection is re-established, the clients immediately request the correct game state from the service using a game object marked "DISRUPTED", after which players can resume play.
+
+The UI can get out of sync with the game object. If this occurs, the frontend first tries to resolve the issue by syncing with the local game object. If this fails, it requests the correct game state from the service and syncs with that.
 
 ## Support
 Feel free to contact the author on [LinkedIn](https://www.linkedin.com/in/ray-musvibe-1a114533/) for any thoughts or suggestions.
