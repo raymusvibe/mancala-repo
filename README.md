@@ -37,19 +37,20 @@ The game UI looks as follows:
 - `jshint`, for Javascript code analysis.
 
 ## Visuals
-Grafana Dashboard:
+
+### Grafana Dashboard:
 
 ![Image of Grafana](documentation-images/grafana.png)
 
-Prometheus Targets:
+### Prometheus Targets:
 
 ![Image of Prometheus](documentation-images/prometheus.png)
 
-Eureka Service Registry:
+### Eureka Service Registry:
 
 ![Image of Eureka](documentation-images/eureka.png)
 
-Gatling Websocket Stress Test Results:
+### Gatling Websocket Stress Test Results:
 
 ![Image of Gatling](documentation-images/gatling.png)
 
