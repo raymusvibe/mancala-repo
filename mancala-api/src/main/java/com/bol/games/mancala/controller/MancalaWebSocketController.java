@@ -3,6 +3,8 @@ package com.bol.games.mancala.controller;
 import com.bol.games.mancala.controller.dto.Message;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @Slf4j
+@AllArgsConstructor
 public class MancalaWebSocketController {
 
     @Autowired
@@ -20,13 +23,17 @@ public class MancalaWebSocketController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @MessageMapping("/gameplay.{gameId}")
     public MancalaGame gamePlay (@Payload MancalaGame request, @DestinationVariable("gameId") String gameId) throws Exception {
         if (log.isInfoEnabled()) {
-            log.info("gameplay: {}", gameId);
+            log.info("gameplay: {}", mapper.writeValueAsString(request));
         }
         MancalaGame game = validationService.validate(request);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress." + gameId, game);
+        if (game != null) {
+            simpMessagingTemplate.convertAndSend("/topic/game-progress." + gameId, game);
+        }
         return game;
     }
 

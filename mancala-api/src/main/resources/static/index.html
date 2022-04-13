@@ -2,8 +2,8 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>Mancala Board (Code Pen)</title>
-  <link rel="stylesheet" href="./style.css">
+  <title>Mancala Online!</title>
+  <link rel="stylesheet" href="./css/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
@@ -53,7 +53,7 @@
     </div>
     <div class="game_connect_area">
       <button id="connect_to_game_button" class="button button1" type="button" onclick="connect_to_specific_game()">Connect to game</button>
-      <input id="game_id" class="w3-input w3-border" type="text " placeholder="Paste a valid game ID here and press connect button/Enter key. Or start a new game">
+      <input id="game_id" class="w3-input w3-border" type="text" placeholder="Paste a valid game ID here and press connect button/Enter key. Or start a new game">
     </div>
     <div id = "restart_game_area" class="input_area">
       <button id="game_restart_button" class="button button1 disable" type="button" onclick="restart_game()">Re-start the game</button>
@@ -63,18 +63,18 @@
     </div>
     <div id ="chat_controls" class="input_area hidden">
       <button id="chat_message_button" class="button button1" type="button" onclick="send_chat_message()">Send</button>
-      <input id="chat_message" class="w3-input w3-border" type="text " placeholder="Type chat messages here to speak to opponent. Click or press Enter to send">
+      <input id="chat_message" class="w3-input w3-border" type="text" placeholder="Type chat messages here to speak to opponent. Click or press Enter to send">
     </div>
     <div id="chat_messages" class = "input_area hidden">
     </div>
   </div>
   </div>
-<script  src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script  src="./presentation.js"></script>
-<script  src="./enums.js"></script>
-<script  src="./utils.js"></script>
-<script  src="./main.js"></script>
-<script  src="./api.js"></script>
+<script  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script  src="./js/presentation.js"></script>
+<script  src="./js/enums.js"></script>
+<script  src="./js/utils.js"></script>
+<script  src="./js/main.js"></script>
+<script  src="./js/api.js"></script>
 
 </body>
 </html>

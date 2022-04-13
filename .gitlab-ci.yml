@@ -1,11 +1,3 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-
 image: maven:3-jdk-11
 
 stages:
@@ -106,11 +98,6 @@ mancala-frontend-build:
     - cd ${CI_PROJECT_DIR}/mancala-frontend/interactive
     - echo "TODO... for compiling the mancala-frontend code..."
 
-sast:
-  stage: test
-include:
-  - template: Security/SAST.gitlab-ci.yml
-
 mancala-api-test:jdk11:
   stage: test
   extends: .mancala-api
@@ -154,7 +141,6 @@ mancala-api-package:jdk11:
       - target/*.jar
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
-
 
 mancala-gateway-package:jdk11:
   stage: package
@@ -228,3 +214,9 @@ mancala-frontend-deploy:
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
 
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Container-Scanning.gitlab-ci.yml
+  - template: Code-Quality.gitlab-ci.yml

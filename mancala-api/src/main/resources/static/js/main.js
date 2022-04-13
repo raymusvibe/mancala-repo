@@ -5,7 +5,6 @@ var player_two_house_index = 13;
 var total_beads_count = 72;
 
 var player_initiated_game_restart = false;
-var last_pot_after_full_revolution = null;
 var is_player_one = null;
 
 var game_id;
@@ -14,6 +13,9 @@ var player_name;
 var opponent_name;
 
 var map_board_to_pots = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "mb"];
+
+let last_pot_after_full_revolution = null;
+let board_misalignment_handled = false;
 
 /*Main method for sowing*/
 function sow_beads(src_pot, last_pot, is_live_play) {
@@ -82,7 +84,7 @@ function move_bead(bead, src_pot, dest_pot, is_steal, is_live_play)
 {
   if (is_live_play) {
     let src_index;
-    let dest_index;;
+    let dest_index;
     if (is_player_one) {
       if (is_steal) {
         src_index = src_pot.getNumber() + number_of_pots_per_player;
@@ -125,7 +127,12 @@ function move_bead(bead, src_pot, dest_pot, is_steal, is_live_play)
 
     if (source_bead_count == 0) {
       //ui is most likely out of sync with game object, cannot move stones from empty container
-      sync_board_with_ui_beads ();
+      if (!board_misalignment_handled) {
+          sync_board_with_ui_beads ();
+          game_state_correction_message ();
+          //will ensure board sync is handled only once
+          board_misalignment_handled = true;
+      }
       return;
     }
 
@@ -142,6 +149,15 @@ function move_bead(bead, src_pot, dest_pot, is_steal, is_live_play)
 /*Runs at the end of each player's turn*/
 function complete_turn(src_pot, is_live_play) {
   last_pot_after_full_revolution = null;
+  let board_misalignment_handled = false;
+
+  if (is_board_and_game_ui_misaligned ()) {
+    game.gamePlayStatus = GameStatus.DISRUPTED;
+    game_play ();
+    sync_board_with_ui_beads ();
+    return;
+  }
+
   update_house_counters(false);
 
   if(board_total () != total_beads_count) {

@@ -60,6 +60,6 @@
     }
   ],
   "activePlayer": "PLAYER_TWO",
-  "winner": "PLAYER_TWO",
+  "winner": null,
   "selectedStoneContainerIndex": 12
 }

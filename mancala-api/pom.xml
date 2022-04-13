@@ -12,7 +12,7 @@
 	<artifactId>mancala-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>mancala-api</name>
-	<description>Mancala application for Bol</description>
+	<description>Mancala application</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -115,7 +115,6 @@
 						<exclude>com/bol/games/mancala/config/*</exclude>
 						<exclude>com/bol/games/mancala/exception/*</exclude>
 						<exclude>com/bol/games/mancala/constants/*</exclude>
-						<exclude>com/bol/games/mancala/model/*</exclude>
 						<exclude>com/bol/games/mancala/*</exclude>
 						<exclude>com/bol/games/mancala/service/validation/abstractions/*</exclude>
 					</excludes>

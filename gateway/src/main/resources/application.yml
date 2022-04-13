@@ -1,4 +1,16 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 122806740996-lcbgqqgakl7ahif3hei0ulfc7nfsf14v.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: https://localhost/login/oauth2/code/google
+          facebook:
+            client-id: 3228288284164239
+            client-secret: dad2186dfff7bc002821c939ad0a0dbb
+            redirect-uri: https://localhost/login/oauth2/code/facebook
   application:
     name: gateway
   redis:
@@ -32,6 +44,7 @@ eureka:
     prefer-ip-address: true
 
 server:
+  port: 443
   ssl:
     enabled: true
   ssl.key-store-type: PKCS12

@@ -8,6 +8,7 @@ import com.bol.games.mancala.service.abstractions.MancalaGamePlayValidationAPI;
 import com.bol.games.mancala.service.validation.*;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class MancalaGamePlayValidationService implements MancalaGamePlayValidationAPI {
 
     @Autowired
@@ -23,12 +25,13 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
 
     /**
      * Game play validation method used to validate game play from the frontend.
+     * When validation fails, service return correct state to frontend to sync.
      * The chain of responsibility pattern is used to enforce the various rules.
      * @param gameFromFrontEnd the mancala game object send from the frontend.
      * @return the validated game instance, modified according to game rules.
      */
     @Override
-    public final MancalaGame validate (MancalaGame gameFromFrontEnd) throws ValidationException {
+    public final MancalaGame validate (MancalaGame gameFromFrontEnd) {
         mancalaRepository.insertEvent(gameFromFrontEnd);
 
         GameRule gameExistsInStoreRule = new GameExistsInStoreRule();
@@ -43,8 +46,13 @@ public class MancalaGamePlayValidationService implements MancalaGamePlayValidati
         gameWinnerRule.setSuccessor(selectedContainerIndexRule);
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);
 
-        gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, (MancalaRepository) mancalaRepository);
+        try {
+            gameExistsInStoreRule.processRequest(gameFromFrontEnd, null, (MancalaRepository) mancalaRepository);
+        } catch (ValidationException e) {
+            log.error("Error validating gameplay", e);
+        }
 
+        //Validated game state will be in the cache and the DB
         return mancalaRepository.findGame(gameFromFrontEnd.getGameId());
     }
 }

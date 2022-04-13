@@ -15,13 +15,14 @@ const on_page_load_string = "Please start a new game or enter a game id from a f
 const missing_game_id_string = "Please enter game id to connect.";
 const game_error_string = "Unable to continue previous game, please start new game or join another.";
 const connect_retry_string = "Connection to service lost. Trying to reconnect, please wait...";
-const connect_to_game_string = "Success! Waiting for player one to start, you're player two."
-const winning_message_string = "Congratulations, you won with a total of "
-const losing_message_string = "Sorry, you lost. Your opponent won with a total of "
-const draw_message_string = "The game is a draw!"
-const player_one_turn_message_string = "It is your turn, player one."
-const player_two_turn_message_string = "It is your turn, player two."
-const opponent_turn_message_string = "Waiting on the other player to complete their turn."
+const connect_to_game_string = "Success! Waiting for player one to start, you're player two.";
+const winning_message_string = "Congratulations, you won with a total of ";
+const losing_message_string = "Sorry, you lost. Your opponent won with a total of ";
+const draw_message_string = "The game is a draw!";
+const player_one_turn_message_string = "It is your turn, player one.";
+const player_two_turn_message_string = "It is your turn, player two.";
+const opponent_turn_message_string = "Waiting on the other player to complete their turn.";
+const game_state_correction_message_string = "The game state has been updated, please continue.";
 
 const chat_key_down = (event) => {
   if (event.key === "Enter") {
@@ -40,7 +41,7 @@ function enable_game_connect_key_down() {
   game_id_input.addEventListener("keydown", game_connect_key_down);
 }
 
-function start_new_game() {
+function ui_start_new_game() {
   player_name = Player.ONE;
   opponent_name = Player.TWO;
   
@@ -51,7 +52,7 @@ function start_new_game() {
   game_status_message.innerHTML = "Ask friend to join with " + game_id;
 }
 
-function connect_to_game () {
+function ui_connect_to_game () {
     player_name = Player.TWO;
     opponent_name = Player.ONE;
     is_player_one = null;
@@ -258,6 +259,9 @@ function board_total() {
 function on_page_load() {
     game_status_message.innerHTML = on_page_load_string;
     enable_game_connect_key_down ();
+    if (window.location.hash == "#_=_") {
+      window.location.hash = "";
+    }
 }
 
 function player_one_restart_message() {
@@ -274,6 +278,10 @@ function game_error_message() {
 
 function connect_retry_message() {
     game_status_message.innerHTML = connect_retry_string;
+}
+
+function game_state_correction_message() {
+    game_status_message.innerHTML = game_state_correction_message_string;
 }
 
 function construct_game_winner_message (winning_total) {

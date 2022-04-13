@@ -4,9 +4,12 @@ let proximity_threshold = 20 * 20;
 let colors = [
   new Color(255,0,0,0.7),
   new Color(0,255,0,0.7),
-  new Color(0,0,255,0.7),
+  new Color(0,71,171,0.7),
   new Color(255,255,0,0.7),
-  new Color(0,255,255,0.7)
+  new Color(0,255,255,0.7),
+  new Color(255,128,0,0.7),
+  new Color(255,51,153,0.7),
+  new Color(0,102,0,0.7)
 ];
 
 function Point(x,y)
@@ -37,7 +40,7 @@ function Color(r,g,b,a)
   this.b = b;
   this.a = a;
   this.toString = function() {
-    return "rgba("+Math.floor(this.r)+","+Math.floor(this.g)+","+Math.floor(this.b)+","+this.a+")"
+    return "rgba("+Math.floor(this.r)+","+Math.floor(this.g)+","+Math.floor(this.b)+","+this.a+")";
   }
   this.lerpTo = function(dest,alpha) {
     const acomp = 1 - alpha;
@@ -242,12 +245,12 @@ function add_pot_handlers() {
       remove_action_handlers (".topmid .pot");
     }
   }
-};
+}
 
 function remove_pot_handlers() {
   remove_action_handlers (".topmid .pot");
   remove_action_handlers (".botmid .pot");
-};
+}
 
 function toggle_player_buttons_selection() {
   if (is_player_one) {
@@ -301,4 +304,15 @@ function sync_board_with_ui_beads () {
       place_new_bead(map_board_to_pots[i], colors[n % colors.length]);
     }
   }
+}
+
+function is_board_and_game_ui_misaligned () {
+    for (let i = 0; i <= player_two_house_index; i++ ) {
+        let src_pot = new Pot(map_board_to_pots[i]);
+        let children = src_pot.$().children();
+        if(children.length != game.mancalaBoard[i].stones) {
+          return true;
+        }
+    }
+    return false;
 }

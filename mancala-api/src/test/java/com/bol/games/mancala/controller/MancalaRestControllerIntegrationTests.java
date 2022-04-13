@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 class MancalaRestControllerIntegrationTests {
     @InjectMocks
-    MancalaRestController mancalaController;
+    private MancalaRestController mancalaController;
     @Mock
     private MancalaAPI service;
     @Autowired
