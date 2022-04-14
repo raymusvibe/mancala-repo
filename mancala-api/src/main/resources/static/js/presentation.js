@@ -138,11 +138,11 @@ function setbg_rgba(e,c)
   e.css("background-image",grad );
 }
 
-function read_pos(bead)
+function read_pos(stone)
 {
   return new Point(
-    parseInt($(bead).css("left").slice(0,-2)),
-    parseInt($(bead).css("top").slice(0,-2))
+    parseInt($(stone).css("left").slice(0,-2)),
+    parseInt($(stone).css("top").slice(0,-2))
   );
 }
 
@@ -159,10 +159,10 @@ function generate_pot_offset( radius )
 function pos_proximity_test(test_pos,dest_pot,dist)
 {
   let too_close = false;
-  dest_pot.$().children().each(function(idx,bead)
+  dest_pot.$().children().each(function(idx,stone)
   {
-    const pos_bead = read_pos(bead);
-    if( pos_bead.minus(test_pos).normSq() < dist ) {
+    const pos_stone = read_pos(stone);
+    if( pos_stone.minus(test_pos).normSq() < dist ) {
       too_close = true;
       return false;
     }
@@ -170,13 +170,13 @@ function pos_proximity_test(test_pos,dest_pot,dist)
   return !too_close;
 }
 
-function set_bead_pos(bead,pos) {
-  $(bead).css( {
+function set_stone_pos(stone,pos) {
+  $(stone).css( {
     "top":pos.y + "px","left":pos.x + "px"
   } );
 }
 
-function position_bead(bead, dest_pot) {
+function position_stone(stone, dest_pot) {
   let dsq = proximity_threshold;
   let done = false;
   while( !done ) {
@@ -185,20 +185,20 @@ function position_bead(bead, dest_pot) {
       generate_pot_offset( 25 )
     );
     if(pos_proximity_test(cand_pos,dest_pot,dsq)) {
-      set_bead_pos(bead,cand_pos);
+      set_stone_pos(stone,cand_pos);
       done = true;
     }
   }
 }
 
-function place_new_bead(id, c)
+function place_new_stone(id, c)
 {
-  const bead = $("<div>",{"class":"bead"});
-  $(bead).attr ('hasMoved', false);
-  setbg_rgba(bead,c);
+  const stone = $("<div>",{"class":"stone"});
+  $(stone).attr ('hasMoved', false);
+  setbg_rgba(stone,c);
   const dest_pot = new Pot(id);
-  position_bead(bead,dest_pot);
-  dest_pot.$().append(bead);
+  position_stone(stone,dest_pot);
+  dest_pot.$().append(stone);
 }
 
 function add_listeners(class_list) {
@@ -219,7 +219,7 @@ function add_listeners(class_list) {
     // check if move is valid
     $(class_list).off();
     game.selectedStoneContainerIndex = map_pots_to_board(new Pot($(this).attr("id")));
-    sow_beads (new Pot($(this).attr("id")), null, true);
+    sow_stones (new Pot($(this).attr("id")), null, true);
   });
 }
 
@@ -290,18 +290,18 @@ function populate_row(row) {
   let n = 0;
   for(let c = 0; c < 6; c++) {
     for(let i = 1; i <= 6; i++,n++) {
-      place_new_bead(row + i,colors[n % colors.length]);
+      place_new_stone(row + i,colors[n % colors.length]);
     }
   }
 }
 
-function sync_board_with_ui_beads () {
-  $("div.bead").remove();
+function sync_board_with_ui_stones () {
+  $("div.stone").remove();
   let n = 0;
   for (let i = 0; i <= player_two_house_index; i++) {
     for(let j = 0; j < game.mancalaBoard[i].stones; j++, n++)
     {
-      place_new_bead(map_board_to_pots[i], colors[n % colors.length]);
+      place_new_stone(map_board_to_pots[i], colors[n % colors.length]);
     }
   }
 }

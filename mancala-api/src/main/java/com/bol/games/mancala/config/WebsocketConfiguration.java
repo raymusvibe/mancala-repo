@@ -29,6 +29,7 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public final void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/websocket")
                 .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .withSockJS()
+                .setHeartbeatTime(30_000);
     }
 }

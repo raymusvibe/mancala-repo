@@ -2,11 +2,14 @@ const url = 'https://localhost';
 const login_url = 'https://localhost/login';
 
 let stomp_client;
+let stomp_client_heart_beat_rate = 30000
+
 let player_triggered_connection = false;
+
 let retry_count = 0;
 let retry_limit = 10;
+let retry_nominal_back_off = 500;
 let retry_back_off = 2000;
-let nominal_retry_back_off = 500;
 
 function connect_to_socket() {
     if (stomp_client) {
@@ -14,6 +17,8 @@ function connect_to_socket() {
     }
     let socket = new SockJS(url + "/websocket");
     stomp_client = Stomp.over(socket);
+    stomp_client.heartbeat.outgoing = stomp_client_heart_beat_rate;
+    stomp_client.heartbeat.incoming = stomp_client_heart_beat_rate;
     //disable stomp debug logging to console
     stomp_client.debug = f => f;
     stomp_client.connect({}, function (frame) {
@@ -34,7 +39,7 @@ function connect_to_socket() {
         if (retry_count > 0) {
             game.gamePlayStatus = GameStatus.DISRUPTED;
             game_play();
-            sync_board_with_ui_beads ();
+            sync_board_with_ui_stones ();
             add_pot_handlers();
             update_game_parameters();
             retry_count = 0;
@@ -53,7 +58,7 @@ function error_connect_retry() {
         disable_chat();
         remove_pot_handlers();
         connect_retry_message();
-        setTimeout(connect_to_socket, nominal_retry_back_off + retry_back_off * retry_count);
+        setTimeout(connect_to_socket, retry_nominal_back_off + retry_back_off * retry_count);
         retry_count++;
     } else {
         if (stomp_client) {
@@ -112,7 +117,7 @@ function connect_to_specific_game() {
             }
         },
         error: function (error) {
-            alert("Connection to game failed. Please use a valid game ID or start a new game and share the game ID with a friend to play.");
+            game_connection_error_message ();
         }
     });
 }
@@ -128,7 +133,7 @@ function game_play() {
 function send_chat_message () {
     let message = $("#chat_message").val();
     if (message == null || message === '') {
-        alert ("Please enter a message first to send.");
+        empty_chat_text_error_message ();
         return;
     }
     stomp_client.send(

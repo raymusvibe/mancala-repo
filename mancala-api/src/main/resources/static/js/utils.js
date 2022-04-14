@@ -23,6 +23,8 @@ const player_one_turn_message_string = "It is your turn, player one.";
 const player_two_turn_message_string = "It is your turn, player two.";
 const opponent_turn_message_string = "Waiting on the other player to complete their turn.";
 const game_state_correction_message_string = "The game state has been updated, please continue.";
+const game_connection_error_message_string = "Invalid game ID provided. A game ID can only be used once.";
+const empty_chat_text_error_message_string = "Please enter a message first to send.";
 
 const chat_key_down = (event) => {
   if (event.key === "Enter") {
@@ -90,7 +92,7 @@ function handle_game_restart_request() {
 }
 
 function reset_board() {
-  $("div.bead").remove();
+  $("div.stone").remove();
   is_player_one = false;
   game.activePlayer = Player.TWO;
   update_house_counters(true);
@@ -103,7 +105,7 @@ function reset_stones() {
     if (i == player_one_house_index || i == player_two_house_index) {
       game.mancalaBoard[i].stones = 0;
     } else {
-      game.mancalaBoard[i].stones = number_of_beads_per_pot;
+      game.mancalaBoard[i].stones = number_of_stones_per_pot;
     }
   }
 }
@@ -278,6 +280,14 @@ function game_error_message() {
 
 function connect_retry_message() {
     game_status_message.innerHTML = connect_retry_string;
+}
+
+function game_connection_error_message () {
+    game_status_message.innerHTML = game_connection_error_message_string;
+}
+
+function empty_chat_text_error_message () {
+    game_status_message.innerHTML = empty_chat_text_error_message_string;
 }
 
 function game_state_correction_message() {
