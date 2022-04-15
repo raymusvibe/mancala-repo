@@ -3,8 +3,7 @@ WORKDIR /tmp
 COPY pom.xml .
 RUN mvn dependency:go-offline
 COPY src src
-RUN mvn clean
-RUN mvn package -Dmaven.test.skip=true spring-boot:repackage
+RUN mvn clean package -Dmaven.test.skip=true spring-boot:repackage
 
 FROM adoptopenjdk:11-jre
 COPY target/mancala-api-0.0.1-SNAPSHOT.jar app.jar

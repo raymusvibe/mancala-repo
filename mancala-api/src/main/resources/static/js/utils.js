@@ -76,7 +76,7 @@ function restart_game() {
   game_id_input.disabled = true;
 
   reset_board();
-  game.gamePlayStatus = GameStatus.NEW;
+  game.gamePlayStatus = GameStatus.RESTARTING;
   game.selectedStoneContainerIndex = player_one_house_index;
   game_play ();
 }
@@ -195,7 +195,6 @@ function determine_winner() {
   if (game.gamePlayStatus != GameStatus.FINISHED) {
     game.gamePlayStatus = GameStatus.FINISHED;
     game.winner = winner;
-    game.selectedStoneContainerIndex = player_one_house_index;
     game_play();
   }
   game_over_updates();

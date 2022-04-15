@@ -26,7 +26,7 @@ class SelectedContainerIndexRuleTests {
     private static final GameRule dummyRule = new DummyRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
-    private final Resource playerTwoNewGameMove = new ClassPathResource("playerTwoNewGameMove.json");
+    private final Resource playerTwoGameRestartMove = new ClassPathResource("playerTwoGameRestartMove.json");
 
     @BeforeAll
     public static void setUp () {
@@ -36,7 +36,7 @@ class SelectedContainerIndexRuleTests {
     @Test
     void SelectedContainerIndexRule_WhenValidContainerSelected_NoValidationException () throws Exception {
 
-        MancalaGame playerTwoNewGameMoveGame = mapper.readValue(resourceAsInputStream(playerTwoNewGameMove), MancalaGame.class);
+        MancalaGame playerTwoNewGameMoveGame = mapper.readValue(resourceAsInputStream(playerTwoGameRestartMove), MancalaGame.class);
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
         assertDoesNotThrow(() -> selectedContainerIndexRule.processRequest(playerTwoNewGameMoveGame, playerTwoWinMoveGame, mancalaRepository), "ValidationException not thrown");

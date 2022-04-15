@@ -1,7 +1,6 @@
 package com.bol.games.mancala.service.validation;
 
 import com.bol.games.mancala.constants.MancalaConstants;
-import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
@@ -20,7 +19,7 @@ public class StoneSowingRule extends GameRule {
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
-                               MancalaRepository mancalaRepository) throws ValidationException {
+                               MancalaRepository mancalaRepository) throws Exception {
         assert gameFromStore != null;
         if (gameFromFrontEnd.getActivePlayer() != gameFromStore.getActivePlayer()) {
             throw new ValidationException("You cannot sow stones out of turn");
@@ -29,24 +28,8 @@ public class StoneSowingRule extends GameRule {
         gameFromStore.setSelectedStoneContainerIndex(containerIndex);
         MancalaGame simulationResult = simulateGamePlayAgainstStoreGame(gameFromStore);
         validateMancalaBoard(gameFromFrontEnd, simulationResult);
-        if (simulationResult.getGamePlayStatus() != GameStatus.IN_PROGRESS) {
-            simulationResult.setGamePlayStatus(GameStatus.IN_PROGRESS);
-        }
         mancalaRepository.saveGame(simulationResult);
-    }
-
-    /**
-     * This method validates the input from the frontend against the simulation.
-     * @param gameFromFrontEnd game from the frontend
-     * @param simulationResult  result of the simulation
-     */
-    private void validateMancalaBoard(MancalaGame gameFromFrontEnd,
-                                      MancalaGame simulationResult) throws ValidationException {
-        for (int i = 0; i < gameFromFrontEnd.getMancalaBoard().size(); i++) {
-            if (gameFromFrontEnd.getStoneContainer(i).getStones() != simulationResult.getStoneContainer(i).getStones()) {
-                throw new ValidationException("Error validating stone containers from client");
-            }
-        }
+        successor.processRequest(gameFromFrontEnd, gameFromStore, mancalaRepository);
     }
 
     /**
@@ -60,53 +43,122 @@ public class StoneSowingRule extends GameRule {
 
         //start adding stones to the first container after the one selected
         int targetContainerIndex = (selectedContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
-        Player activePlayer = gameFromStore.getActivePlayer();
-
         //distribute stones to containers based on game rules
         while (stoneCount > MancalaConstants.EMPTY_STONE_COUNT) {
-            StoneContainer targetContainer = gameFromStore.getNextContainerSowed(targetContainerIndex);
+            StoneContainer targetContainer = nextContainerSowed(gameFromStore, targetContainerIndex);
             int oppositeContainerIndex = MancalaConstants.PLAYER_TWO_HOUSE_INDEX - targetContainer.getMancalaGameIndex() - 1;
             //placing the last stone in empty container when opposite container still has stones, must not be my container to steal
             if (stoneCount == MancalaConstants.LAST_STONE_COUNT) {
                 if (targetContainer.isEmpty()
                         && targetContainer.getMancalaGameIndex() != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
                         && targetContainer.getMancalaGameIndex() != MancalaConstants.PLAYER_TWO_HOUSE_INDEX
-                        && gameFromStore.isNotMyContainer(oppositeContainerIndex)) {
-                    StoneContainer oppositeContainer = gameFromStore
-                            .getStoneContainer(oppositeContainerIndex);
-                    int houseIndex = (activePlayer == Player.PLAYER_ONE)?
-                            MancalaConstants.PLAYER_ONE_HOUSE_INDEX : MancalaConstants.PLAYER_TWO_HOUSE_INDEX;
-                    if (!oppositeContainer.isEmpty()) {
-                        int oppositeStones = gameFromStore
-                                .getStoneContainer(oppositeContainerIndex).getAllStonesAndEmptyContainer();
-                        gameFromStore.getStoneContainer(houseIndex).addStones(oppositeStones + 1);
-                    } else {
-                        gameFromStore.getStoneContainer(houseIndex).addStone();
-                    }
-                    break;
+                        && isNotActivePlayersContainer(gameFromStore.getActivePlayer(), oppositeContainerIndex)) {
+                    steal(gameFromStore, oppositeContainerIndex);
+                } else {
+                    gameFromStore.getStoneContainer(targetContainer.getMancalaGameIndex()).addStone();
                 }
+            } else {
                 gameFromStore.getStoneContainer(targetContainer.getMancalaGameIndex()).addStone();
-                break;
+                targetContainerIndex = (targetContainer.getMancalaGameIndex() + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
             }
-            gameFromStore.getStoneContainer(targetContainer.getMancalaGameIndex()).addStone();
             stoneCount--;
-            targetContainerIndex = (targetContainer.getMancalaGameIndex() + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
         }
-
-        //change player if you didn't place last stone in your own house, assisted by logic above that skips placing stone in opponent house
-        if (activePlayer == Player.PLAYER_ONE && targetContainerIndex != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
-                || activePlayer == Player.PLAYER_TWO && targetContainerIndex != MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
-            gameFromStore.setActivePlayer(changePlayer(activePlayer));
-        }
+        changeTurn(gameFromStore, targetContainerIndex);
         return gameFromStore;
+    }
+
+    /*
+     * TODO
+     * */
+    private StoneContainer nextContainerSowed(MancalaGame gameFromStore, Integer currentIndex) {
+        int nextIndex = currentIndex;
+        //cannot place stones on another player's house
+        if (isOpponentHouse(gameFromStore.getActivePlayer(), nextIndex)) {
+            //avoid array out of bounds error
+            nextIndex = (nextIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+        }
+        return gameFromStore.getMancalaBoard().get(nextIndex);
+    }
+
+    /*
+     * TODO
+     * */
+    private boolean isOpponentHouse (Player activePlayer, Integer containerIndex) {
+        boolean isOpponentHouse = false;
+        if (activePlayer == Player.PLAYER_ONE) {
+            if (containerIndex == MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
+                isOpponentHouse = true;
+            }
+        } else {
+            if (containerIndex == MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
+                isOpponentHouse = true;
+            }
+        }
+        return isOpponentHouse;
+    }
+
+    /*
+    * TODO
+    * */
+    private boolean isNotActivePlayersContainer(Player activePlayer, int targetContainerIndex) {
+        boolean isNotMyContainer = false;
+        if (activePlayer == Player.PLAYER_ONE) {
+            if (targetContainerIndex > MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
+                isNotMyContainer = true;
+            }
+        } else {
+            if (targetContainerIndex <= MancalaConstants.PLAYER_ONE_HOUSE_INDEX) {
+                isNotMyContainer = true;
+            }
+        }
+        return isNotMyContainer;
     }
 
     /**
      * This method changes the turn between playerOne and playerTwo.
-     * @param currentPlayer player who has just made a move
-     * @return Player turn switches to other player
+     * This occurs when you don't place last stone in your own house
+     * @param gameFromStore game object from client
+     * @param lastSownContainerIndex the container index of pot last sown
      */
-    private Player changePlayer (Player currentPlayer) {
-        return (currentPlayer == Player.PLAYER_ONE)? Player.PLAYER_TWO : Player.PLAYER_ONE;
+    private void changeTurn (MancalaGame gameFromStore, int lastSownContainerIndex) {
+        if (gameFromStore.getActivePlayer() == Player.PLAYER_ONE && lastSownContainerIndex != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                || gameFromStore.getActivePlayer() == Player.PLAYER_TWO && lastSownContainerIndex != MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
+            Player newPlayer = (gameFromStore.getActivePlayer() == Player.PLAYER_ONE)? Player.PLAYER_TWO : Player.PLAYER_ONE;
+            gameFromStore.setActivePlayer(newPlayer);
+        }
+    }
+
+    /**
+     * Method to steal opposing player's stones when sowing the last stone into
+     * your own pot. If opposite pot is empty, then sow the last stone into your Mancala.
+     * @param gameFromStore game object from client
+     * @param oppositeContainerIndex the index for the opposite pot
+     */
+    private void steal (MancalaGame gameFromStore, Integer oppositeContainerIndex) {
+        StoneContainer oppositeContainer = gameFromStore
+                .getStoneContainer(oppositeContainerIndex);
+        int houseIndex = (gameFromStore.getActivePlayer() == Player.PLAYER_ONE)?
+                MancalaConstants.PLAYER_ONE_HOUSE_INDEX : MancalaConstants.PLAYER_TWO_HOUSE_INDEX;
+        if (!oppositeContainer.isEmpty()) {
+            int oppositeStones = gameFromStore
+                    .getStoneContainer(oppositeContainerIndex).getAllStonesAndEmptyContainer();
+            gameFromStore.getStoneContainer(houseIndex).addStones(oppositeStones + 1);
+        } else {
+            gameFromStore.getStoneContainer(houseIndex).addStone();
+        }
+    }
+
+    /**
+     * This method validates the Mancala board from the frontend against the simulation.
+     * @param gameFromFrontEnd game from the frontend
+     * @param simulationResult  result of the simulation
+     */
+    private void validateMancalaBoard(MancalaGame gameFromFrontEnd,
+                                      MancalaGame simulationResult) throws ValidationException {
+        for (int i = 0; i < gameFromFrontEnd.getMancalaBoard().size(); i++) {
+            if (gameFromFrontEnd.getStoneContainer(i).getStones() != simulationResult.getStoneContainer(i).getStones()) {
+                throw new ValidationException("Error validating stone containers from client");
+            }
+        }
     }
 }

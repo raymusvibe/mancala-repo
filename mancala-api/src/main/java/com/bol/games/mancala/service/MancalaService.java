@@ -43,7 +43,7 @@ public class MancalaService implements MancalaAPI {
     public final MancalaGame connectToGame(String gameId) throws NotFoundException {
         MancalaGame game = mancalaRepository.findNewGame(gameId);
         if (game == null) {
-            throw new NotFoundException("Invalid GameId or this game is already in progress");
+            throw new NotFoundException("Invalid game ID or this game ID has already been used");
         }
         game.setGamePlayStatus(GameStatus.IN_PROGRESS);
         mancalaRepository.saveGame(game);

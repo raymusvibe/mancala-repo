@@ -15,7 +15,7 @@ public class SelectedContainerIndexRule extends GameRule {
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
-                               MancalaRepository mancalaRepository) throws ValidationException {
+                               MancalaRepository mancalaRepository) throws Exception {
         int containerIndex = gameFromFrontEnd.getSelectedStoneContainerIndex();
         assert gameFromStore != null;
         StoneContainer targetContainer = gameFromStore.getStoneContainer(containerIndex);
@@ -29,7 +29,7 @@ public class SelectedContainerIndexRule extends GameRule {
         if (gameFromFrontEnd.getActivePlayer() == Player.PLAYER_ONE && containerIndex > MancalaConstants.PLAYER_ONE_HOUSE_INDEX
                 || gameFromFrontEnd.getActivePlayer() == Player.PLAYER_TWO && containerIndex < MancalaConstants.PLAYER_ONE_HOUSE_INDEX
                 || gameFromFrontEnd.getActivePlayer() == Player.PLAYER_TWO && containerIndex > MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
-            throw new ValidationException("Invalid game state detected (Container selection index)");
+            throw new ValidationException("Invalid game state (Container selection index)");
         }
         successor.processRequest(gameFromFrontEnd, gameFromStore, mancalaRepository);
     }

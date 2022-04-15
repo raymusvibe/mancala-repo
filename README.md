@@ -7,9 +7,9 @@ Ray Musvibe
 ## Description
 This web based game allows people from anywhere in the world to play Mancala with friends on-line from the comfort of their homes. 
 
-To play the game, players must log in with OAuth2 providers Google or Facebook. Once logged in, a player needs to start a game. This action returns a game ID that can be a shared with a friend over a messaging platform like WhatsApp. The friend can then enter the game ID on the site in the "Connect to game" text field and press enter to join the game creator for a game. Once players have connected to a game, a chat interface is opened in the UI for the players to communicate. After the game is finished, the two players can either choose to re-start the current game on the same game ID, create a new game and share that with another player, or connect to another game ID.
+To play the game, players must log in with OAuth2 providers Google or Facebook. Once logged in, a player needs to start a game. This action returns a game ID that can be a shared with a friend over a messaging platform like WhatsApp. The friend can then enter the game ID on the site in the "Connect to game" text field and press enter to join the game creator for a game. A game ID can only be used once. When players have connected to a game, a chat interface is opened in the UI for the players to communicate. After the game is finished, the two players can either choose to re-start the current game on the same game ID, create a new game and share that with another player, or connect to another game ID.
 
-The game UI looks as follows once logged in:
+To play on one machine, you'll need to open to two browser pages/tabs. The start of game-play looks as follows once logged in:
 
 ![Image of Mancala](documentation-images/mancala.gif)
 

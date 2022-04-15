@@ -17,28 +17,28 @@ import static com.bol.games.mancala.util.TestUtils.resourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
-class NewGameRequestRuleUnitTests {
+class GameRestartRequestRuleUnitTests {
 
     @Mock
     private MancalaRepository mancalaRepository;
 
-    private static final NewGameRequestRule newGameRequestRule = new NewGameRequestRule();
+    private static final GameRestartRequestRule gameRestartRequestRule = new GameRestartRequestRule();
     private static final GameRule dummyRule = new DummyRule();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource playerTwoWinMove = new ClassPathResource("playerTwoWinMove.json");
-    private final Resource playerTwoNewGameMove = new ClassPathResource("playerTwoNewGameMove.json");
+    private final Resource playerTwoGameRestartMove = new ClassPathResource("playerTwoGameRestartMove.json");
 
     @BeforeAll
     public static void setUp () {
-        newGameRequestRule.setSuccessor(dummyRule);
+        gameRestartRequestRule.setSuccessor(dummyRule);
     }
 
     @Test
     void NewGameRequestRule_WhenNewGameRequest_NoValidationException () throws Exception {
-        MancalaGame playerTwoNewGameMoveGame = mapper.readValue(resourceAsInputStream(playerTwoNewGameMove), MancalaGame.class);
+        MancalaGame playerTwoNewGameMoveGame = mapper.readValue(resourceAsInputStream(playerTwoGameRestartMove), MancalaGame.class);
         MancalaGame playerTwoWinMoveGame = mapper.readValue(resourceAsInputStream(playerTwoWinMove), MancalaGame.class);
 
-        assertDoesNotThrow(() -> newGameRequestRule
+        assertDoesNotThrow(() -> gameRestartRequestRule
                 .processRequest(playerTwoNewGameMoveGame, playerTwoWinMoveGame, mancalaRepository),
                 "ValidationException not thrown");
     }

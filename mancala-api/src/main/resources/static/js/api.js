@@ -1,5 +1,5 @@
-const url = 'https://localhost';
-const login_url = 'https://localhost/login';
+const url = "https://localhost";
+const login_url = "https://localhost/login";
 
 let stomp_client;
 let stomp_client_heart_beat_rate = 30000
@@ -20,9 +20,9 @@ function connect_to_socket() {
     stomp_client.heartbeat.outgoing = stomp_client_heart_beat_rate;
     stomp_client.heartbeat.incoming = stomp_client_heart_beat_rate;
     //disable stomp debug logging to console
-    stomp_client.debug = f => f;
+    //stomp_client.debug = f => f;
     stomp_client.connect({}, function (frame) {
-        stomp_client.subscribe('/topic/game-messaging.' + game_id, function (response) {
+        stomp_client.subscribe("/topic/game-messaging." + game_id, function (response) {
             append_chat_message(JSON.parse(response.body));
         });
         stomp_client.subscribe("/topic/game-progress." + game_id, function (response) {
@@ -141,7 +141,7 @@ function send_chat_message () {
     {},
     JSON.stringify(
         {
-            'sender': player_name,
+            "sender": player_name,
             "message": message
         }
         )

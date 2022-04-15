@@ -178,12 +178,13 @@ function complete_turn(src_pot, is_live_play) {
   }
 }
 
+/*Executed when there is an update from the server*/
 function handle_gameplay_websocket_response() {
   if (game.gamePlayStatus == GameStatus.FINISHED) {
     determine_winner ();
     return;
   }
-  if (game.gamePlayStatus == GameStatus.NEW && !player_initiated_game_restart) {
+  if (game.gamePlayStatus == GameStatus.RESTARTING && !player_initiated_game_restart) {
     handle_game_restart_request ();
     //restart sets player two as active
     if (player_name == Player.ONE) {
@@ -196,7 +197,7 @@ function handle_gameplay_websocket_response() {
       player_initiated_game_restart = false;
     }
   }
-  //three simulation scenario's. Condition one at the start of the game will run simulation on player two's board when player one makes first move
+  //Three simulation scenario's. Condition one: at the start of the game - will run simulation on player two's board when player one makes first move
   let is_simulation = false;
   if (is_player_one === null) {
     if (game.selectedStoneContainerIndex != player_one_house_index && game.selectedStoneContainerIndex != player_two_house_index){
@@ -205,7 +206,7 @@ function handle_gameplay_websocket_response() {
       is_simulation =true;
     }
   }
-  //simulate opponent play after normal turn changes
+  //Condition two: simulate opponent's play after turn changes
   else if (is_player_one !== null && is_player_one && game.activePlayer == Player.TWO
               || is_player_one !== null && !is_player_one && game.activePlayer == Player.ONE) 
           {
@@ -214,7 +215,7 @@ function handle_gameplay_websocket_response() {
             is_simulation =true;
           }
   }
-  // simulate opponent play when other player has a repeat play
+  //Condition three: simulate opponent's play when other player has a repeat play
   else if (is_player_one !== null && !is_player_one && game.activePlayer == Player.TWO
       || is_player_one !== null && is_player_one && game.activePlayer == Player.ONE)
       {

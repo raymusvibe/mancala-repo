@@ -31,9 +31,7 @@ public class MancalaWebSocketController {
             log.info("gameplay: {}", mapper.writeValueAsString(request));
         }
         MancalaGame game = validationService.validate(request);
-        if (game != null) {
-            simpMessagingTemplate.convertAndSend("/topic/game-progress." + gameId, game);
-        }
+        simpMessagingTemplate.convertAndSend("/topic/game-progress." + gameId, game);
         return game;
     }
 

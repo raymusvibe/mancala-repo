@@ -4,5 +4,6 @@ public enum GameStatus {
     NEW,
     IN_PROGRESS,
     DISRUPTED,
+    RESTARTING,
     FINISHED
 }

@@ -10,6 +10,7 @@ var GameStatus = function(){
         'NEW':"NEW",
         'IN_PROGRESS':"IN_PROGRESS",
         'DISRUPTED':"DISRUPTED",
+        'RESTARTING':"RESTARTING",
         'FINISHED':"FINISHED"
     }
 }();

@@ -1,7 +1,7 @@
 package com.bol.games.mancala.service.validation;
 
+import com.bol.games.mancala.exception.NotFoundException;
 import com.bol.games.mancala.repository.MancalaRepository;
-import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.validation.abstractions.GameRule;
 import com.bol.games.mancala.util.DummyRule;
@@ -37,19 +37,19 @@ class GameExistsInStoreRuleUnitTests {
     }
 
     @Test
-    void GameExistsInStoreRule_WhenIncorrectGameId_ValidationException () throws Exception {
+    void GameExistsInStoreRule_WhenIncorrectGameId_NotFoundException () throws Exception {
         MancalaGame playerTwoOppositeStoneCapturePriorGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCapturePriorMove), MancalaGame.class);
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
 
-        assertThrows(ValidationException.class, () -> gameExistsInStoreRule
+        assertThrows(NotFoundException.class, () -> gameExistsInStoreRule
                 .processRequest(playerTwoOppositeStoneCaptureGame,
                         playerTwoOppositeStoneCapturePriorGame,
                         mancalaRepository),
-                "ValidationException was expected");
+                "NotFoundException was expected");
     }
 
     @Test
-    void GameExistsInStoreRule_WhenValidGameId_NoValidationException () throws Exception {
+    void GameExistsInStoreRule_WhenValidGameId_NotFoundExceptionNotThrown () throws Exception {
         MancalaGame playerTwoOppositeStoneCaptureGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCaptureMove), MancalaGame.class);
         MancalaGame playerTwoOppositeStoneCapturePriorGame = mapper.readValue(resourceAsInputStream(playerTwoOppositeStoneCapturePriorMove), MancalaGame.class);
 
@@ -59,6 +59,6 @@ class GameExistsInStoreRuleUnitTests {
                 .processRequest(playerTwoOppositeStoneCaptureGame,
                         playerTwoOppositeStoneCapturePriorGame,
                         mancalaRepository),
-                "ValidationException not thrown");
+                "NotFoundException not thrown");
     }
 }

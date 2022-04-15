@@ -14,11 +14,11 @@ public class StoneCountRule extends GameRule {
     @Override
     public final void processRequest(MancalaGame gameFromFrontEnd,
                                MancalaGame gameFromStore,
-                               MancalaRepository mancalaRepository) throws ValidationException {
+                               MancalaRepository mancalaRepository) throws Exception {
         int stoneCount = gameFromFrontEnd.getMancalaBoard()
-                .stream()
-                .map(StoneContainer::getStones)
-                .reduce(0, Integer::sum);
+                        .stream()
+                        .map(StoneContainer::getStones)
+                        .reduce(0, Integer::sum);
         int expectedStoneCount = MancalaConstants.CONTAINERS_PER_PLAYER * MancalaConstants.STONES_PER_PLAYER * 2;
         if (stoneCount != expectedStoneCount) {
             throw new ValidationException("Error validating stone count");
