@@ -1,5 +1,6 @@
 package com.bol.games.mancala.repository;
 
+import com.bol.games.mancala.controller.dto.GamePlay;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.repository.abstractions.MancalaRepositoryAPI;
@@ -51,7 +52,7 @@ public class MancalaRepository implements MancalaRepositoryAPI {
     }
 
     @Override
-    public void insertEvent(MancalaGame game) {
+    public void insertEvent(GamePlay game) {
         mancalaEventsMongoTemplate.insert(game);
     }
 }

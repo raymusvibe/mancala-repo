@@ -31,12 +31,12 @@ class MancalaServiceIntegrationTests {
     private MongoTemplate mancalaEventsMongoTemplate;
 
     private static final String invalidGameId = "someGameId";
-    private static final MancalaGame expectedGame = new MancalaGame(null);
+    private static final MancalaGame newGame = new MancalaGame();
 
     @BeforeAll
     public static void baseSetUp () {
-        expectedGame.initialiseBoardToNewGame();
-        expectedGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
+        newGame.initialiseBoardToStartNewGame();
+        newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
     }
 
     @BeforeEach
@@ -47,7 +47,7 @@ class MancalaServiceIntegrationTests {
 
     @Test
     void MancalaService_WhenNewGameRequest_CreatesGame () {
-        doReturn(expectedGame).when(mancalaGamesMongoTemplate).insert(any(MancalaGame.class));
+        doReturn(newGame).when(mancalaGamesMongoTemplate).insert(any(MancalaGame.class));
         MancalaGame game = mancalaService.createGame();
         assertThat(game.getWinner()).isNull();
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.NEW);
@@ -56,15 +56,15 @@ class MancalaServiceIntegrationTests {
 
     @Test
     void MancalaService_WhenNewGameConnectionRequest_ConnectsToGame () throws Exception {
-        doReturn(expectedGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
-        MancalaGame game = mancalaService.connectToGame(expectedGame.getGameId());
+        doReturn(newGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
+        MancalaGame game = mancalaService.connectToGame(newGame.getGameId());
         assertThat(game.getGamePlayStatus()).isEqualTo(GameStatus.IN_PROGRESS);
         assertThat(game.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
     }
 
     @Test
     void MancalaService_WhenInvalidGameId_NotFoundException () {
-        assertThrows(NotFoundException.class, () -> mancalaService
-                .connectToGame(invalidGameId), "NotFoundException was expected");
+        assertThrows(NotFoundException.class, () -> mancalaService.connectToGame(invalidGameId),
+                "NotFoundException was expected");
     }
 }

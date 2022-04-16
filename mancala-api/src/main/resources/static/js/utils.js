@@ -23,7 +23,7 @@ const player_one_turn_message_string = "It is your turn, player one.";
 const player_two_turn_message_string = "It is your turn, player two.";
 const opponent_turn_message_string = "Waiting on the other player to complete their turn.";
 const game_state_correction_message_string = "The game state has been updated, please continue.";
-const game_connection_error_message_string = "Invalid game ID provided. A game ID can only be used once.";
+const connect_to_game_error_message_string = "Invalid game ID provided. (A game ID can only be used once).";
 const empty_chat_text_error_message_string = "Please enter a message first to send.";
 
 const chat_key_down = (event) => {
@@ -57,7 +57,7 @@ function ui_start_new_game() {
 function ui_connect_to_game () {
     player_name = Player.TWO;
     opponent_name = Player.ONE;
-    is_player_one = null;
+    is_player_one = true;
 
     new_game_button.classList.add("disable");
     connect_to_game_button.classList.add("disable");
@@ -75,7 +75,7 @@ function restart_game() {
   game_restart_button.classList.add("disable");
   game_id_input.disabled = true;
 
-  reset_board();
+  reset_ui_board();
   game.gamePlayStatus = GameStatus.RESTARTING;
   game.selectedStoneContainerIndex = player_one_house_index;
   game_play ();
@@ -87,33 +87,20 @@ function handle_game_restart_request() {
   game_restart_button.classList.add("disable");
   game_id_input.disabled = true;
 
-  reset_board();
+  reset_ui_board();
   game.gamePlayStatus = GameStatus.IN_PROGRESS;
 }
 
-function reset_board() {
+function reset_ui_board() {
   $("div.stone").remove();
   is_player_one = false;
   game.activePlayer = Player.TWO;
-  update_house_counters(true);
+  update_house_counters();
   populate_row("pt");
   populate_row("pb");
 }
 
-function reset_stones() {
-  for (let i = 0; i <= player_two_house_index; i++) {
-    if (i == player_one_house_index || i == player_two_house_index) {
-      game.mancalaBoard[i].stones = 0;
-    } else {
-      game.mancalaBoard[i].stones = number_of_stones_per_pot;
-    }
-  }
-}
-
-function update_house_counters(is_new_game) {
-  if (is_new_game) {
-    reset_stones ();
-  }
+function update_house_counters() {
   let player_one_house_count = game.mancalaBoard[player_one_house_index].stones;
   let player_two_house_count = game.mancalaBoard[player_two_house_index].stones;
   document.getElementById("player_one_house_count").innerHTML = "Player one house count: " + player_one_house_count;
@@ -137,84 +124,42 @@ function update_game_parameters() {
   }
 }
 
-function is_game_over() {
-  let is_game_over = true;
-  for (let i = 0; i < player_one_house_index; i++) {
-    if (game.mancalaBoard[i].stones > 0) {
-      is_game_over = false;
-      break;
-    }
-  }
-  if (is_game_over) {
-    return is_game_over;
-  }
-  is_game_over = true;
-  for (let i = player_one_house_index + 1; i < player_two_house_index; i++) {
-    if (game.mancalaBoard[i].stones > 0){
-      is_game_over = false;
-      break;
-    }
-  }
-  return is_game_over;
-}
-
-function determine_winner() {
+function display_winner() {
   remove_pot_handlers();
-  let player_one_count = 0;
-  for (let i = 0; i <= player_one_house_index; i++) {
-    player_one_count += game.mancalaBoard[i].stones;
-  }
-  let player_two_count = 0;
-  for (let i = player_one_house_index + 1; i <= player_two_house_index; i++) {
-    player_two_count += game.mancalaBoard[i].stones;
-  }
-  let winner;
-  if (player_one_count == player_two_count) {
-    game_status_message.innerHTML = draw_message_string;
-    winner = GameWinner.DRAW;
+  let winning_total = (game.winner == Player.ONE)? game.mancalaBoard[player_one_house_index].stones : game.mancalaBoard[player_two_house_index].stones;
+  let winner_string;
+  if (game.winner == Player.ONE) {
+    if (player_name == Player.ONE) {
+        winner_string = construct_game_winner_message(winning_total);
+    } else {
+        winner_string = construct_game_loser_message(winning_total);
+    }
   } else {
-    let winning_total = (player_one_count > player_two_count)? player_one_count : player_two_count;
-    let winner_string;
-     if (player_one_count > player_two_count) {
-        winner = Player.ONE;
-        if (player_name == Player.ONE) {
-            winner_string = construct_game_winner_message(winning_total);
-        } else {
-            winner_string = construct_game_loser_message (winning_total);
-        }
-     } else {
-        winner = Player.TWO;
-        if (player_name == Player.TWO) {
-            winner_string = construct_game_winner_message(winning_total);
-        } else {
-            winner_string = construct_game_loser_message(winning_total);
-        }
-     }
-    game_status_message.innerHTML = winner_string;
+    if (player_name == Player.TWO) {
+        winner_string = construct_game_winner_message(winning_total);
+    } else {
+        winner_string = construct_game_loser_message(winning_total);
+    }
   }
-  if (game.gamePlayStatus != GameStatus.FINISHED) {
-    game.gamePlayStatus = GameStatus.FINISHED;
-    game.winner = winner;
-    game_play();
-  }
-  game_over_updates();
+  game_status_message.innerHTML = winner_string;
+  game_over_ui_updates();
 }
 
-function game_over_updates() {
+function game_over_ui_updates() {
     new_game_button.classList.remove("disable");
     connect_to_game_button.classList.remove("disable");
     game_restart_button.classList.remove("disable");
     game_id_input.disabled = false;
-    reset_board();
+    reset_ui_board();
 }
 
-function game_error_updates() {
+function game_error_ui_updates() {
     $("div.message").remove();
     new_game_button.classList.remove("disable");
     connect_to_game_button.classList.remove("disable");
     game_restart_button.classList.add("disable");
     game_id_input.disabled = false;
-    reset_board();
+    reset_ui_board();
     disable_chat();
     game_error_message();
 }
@@ -249,14 +194,6 @@ function map_pots_to_board(src_pot) {
     }
 }
 
-function board_total() {
-  let total = 0;
-  for (let i = 0; i <= player_two_house_index; i++) {
-    total += game.mancalaBoard[i].stones;
-  }
-  return total;
-}
-
 function on_page_load() {
     game_status_message.innerHTML = on_page_load_string;
     enable_game_connect_key_down ();
@@ -281,8 +218,8 @@ function connect_retry_message() {
     game_status_message.innerHTML = connect_retry_string;
 }
 
-function game_connection_error_message () {
-    game_status_message.innerHTML = game_connection_error_message_string;
+function connect_to_game_error_message () {
+    game_status_message.innerHTML = connect_to_game_error_message_string;
 }
 
 function empty_chat_text_error_message () {

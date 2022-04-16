@@ -8,9 +8,9 @@ import java.io.Reader;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public final class TestUtils {
+public final class ResourceReader {
 
-    private TestUtils () {}
+    private ResourceReader() {}
 
     public static Reader resourceAsInputStream (Resource resource) throws IOException {
         return new InputStreamReader(resource.getInputStream(), UTF_8);

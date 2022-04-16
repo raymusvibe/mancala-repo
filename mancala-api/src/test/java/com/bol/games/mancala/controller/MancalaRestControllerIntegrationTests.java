@@ -35,7 +35,7 @@ class MancalaRestControllerIntegrationTests {
     private JacksonTester<MancalaGame> jsonTestWriter;
 
     private MockMvc mockMvc;
-    private static final String invalidGameId = "someGameId";
+    private static final String invalidGameId = "some_invalid_game_id";
 
     @BeforeEach
     public void setup() {
@@ -44,7 +44,7 @@ class MancalaRestControllerIntegrationTests {
 
     @Test
     void MancalaController_WhenNewGameRequest_CreatesNewGame() throws Exception {
-        MancalaGame expectedGame = new MancalaGame(null);
+        MancalaGame expectedGame = new MancalaGame();
         doReturn(expectedGame).when(service).createGame();
 
         MockHttpServletResponse response = mockMvc

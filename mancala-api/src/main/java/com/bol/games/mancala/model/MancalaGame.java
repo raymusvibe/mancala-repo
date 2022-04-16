@@ -2,9 +2,7 @@ package com.bol.games.mancala.model;
 
 import com.bol.games.mancala.constants.MancalaConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,10 +15,7 @@ import java.util.UUID;
 @Document(collection = "mancala")
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class MancalaGame implements Serializable {
-
     @Id
     @JsonIgnore
     private String id;
@@ -32,15 +27,15 @@ public class MancalaGame implements Serializable {
     private Integer selectedStoneContainerIndex;
     private List<StoneContainer> mancalaBoard;
 
-    public MancalaGame (String gameId) {
-        this.gameId = (gameId == null)? UUID.randomUUID().toString() : gameId;
+    public MancalaGame () {
+        this.gameId = UUID.randomUUID().toString();
         activePlayer = Player.PLAYER_ONE;
         gamePlayStatus = GameStatus.NEW;
         selectedStoneContainerIndex = MancalaConstants.PLAYER_ONE_HOUSE_INDEX;
     }
 
     @JsonIgnore
-    public final void initialiseBoardToNewGame() {
+    public final void initialiseBoardToStartNewGame() {
         mancalaBoard = new ArrayList<>();
         int numberOfContainers = (MancalaConstants.CONTAINERS_PER_PLAYER + 1) * 2;
         for (int i = 0; i < numberOfContainers; i++) {

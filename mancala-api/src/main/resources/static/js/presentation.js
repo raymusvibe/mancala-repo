@@ -218,8 +218,10 @@ function add_listeners(class_list) {
   {
     // check if move is valid
     $(class_list).off();
-    game.selectedStoneContainerIndex = map_pots_to_board(new Pot($(this).attr("id")));
-    sow_stones (new Pot($(this).attr("id")), null, true);
+    let src_pot = new Pot($(this).attr("id"));
+    game.selectedStoneContainerIndex = map_pots_to_board(src_pot);
+    game_play ();
+    src_pot.$().css("background-color","rgba(255, 255, 255, 0.15)");
   });
 }
 

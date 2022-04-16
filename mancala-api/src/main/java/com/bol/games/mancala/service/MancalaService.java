@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Service used to create new games and connect to already existing ones.
+ * Service used to create new games and connect to already existing games.
  */
 @Service
 @AllArgsConstructor
@@ -20,24 +20,23 @@ public class MancalaService implements MancalaAPI {
     private MancalaRepositoryAPI mancalaRepository;
 
     /**
-     * Service method called through constructor to create a new game.
-     * A copy of the game is placed in both the games store and events store.
-     * @return a new game instance.
+     * Service method called through controller to create a new game.
+     * @return MancalaGame, a new game instance.
      */
     @Override
     public final MancalaGame createGame() {
-        MancalaGame mancala = new MancalaGame(null);
-        mancala.initialiseBoardToNewGame();
+        MancalaGame mancala = new MancalaGame();
+        mancala.initialiseBoardToStartNewGame();
         mancalaRepository.insertGame(mancala);
-        mancalaRepository.insertEvent(mancala);
         return mancala;
     }
 
     /**
-     * Service method called through constructor when a second player
-     * wants to join an existing game through a link send to them by a colleague.
+     * Service method called through controller when a second player
+     * wants to join an existing game through a link send to them by a friend.
+     * A game ID can only be used to connect to a game only once.
      * @param gameId the id of the game they'll connect to
-     * @return the new game instance they've connected to.
+     * @return MancalaGame, the new game instance client has connected to.
      */
     @Override
     public final MancalaGame connectToGame(String gameId) throws NotFoundException {

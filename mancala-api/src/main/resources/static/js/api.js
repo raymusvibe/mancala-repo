@@ -20,7 +20,7 @@ function connect_to_socket() {
     stomp_client.heartbeat.outgoing = stomp_client_heart_beat_rate;
     stomp_client.heartbeat.incoming = stomp_client_heart_beat_rate;
     //disable stomp debug logging to console
-    //stomp_client.debug = f => f;
+    stomp_client.debug = f => f;
     stomp_client.connect({}, function (frame) {
         stomp_client.subscribe("/topic/game-messaging." + game_id, function (response) {
             append_chat_message(JSON.parse(response.body));
@@ -62,7 +62,7 @@ function error_connect_retry() {
         retry_count++;
     } else {
         if (stomp_client) {
-            game_error_updates ();
+            game_error_ui_updates ();
             stomp_client.disconnect();
         }
     }
@@ -87,7 +87,7 @@ function create_game() {
         },
         error: function (error) {
             if (stomp_client) {
-                game_error_updates();
+                game_error_ui_updates();
                 stomp_client.disconnect();
             }
         }
@@ -95,17 +95,18 @@ function create_game() {
 }
 
 function connect_to_specific_game() {
-    game_id = document.getElementById("game_id").value;
-    if (game_id == null || game_id === '') {
+    let interim_game_id = document.getElementById("game_id").value;
+    if (interim_game_id == null || interim_game_id === '') {
         missing_game_id_message();
         return;
     }
     $.ajax({
-        url: url + "/mancala/v1/connect?gameId=" + game_id,
+        url: url + "/mancala/v1/connect?gameId=" + interim_game_id,
         type: 'GET',
         contentType: "application/json",
         success: function (data) {
             if (data.gameId) {
+                game_id = data.gameId;
                 game = data;
                 player_triggered_connection = true;
                 retry_count = 0;
@@ -117,7 +118,7 @@ function connect_to_specific_game() {
             }
         },
         error: function (error) {
-            game_connection_error_message ();
+            connect_to_game_error_message ();
         }
     });
 }
@@ -126,7 +127,13 @@ function game_play() {
     stomp_client.send(
     "/app/gameplay." + game_id,
     {},
-    JSON.stringify(game)
+    JSON.stringify(
+        {
+            "gameId": game_id,
+            "gamePlayStatus": game.gamePlayStatus,
+            "selectedStoneContainerIndex": game.selectedStoneContainerIndex
+        }
+        )
     );
 }
 

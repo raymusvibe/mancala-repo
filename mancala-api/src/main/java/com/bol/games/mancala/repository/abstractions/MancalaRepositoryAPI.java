@@ -1,5 +1,6 @@
 package com.bol.games.mancala.repository.abstractions;
 
+import com.bol.games.mancala.controller.dto.GamePlay;
 import com.bol.games.mancala.model.MancalaGame;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +10,5 @@ public interface MancalaRepositoryAPI {
     MancalaGame findGame(String gameId);
     MancalaGame saveGame(MancalaGame game);
     void insertGame(MancalaGame game);
-    void insertEvent (MancalaGame game);
+    void insertEvent (GamePlay gamePlay);
 }
