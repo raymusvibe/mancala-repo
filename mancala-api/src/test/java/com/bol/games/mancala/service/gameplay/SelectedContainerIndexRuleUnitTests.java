@@ -33,6 +33,7 @@ class SelectedContainerIndexRuleUnitTests {
     void SelectedContainerIndexRule_WhenOpponentsContainerSelected_ValidationException() {
         MancalaGame game = new MancalaGame();
         game.initialiseBoardToStartNewGame();
+        game.setGamePlayStatus(GameStatus.IN_PROGRESS);
         GamePlay gamePlay = new GamePlay(game.getGameId(), GameStatus.IN_PROGRESS, 12);
 
         assertThrows(ValidationException.class,() -> selectedContainerIndexRule

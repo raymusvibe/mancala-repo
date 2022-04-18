@@ -12,8 +12,8 @@ import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
 /**
  * Rule used to restart a game. The rule simply updates the game object in the
  * store to the RESTARTING status and returns if a RESTARTING status is received.
- * The game can only transition to a RESTARTING status from a FINISHED status.
- * And from RESTARTING it can only transition to IN_PROGRESS.
+ * from the frontend. The game can only transition to a RESTARTING status from a
+ * FINISHED status. And from RESTARTING it can only transition to IN_PROGRESS.
  * All other persisted game statuses are initiated by the backend.
  */
 public class GameRestartRequestRule extends GameRule {
@@ -50,7 +50,7 @@ public class GameRestartRequestRule extends GameRule {
      * This method determines whether the game status change around restarts is valid or legal.
      * @param gamePlayStatus the game status from the client/frontend
      * @param gameFromStoreStatus the game status from the game object in the DB
-     * @return boolean, is true if an invalid status is detected
+     * @return boolean, is true if an invalid status change is detected
      */
     private boolean isInvalidRestartStatusChange(GameStatus gamePlayStatus, GameStatus gameFromStoreStatus) {
         return gamePlayStatus == GameStatus.RESTARTING

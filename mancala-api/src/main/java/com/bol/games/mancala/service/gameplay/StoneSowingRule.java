@@ -9,7 +9,7 @@ import com.bol.games.mancala.model.StoneContainer;
 import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
 
 /**
- * Rule used sow stones based on the selected container.
+ * Rule used to sow stones based on the selected container.
  */
 public class StoneSowingRule extends GameRule {
     @Override
@@ -24,7 +24,9 @@ public class StoneSowingRule extends GameRule {
     }
 
     /**
-     * This method sows stones on the Mancala board.
+     * This method sows stones on the Mancala board. When placing the
+     * last stone in empty container and the opposite container still
+     * has stones, a player can steal from the opposite container.
      * @param game Mancala game object from the database
      * @return MancalaGame the result of the sowing
      */
@@ -32,13 +34,10 @@ public class StoneSowingRule extends GameRule {
         int selectedContainerIndex = game.getSelectedStoneContainerIndex();
         int stoneCount = game.getStoneContainer(selectedContainerIndex).getAllStonesAndEmptyContainer();
 
-        //start adding stones to the first container after the one selected
         int targetContainerIndex = (selectedContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
-        //distribute stones to containers based on game rules
         while (stoneCount > MancalaConstants.EMPTY_STONE_COUNT) {
             StoneContainer targetContainer = nextContainerSowed(game, targetContainerIndex);
             int oppositeContainerIndex = MancalaConstants.PLAYER_TWO_HOUSE_INDEX - targetContainer.getMancalaGameIndex() - 1;
-            //placing the last stone in empty container when opposite container still has stones, must not be my container to steal
             if (stoneCount == MancalaConstants.LAST_STONE_COUNT) {
                 if (targetContainer.isEmpty()
                         && targetContainer.getMancalaGameIndex() != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
@@ -60,18 +59,17 @@ public class StoneSowingRule extends GameRule {
 
     /**
      * This method determines which container to sow into next.
-     * @param gameFromStore Mancala game object from the database
+     * A player cannot place stones on another player's house.
+     * @param game Mancala game object from the database
      * @param currentIndex the current game/sowing index
      * @return StoneContainer the next container to sow into
      */
-    private StoneContainer nextContainerSowed(MancalaGame gameFromStore, Integer currentIndex) {
+    private StoneContainer nextContainerSowed(MancalaGame game, Integer currentIndex) {
         int nextIndex = currentIndex;
-        //Cannot place stones on another player's house
-        if (isOpponentHouse(gameFromStore.getActivePlayer(), nextIndex)) {
-            //To avoid array out of bounds error
+        if (isOpponentHouse(game.getActivePlayer(), nextIndex)) {
             nextIndex = (nextIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
         }
-        return gameFromStore.getMancalaBoard().get(nextIndex);
+        return game.getMancalaBoard().get(nextIndex);
     }
 
     /**
@@ -95,7 +93,7 @@ public class StoneSowingRule extends GameRule {
     }
 
     /**
-     * The method determines if the target container belows to the opponent (of the active player)
+     * The method determines if the target container belongs to the opponent (of the active player)
      * @param activePlayer the current player (who has just made a game move)
      * @param containerIndex the current game/sowing index
      * @return boolean, is true if the container belongs to opponent
@@ -129,22 +127,22 @@ public class StoneSowingRule extends GameRule {
     }
 
     /**
-     * Method to steal opposing player's stones when sowing the last stone into
-     * your own pot. If opposite pot is empty, then sow the last stone into players Mancala.
-     * @param gameFromStore game object from client
+     * Method to steal opposing player's stones when sowing the last stone into your own empty pot.
+     * If opposite pot is empty, then just sow the last stone into player's Mancala.
+     * @param game game object from repo
      * @param oppositeContainerIndex the index for the opposite pot
      */
-    private void steal (MancalaGame gameFromStore, Integer oppositeContainerIndex) {
-        StoneContainer oppositeContainer = gameFromStore
+    private void steal (MancalaGame game, Integer oppositeContainerIndex) {
+        StoneContainer oppositeContainer = game
                 .getStoneContainer(oppositeContainerIndex);
-        int houseIndex = (gameFromStore.getActivePlayer() == Player.PLAYER_ONE)?
+        int houseIndex = (game.getActivePlayer() == Player.PLAYER_ONE)?
                 MancalaConstants.PLAYER_ONE_HOUSE_INDEX : MancalaConstants.PLAYER_TWO_HOUSE_INDEX;
         if (!oppositeContainer.isEmpty()) {
-            int oppositeStones = gameFromStore
+            int oppositeStones = game
                     .getStoneContainer(oppositeContainerIndex).getAllStonesAndEmptyContainer();
-            gameFromStore.getStoneContainer(houseIndex).addStones(oppositeStones + 1);
+            game.getStoneContainer(houseIndex).addStones(oppositeStones + 1);
         } else {
-            gameFromStore.getStoneContainer(houseIndex).addStone();
+            game.getStoneContainer(houseIndex).addStone();
         }
     }
 }

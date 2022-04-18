@@ -2,6 +2,7 @@ package com.bol.games.mancala.service.gameplay;
 
 import com.bol.games.mancala.constants.MancalaConstants;
 import com.bol.games.mancala.controller.dto.GamePlay;
+import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.exception.ValidationException;
@@ -10,15 +11,17 @@ import com.bol.games.mancala.model.StoneContainer;
 import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
 
 /**
- * Rule used to validate the selected container index.
+ * Rule used to validate the selected container/pot index.
  */
 public class SelectedContainerIndexRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,
                                   MancalaGame game,
                                   MancalaRepository mancalaRepository) throws Exception {
+
+        assert game.getGamePlayStatus() == GameStatus.IN_PROGRESS;
+
         int containerIndex = gamePlay.getSelectedStoneContainerIndex();
-        assert game != null;
         StoneContainer targetContainer = game.getStoneContainer(containerIndex);
         //no action required for selecting an empty container or house containers
         if (targetContainer.isEmpty()

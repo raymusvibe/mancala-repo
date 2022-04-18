@@ -67,7 +67,7 @@ public class GameWinnerRule extends GameRule {
     }
 
     /**
-     * This method moves a players' stones to their house pot.
+     * This method moves a player's stones to their house pot.
      * @param game Mancala game object from the database
      * @param selectedPlayer either of the players
      */

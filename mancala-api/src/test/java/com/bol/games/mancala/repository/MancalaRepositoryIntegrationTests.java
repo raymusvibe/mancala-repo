@@ -1,58 +1,71 @@
 package com.bol.games.mancala.repository;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
-import org.junit.jupiter.api.*;
+import com.bol.games.mancala.model.MancalaGame;
+import com.bol.games.mancala.model.Player;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
-import java.util.Date;
+import java.io.IOException;
+import java.net.Socket;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-class MancalaRepositoryIntegrationTests {
+@Testcontainers
+@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
+public class MancalaRepositoryIntegrationTests {
+    @Autowired
+    private MancalaTestRepository mancalaTestRepository;
 
-    private static final String DATABASE_NAME = "embedded";
-    private MongodExecutable mongodExecutable;
-    private MongodProcess mongod;
-    private MongoClient mongo;
+    @Container
+    public static MongoDBContainer container = new MongoDBContainer(DockerImageName.parse("mongo:4.4.3"));
 
-    @BeforeEach
-    public void beforeEach() throws Exception {
-        MongodStarter starter = MongodStarter.getDefaultInstance();
-        String bindIp = "localhost";
-        int port = 12_345;
-        MongodConfig mongodConfig = MongodConfig.builder()
-                .version(Version.Main.PRODUCTION)
-                .net(new Net(bindIp, port, Network.localhostIsIPv6()))
-                .build();
-        this.mongodExecutable = starter.prepare(mongodConfig);
-        this.mongod = mongodExecutable.start();
-        this.mongo = MongoClients.create(String.format("mongodb://%s:%d", bindIp, port));
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", container::getHost);
+        registry.add("spring.data.mongodb.port", container::getFirstMappedPort);
+    }
+
+    @BeforeAll
+    static void initAll(){
+        container.start();
     }
 
     @AfterEach
-    public void afterEach() {
-        if (this.mongod != null) {
-            this.mongod.stop();
-            this.mongodExecutable.stop();
-        }
+    void cleanUp() {
+        mancalaTestRepository.deleteAll();
     }
 
     @Test
-    void MancalaRepository_WhenCollectionInsert_Success() {
-        MongoDatabase mongoDatabase = mongo.getDatabase(DATABASE_NAME);
-        mongoDatabase.createCollection("testCollection");
-        MongoCollection<BasicDBObject> col = mongoDatabase.getCollection("testCollection", BasicDBObject.class);
-        col.insertOne(new BasicDBObject("testDoc", new Date()));
-        assertEquals(1L, col.countDocuments(), "There should only be one document");
+    void MancalaRepository_WhenContainerStarts_PublicPortIsAvailable() {
+        assertThatPortIsAvailable(container);
+    }
+
+    @Test
+    void MancalaRepository_WhenApplicationWritesAndReadFromRepository_DataInCorrectState() {
+        MancalaGame game = new MancalaGame();
+        game.initialiseBoardToStartNewGame();
+        MancalaGame savedGame = mancalaTestRepository.save(game);
+        assertThat(mancalaTestRepository.findAll().size()).isEqualTo(1);
+        assertThat(savedGame.getId()).isNotNull();
+        assertThat(savedGame.getGameId()).isNotNull();
+        assertThat(savedGame.getActivePlayer()).isEqualByComparingTo(Player.PLAYER_ONE);
+    }
+
+    private void assertThatPortIsAvailable(MongoDBContainer container) {
+        try {
+            new Socket(container.getHost(), container.getFirstMappedPort());
+        } catch (IOException e) {
+            throw new AssertionError("The expected port " + container.getFirstMappedPort() + " is not available!");
+        }
     }
 }

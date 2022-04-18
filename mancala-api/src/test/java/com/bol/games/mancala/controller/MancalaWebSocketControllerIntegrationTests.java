@@ -71,7 +71,7 @@ public class MancalaWebSocketControllerIntegrationTests {
     }
 
     @Test
-    public void WebSocketController_WhenGamePlay_RoutesWithoutException() throws Exception {
+    public void WebSocketController_WhenGamePlay_ServiceExecutesRules() throws Exception {
         game.initialiseBoardToStartNewGame();
         game.setGamePlayStatus(GameStatus.IN_PROGRESS);
         doReturn(game).when(mancalaRepository).findGame(any(String.class));

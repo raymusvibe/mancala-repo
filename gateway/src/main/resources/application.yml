@@ -11,6 +11,10 @@ spring:
             client-id: 3228288284164239
             client-secret: dad2186dfff7bc002821c939ad0a0dbb
             redirect-uri: https://localhost/login/oauth2/code/facebook
+          github:
+            clientId: f7ac04ca1f0eeae06f24
+            clientSecret: 8f442b5493aab714591dcbc5a6bb5a7bb12c987b
+            redirectUri: https://localhost/login/oauth2/code/github
   application:
     name: gateway
   redis:
@@ -23,16 +27,26 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: mancala-api
+        - id: mancala-api-rest
           uri: lb://mancala-api
           predicates:
-            - Path=/**
+            - Path=/mancala/v1/**
           filters:
             - name: RequestRateLimiter
               args:
                 key-resolver: '#{@userKeyResolver}'
-                redis-rate-limiter.replenishRate: ${SPRING_REDIS_REPLENISH_RATE:25}
-                redis-rate-limiter.burstCapacity: ${SPRING_REDIS_BURST_CAPACITY:30}
+                redis-rate-limiter.replenishRate: ${SPRING_REDIS_REPLENISH_RATE:5}
+                redis-rate-limiter.burstCapacity: ${SPRING_REDIS_BURST_CAPACITY:7}
+        - id: mancala-api-websocket
+          uri: lb:ws://mancala-api
+          predicates:
+            - Path=/websocket/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@userKeyResolver}'
+                redis-rate-limiter.replenishRate: ${SPRING_REDIS_REPLENISH_RATE:5}
+                redis-rate-limiter.burstCapacity: ${SPRING_REDIS_BURST_CAPACITY:7}
 
 eureka:
   client:

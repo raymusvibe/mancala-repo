@@ -6,15 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+/**
+ * Used to communicate game events from the frontend/client,
+ * such as a game restart request or to update the game
+ * object after a player's turn.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-/*
-  Used to communicate game events from the frontend/client,
-  such as a game restart request or to update the game
-  object after a player's turn.
-  */
 public class GamePlay {
     private String gameId;
     private GameStatus gamePlayStatus;
