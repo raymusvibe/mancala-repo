@@ -33,8 +33,9 @@ public class MancalaService implements MancalaAPI {
 
     /**
      * Service method called through controller when a second player
-     * wants to join an existing game through a link send to them by a friend.
-     * A game ID can only be used to connect to a game only once.
+     * wants to join an existing game through a link send to them by a
+     * friend. A game ID can only be used to connect to a game only
+     * once and when the game is in a NEW state.
      * @param gameId the id of the game they'll connect to
      * @return MancalaGame, the new game instance client has connected to.
      */

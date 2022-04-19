@@ -31,6 +31,7 @@ class MancalaGamePlayServiceIntegrationTests {
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
 
+    private final MancalaGame newGame = new MancalaGame();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Resource repoStateBeforePlayerTwoWin = new ClassPathResource("gameStateBeforePlayerTwoWin.json");
     private final Resource repoStateBeforePlayerTwoOppositeStoneCapture = new ClassPathResource("gameStateBeforePlayerTwoOppositeStoneCapture.json");
@@ -39,42 +40,38 @@ class MancalaGamePlayServiceIntegrationTests {
     public void setUp () {
         MancalaRepository mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
         gamePlayService = new MancalaGamePlayService(mancalaRepository);
+        newGame.initialiseBoardToStartNewGame();
+        newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
     }
 
     @Test
     void ValidationService_WhenHouseIndexSelected_NoFurtherActionRequired () throws Exception {
-        MancalaGame newGame = new MancalaGame();
-        newGame.initialiseBoardToStartNewGame();
-        newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
         doReturn(newGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
-        GamePlay gamePlay = new GamePlay(newGame.getGameId(), GameStatus.IN_PROGRESS, MancalaConstants.PLAYER_ONE_HOUSE_INDEX);
 
+        GamePlay gamePlay = new GamePlay(newGame.getGameId(), GameStatus.IN_PROGRESS, MancalaConstants.PLAYER_ONE_HOUSE_INDEX);
         MancalaGame updatedGame = gamePlayService.executeGameRules(gamePlay);
+
         assertThat(updatedGame.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
         assertThat(updatedGame.getWinner()).isNull();
     }
 
     @Test
     void ValidationService_WhenLastStoneInHouse_PlayerPlaysAgain () throws Exception {
-        MancalaGame newGame = new MancalaGame();
-        newGame.initialiseBoardToStartNewGame();
-        newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
         doReturn(newGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
+
         GamePlay gamePlay = new GamePlay(newGame.getGameId(), GameStatus.IN_PROGRESS, 0);
         MancalaGame updatedGame = gamePlayService.executeGameRules(gamePlay);
+
         assertThat(updatedGame.getActivePlayer()).isEqualTo(Player.PLAYER_ONE);
     }
 
     @Test
     void ValidationService_WhenLastStoneNotInHouse_TurnChanges () throws Exception {
-        MancalaGame newGame = new MancalaGame();
-        newGame.initialiseBoardToStartNewGame();
-        newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
         doReturn(newGame).when(mancalaGamesMongoTemplate).findOne(any(Query.class), ArgumentMatchers.<Class<MancalaGame>>any());
 
         GamePlay gamePlay = new GamePlay(newGame.getGameId(), GameStatus.IN_PROGRESS, 1);
-
         MancalaGame updatedGame = gamePlayService.executeGameRules(gamePlay);
+
         assertThat(updatedGame.getActivePlayer()).isNotEqualByComparingTo(Player.PLAYER_ONE);
     }
 

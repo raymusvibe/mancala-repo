@@ -30,7 +30,7 @@ class MancalaServiceIntegrationTests {
     @Mock
     private MongoTemplate mancalaEventsMongoTemplate;
 
-    private static final String invalidGameId = "someGameId";
+    private static final String invalidGameId = "some_invalid_game_id";
     private static final MancalaGame newGame = new MancalaGame();
 
     @BeforeAll

@@ -27,7 +27,7 @@ public class MancalaGamePlayService implements MancalaGamePlayAPI {
      * This method executes game rules using the game play object send by the frontend.
      * The frontend could, for instance, be asking though the gameplay object for the
      * updated Mancala board after selecting a pot for sowing or asking for the correct
-     * state of the game after a service disruption, among other scenarios handle by
+     * state of the game after a service disruption, among other scenarios handled by
      * the game rules.
      * The chain of responsibility pattern is used to enforce the various game rules.
      * @param gamePlay the game play object send from the frontend.

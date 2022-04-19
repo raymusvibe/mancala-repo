@@ -7,7 +7,9 @@ Ray Musvibe
 ## Description
 This web based game allows people from anywhere in the world to play Mancala with friends on-line from the comfort of their homes. 
 
-To play the game, players must log in with OAuth2 providers GitHub, Google or Facebook. Once logged in, a player needs to start a game. This action returns a game ID that can be a shared with a friend over a messaging platform like WhatsApp. The friend can then enter the game ID on the site in the "Connect to game" text field and press enter to join the game creator for a game. A game ID can only be used once. When players have connected to a game, a chat interface is opened in the UI for the players to communicate. After the game is finished, the two players can either choose to re-start the current game on the same game ID, create a new game and share that with another player, or connect to another game ID.
+To play the game, players must log in with OAuth2 providers GitHub, Google or Facebook. Once logged in, a player needs to start a game. This action returns a game ID that can be a shared with a friend over a messaging platform like WhatsApp. The friend can then enter the game ID on the site in the "Connect to game" text field and press enter to join the game creator for a game. A game ID can only be used once. When players have connected to a game, a chat interface is opened in the UI for the players to communicate. 
+
+After the game is finished, the two players can either choose to re-start the current game on the same game ID, create a new game and share that with another player, or connect to another game ID.
 
 To play on one machine, you'll need to open to two browser pages/tabs. The start of game-play looks as follows once logged in:
 
@@ -35,6 +37,10 @@ To play on one machine, you'll need to open to two browser pages/tabs. The start
 - `Artillery`, for load testing REST endpoints.
 - `Gatling`, for load testing websocket endpoints. See [Aemaem](https://github.com/aemaem/gatling-websocket-stomp) for details.
 - `jshint`, for Javascript code analysis.
+
+## Service Architecture
+
+![Service Architecture](documentation-images/mancala-architecture.png)
 
 ## How to run
 The application can be run on a local machine using following the command, executed in the projects root directory through a terminal:
@@ -83,10 +89,20 @@ The list of docker images can be obtained by the command:
 
 ![Image of Gatling](documentation-images/gatling.png)
 
+## Game Restart
+
+When a game is finished, the players can choose either to restart the current game or join/create an entirely new game with a different game ID. 
+For the game restart sequence, a client will send a game play object with a status marked restarting, this will notify the other player than the game is restarting.
+The assumption here is that the players would have agreed to restart the game through the game chat. 
+
+The sequence diagram for this exchange is as follows:
+
+![Game Restart](documentation-images/game-restart-sequence.png)
+
 ## Fault Tolerance
 If at any time the connection to the service is lost (e.g. server restart), the frontend will try to re-establish a connection using a simple back-off algorithm for a short while before giving up. If a connection is re-established, the clients immediately request the correct game state from the service using a game object marked "DISRUPTED", after which players can resume play.
 
-The UI can get out of sync with the game object. If this occurs, the frontend first tries to resolve the issue by syncing with the local game object. If this fails, it requests the correct game state from the service and syncs with that.
+![Game Restart](documentation-images/service-disrupted-retry.png)
 
 ## Support
 Feel free to contact the author on [LinkedIn](https://www.linkedin.com/in/ray-musvibe-1a114533/) for any thoughts or suggestions.
@@ -101,7 +117,7 @@ Feel free to contact the author on [LinkedIn](https://www.linkedin.com/in/ray-mu
 - `Add distributed tracing service to backend`, a distributed tracing service like zipkin or dynatrace can be added that allows cause-and-effect connections to be discovered quickly between services.
 - `Application personalisation`, rather than uses titles like "player one" and "player two", the application could use the clients actual name after sign-in.
 - `Frontend`, the frontend can be re-written using a modern framework with better state management, like ReactJS. Tests, a linter and code minification can also be implemented to improve code quality and page load speed. 
-- `CDN`, static frontend files should ideally be served through a CDN, and not from the mancala-api. 
+- `CDN`, static frontend files should ideally be served through a CDN, and not from the gateway. 
 - `Implement a CQRS pattern`, the application is write-heavy, so a CQRS pattern (Command and Query Responsibility Segregation) can be considered. CQRS allows data writes and reads to be scalled separately and prevent data contention.
 - `Add BDD tests`, BDD (Behaviour-Driven Development) tests can be added to test the application from the client perspective.
 - `CI/CD setup and deployment environment`, CI/CD pipelines can be setup to manage code merges, deployments and tests.

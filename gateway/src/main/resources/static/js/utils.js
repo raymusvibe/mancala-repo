@@ -1,3 +1,6 @@
+const player_one_house_index = 6;
+const player_two_house_index = 13;
+
 const game_status_message = document.getElementById("game_status");
 const new_game_button = document.getElementById("new_game_button");
 const connect_to_game_button = document.getElementById("connect_to_game_button");
@@ -15,7 +18,7 @@ const game_id_input = document.getElementById("game_id");
 const player_one_restart_string = "Restarting the game. Player two will start.";
 const on_page_load_string = "Please start a new game or enter a game id from a friend to play.";
 const missing_game_id_string = "Please enter game id to connect.";
-const game_error_string = "Unable to continue previous game, please start new game or join another.";
+const game_error_string = "Connection failed. Please start a new game or join another.";
 const connect_retry_string = "Connection to service lost. Trying to reconnect, please wait...";
 const connect_to_game_string = "Success! Waiting for player one to start, you're player two.";
 const draw_message_string = "The game is a draw! Each player had a total of 36.";

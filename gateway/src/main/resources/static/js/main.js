@@ -1,21 +1,9 @@
-var number_of_pots_per_player = 6;
-var number_of_stones_per_pot = 6;
-var player_one_house_index = 6;
-var player_two_house_index = 13;
-var total_stones_count = 72;
-
-var player_initiated_game_restart = false;
 var is_player_one = true;
+var player_initiated_game_restart = false;
+var last_pot_after_full_revolution = null;
 
-var game_id;
-var game;
-var player_name;
-var opponent_name;
-
-var map_board_to_pots = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "mb"];
-
-let last_pot_after_full_revolution = null;
 const sowing_interval = 350;
+const map_board_to_pots = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "mb"];
 
 /*Main method for sowing*/
 function sow_stones(src_pot, last_pot) {

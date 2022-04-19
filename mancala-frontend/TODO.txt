@@ -1,4 +1,4 @@
-Move frontend logic from mancala api to this directory, add linter and build/packaging logic etc.
+Move frontend logic from the gateway to this directory, add linter and build/packaging logic etc.
 
 Static frontend files should ideally be served through a CDN.
 

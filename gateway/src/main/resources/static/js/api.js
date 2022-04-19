@@ -11,6 +11,11 @@ let retry_limit = 10;
 let retry_nominal_back_off = 500;
 let retry_back_off = 2000;
 
+var game_id;
+var game;
+var player_name;
+var opponent_name;
+
 function connect_to_socket() {
     if (stomp_client) {
         stomp_client.disconnect();
