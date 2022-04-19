@@ -71,6 +71,21 @@ The list of docker images can be obtained by the command:
 
 ```docker image list```
 
+## Game Restart
+
+When a game is finished, the players can choose either to restart the current game or join/create an entirely new game with a different game ID.
+For the game restart sequence, a client will send a game play object with a status marked restarting, this will notify the other player than the game is restarting.
+The assumption here is that the players would have agreed to restart the game through the game chat.
+
+The sequence diagram for this exchange is as follows:
+
+![Game Restart](documentation-images/game-restart-sequence.png)
+
+## Fault Tolerance
+If at any time the connection to the service is lost (e.g. server restart), the frontend will try to re-establish a connection using a simple back-off algorithm for a short while before giving up. If a connection is re-established, the clients immediately request the correct game state from the service using a game object marked "DISRUPTED", after which players can resume play.
+
+![Game Restart](documentation-images/service-disrupted-retry.png)
+
 ## Visuals
 
 ### Grafana Dashboard:
@@ -88,21 +103,6 @@ The list of docker images can be obtained by the command:
 ### Gatling Websocket Stress Test Results:
 
 ![Image of Gatling](documentation-images/gatling.png)
-
-## Game Restart
-
-When a game is finished, the players can choose either to restart the current game or join/create an entirely new game with a different game ID. 
-For the game restart sequence, a client will send a game play object with a status marked restarting, this will notify the other player than the game is restarting.
-The assumption here is that the players would have agreed to restart the game through the game chat. 
-
-The sequence diagram for this exchange is as follows:
-
-![Game Restart](documentation-images/game-restart-sequence.png)
-
-## Fault Tolerance
-If at any time the connection to the service is lost (e.g. server restart), the frontend will try to re-establish a connection using a simple back-off algorithm for a short while before giving up. If a connection is re-established, the clients immediately request the correct game state from the service using a game object marked "DISRUPTED", after which players can resume play.
-
-![Game Restart](documentation-images/service-disrupted-retry.png)
 
 ## Support
 Feel free to contact the author on [LinkedIn](https://www.linkedin.com/in/ray-musvibe-1a114533/) for any thoughts or suggestions.
