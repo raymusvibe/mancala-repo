@@ -62,7 +62,7 @@ To run Mancala-API tests, cd into the mancala-api microservice directory and run
 
 ```./mvnw clean test```
 
-To run code analysis with SonarQube/Jacoco, first install SonarQube from [here](https://www.sonarqube.org/). After setting up Sonarqube on its admin UI (see SonarQube link for set-up details), you can run the following command in the mancala-api directory to generate a code quality report on the microservice:
+To run code analysis with SonarQube/Jacoco, first install SonarQube from [here](https://www.sonarqube.org/). After setting up SonarQube on its admin UI (see SonarQube link for set-up details), you can run the following command in the mancala-api directory to generate a code quality report on the microservice:
 
 ```./mvnw clean verify sonar:sonar {args}```
 
@@ -95,7 +95,7 @@ If at any time the connection to the service is lost (e.g. server restart), the 
 
 ## Visuals
 
-### SonaQube Dashboard:
+### SonarQube Dashboard:
 
 ![Image of Grafana](documentation-images/sonarqube.png)
 
