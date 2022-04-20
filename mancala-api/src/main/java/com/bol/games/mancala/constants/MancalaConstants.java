@@ -1,6 +1,9 @@
 package com.bol.games.mancala.constants;
 
 public class MancalaConstants {
+    
+    private MancalaConstants () {}
+
     public static final int CONTAINERS_PER_PLAYER = 6;
     public static final int STONES_PER_PLAYER = 6;
     public static final int TOTAL_NUMBER_OF_STONES = 72;

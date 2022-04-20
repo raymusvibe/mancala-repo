@@ -28,15 +28,15 @@ public class StoneContainer implements Serializable {
     }
 
     @JsonIgnore
-    public Boolean isEmpty (){
+    public boolean isEmpty (){
         return this.stones == 0;
     }
 
     @JsonIgnore
     public int getAllStonesAndEmptyContainer() {
-        int stones = this.stones;
+        int allStones = this.stones;
         this.stones = 0;
-        return stones;
+        return allStones;
     }
 
     @Override

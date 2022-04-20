@@ -20,8 +20,10 @@ public class GameRestartRequestRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,
                                   MancalaGame game,
-                                  MancalaRepository mancalaRepository) throws Exception {
-        assert game != null;
+                                  MancalaRepository mancalaRepository) throws ValidationException {
+        if (game == null) {
+            throw new ValidationException("The game object cannot be null");
+        }
 
         if (isInvalidRestartStatusChange(gamePlay.getGamePlayStatus(), game.getGamePlayStatus())) {
             throw new ValidationException("Invalid game status change");

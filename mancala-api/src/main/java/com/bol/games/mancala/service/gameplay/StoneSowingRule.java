@@ -2,6 +2,7 @@ package com.bol.games.mancala.service.gameplay;
 
 import com.bol.games.mancala.constants.MancalaConstants;
 import com.bol.games.mancala.controller.dto.GamePlay;
+import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
@@ -15,7 +16,7 @@ public class StoneSowingRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,
                                   MancalaGame game,
-                                  MancalaRepository mancalaRepository) throws Exception {
+                                  MancalaRepository mancalaRepository) throws ValidationException {
         int containerIndex = gamePlay.getSelectedStoneContainerIndex();
         game.setSelectedStoneContainerIndex(containerIndex);
         MancalaGame gameAfterSowing = sow(game);
@@ -113,20 +114,6 @@ public class StoneSowingRule extends GameRule {
     }
 
     /**
-     * This method changes the turn between playerOne and playerTwo.
-     * Turn changes occur when a player doesn't place last stone in their own house
-     * @param game the Mancala game object from the repository
-     * @param lastSownContainerIndex the container index of pot last sown
-     */
-    private void changeTurn (MancalaGame game, int lastSownContainerIndex) {
-        if (game.getActivePlayer() == Player.PLAYER_ONE && lastSownContainerIndex != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
-                || game.getActivePlayer() == Player.PLAYER_TWO && lastSownContainerIndex != MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
-            Player newPlayer = (game.getActivePlayer() == Player.PLAYER_ONE)? Player.PLAYER_TWO : Player.PLAYER_ONE;
-            game.setActivePlayer(newPlayer);
-        }
-    }
-
-    /**
      * Method to steal opposing player's stones when sowing the last stone into your own empty pot.
      * If opposite pot is empty, then just sow the last stone into player's Mancala.
      * @param game game object from repo
@@ -143,6 +130,20 @@ public class StoneSowingRule extends GameRule {
             game.getStoneContainer(houseIndex).addStones(oppositeStones + 1);
         } else {
             game.getStoneContainer(houseIndex).addStone();
+        }
+    }
+
+    /**
+     * This method changes the turn between playerOne and playerTwo.
+     * Turn changes occur when a player doesn't place last stone in their own house
+     * @param game the Mancala game object from the repository
+     * @param lastSownContainerIndex the container index of pot last sown
+     */
+    private void changeTurn (MancalaGame game, int lastSownContainerIndex) {
+        if (game.getActivePlayer() == Player.PLAYER_ONE && lastSownContainerIndex != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                || game.getActivePlayer() == Player.PLAYER_TWO && lastSownContainerIndex != MancalaConstants.PLAYER_TWO_HOUSE_INDEX) {
+            Player newPlayer = (game.getActivePlayer() == Player.PLAYER_ONE)? Player.PLAYER_TWO : Player.PLAYER_ONE;
+            game.setActivePlayer(newPlayer);
         }
     }
 }

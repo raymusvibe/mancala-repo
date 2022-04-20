@@ -35,7 +35,7 @@ To play on one machine, you'll need to open two browser pages/tabs. The start of
 - `GitHub/Google/Facebook`, OAuth2 login providers.
 - `PMD`, for Java code analysis. 
 - `Mockito/Junit 5/TestContainers`, for mancala-api microservice's unit and integration testing. 
-- `Jacoco`, for mancala-api test coverage analysis. 
+- `SonarQube/Jacoco`, for code quality analysis. 
 - `Artillery`, for load testing REST endpoints.
 - `Gatling`, for load testing websocket endpoints. See [Aemaem](https://github.com/aemaem/gatling-websocket-stomp) for details.
 - `jshint`, for Javascript code analysis.
@@ -61,6 +61,10 @@ Once the application is running, the game UI and supporting services can all be 
 To run Mancala-API tests, cd into the mancala-api microservice directory and run:
 
 ```./mvnw clean test```
+
+To run code analysis with SonarQube/Jacoco, first install SonarQube from [here](https://www.sonarqube.org/). After setting up Sonarqube on its admin UI (see SonarQube link for set-up details), you can run the following command in the mancala-api directory to generate a code quality report on the microservice:
+
+```./mvnw clean verify sonar:sonar {args}```
 
 To run artillery load tests against the mancala-api microservice, run the following from a terminal (OAuth login would need to be disabled for this test and the gatling test to work, or pass credentials to these applications):
 
@@ -90,6 +94,10 @@ If at any time the connection to the service is lost (e.g. server restart), the 
 ![Game Restart](documentation-images/service-disrupted-retry.png)
 
 ## Visuals
+
+### SonaQube Dashboard:
+
+![Image of Grafana](documentation-images/sonarqube.png)
 
 ### Grafana Dashboard:
 

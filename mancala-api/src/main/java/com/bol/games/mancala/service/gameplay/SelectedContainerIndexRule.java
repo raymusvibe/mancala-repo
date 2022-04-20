@@ -17,9 +17,11 @@ public class SelectedContainerIndexRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,
                                   MancalaGame game,
-                                  MancalaRepository mancalaRepository) throws Exception {
+                                  MancalaRepository mancalaRepository) throws ValidationException {
 
-        assert game.getGamePlayStatus() == GameStatus.IN_PROGRESS;
+        if (game.getGamePlayStatus() != GameStatus.IN_PROGRESS) {
+            throw new ValidationException("Invalid game status: " + game.getGamePlayStatus());
+        }
 
         int containerIndex = gamePlay.getSelectedStoneContainerIndex();
         StoneContainer targetContainer = game.getStoneContainer(containerIndex);

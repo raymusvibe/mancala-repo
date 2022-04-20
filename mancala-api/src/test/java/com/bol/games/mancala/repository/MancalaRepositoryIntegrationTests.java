@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
-public class MancalaRepositoryIntegrationTests {
+class MancalaRepositoryIntegrationTests {
     @Autowired
     private MancalaTestRepository mancalaTestRepository;
 
@@ -55,7 +55,7 @@ public class MancalaRepositoryIntegrationTests {
         MancalaGame game = new MancalaGame();
         game.initialiseBoardToStartNewGame();
         MancalaGame savedGame = mancalaTestRepository.save(game);
-        assertThat(mancalaTestRepository.findAll().size()).isEqualTo(1);
+        assertThat(mancalaTestRepository.findAll()).hasSize(1);
         assertThat(savedGame.getId()).isNotNull();
         assertThat(savedGame.getGameId()).isNotNull();
         assertThat(savedGame.getActivePlayer()).isEqualByComparingTo(Player.PLAYER_ONE);

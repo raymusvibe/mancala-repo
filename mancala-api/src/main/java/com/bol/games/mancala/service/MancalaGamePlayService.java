@@ -1,6 +1,7 @@
 package com.bol.games.mancala.service;
 
 import com.bol.games.mancala.controller.dto.GamePlay;
+import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.*;
 import com.bol.games.mancala.repository.abstractions.MancalaRepositoryAPI;
@@ -34,7 +35,7 @@ public class MancalaGamePlayService implements MancalaGamePlayAPI {
      * @return MancalaGame, the validated and updated game instance.
      */
     @Override
-    public final MancalaGame executeGameRules(GamePlay gamePlay) throws Exception {
+    public final MancalaGame executeGameRules(GamePlay gamePlay) throws ValidationException {
         mancalaRepository.insertEvent(gamePlay);
 
         GameRule gameExistsInStoreRule = new GameExistsInStoreRule();

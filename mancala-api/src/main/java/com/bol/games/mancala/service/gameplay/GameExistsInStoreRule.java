@@ -1,7 +1,7 @@
 package com.bol.games.mancala.service.gameplay;
 
 import com.bol.games.mancala.controller.dto.GamePlay;
-import com.bol.games.mancala.exception.NotFoundException;
+import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.MancalaGame;
@@ -17,10 +17,10 @@ public class GameExistsInStoreRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,
                                   MancalaGame game,
-                                  MancalaRepository mancalaRepository) throws Exception {
+                                  MancalaRepository mancalaRepository) throws ValidationException {
         MancalaGame gameFromRepo = mancalaRepository.findGame(gamePlay.getGameId());
         if (gameFromRepo == null) {
-            throw new NotFoundException ("Invalid game Id provided: " + gamePlay.getGameId());
+            throw new ValidationException("Invalid game Id provided: " + gamePlay.getGameId());
         }
         if (gamePlay.getGamePlayStatus() != GameStatus.DISRUPTED) {
             successor.executeRule(gamePlay, gameFromRepo, mancalaRepository);

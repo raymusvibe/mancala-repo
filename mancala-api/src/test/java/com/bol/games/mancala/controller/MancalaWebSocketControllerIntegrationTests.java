@@ -35,7 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
-public class MancalaWebSocketControllerIntegrationTests {
+class MancalaWebSocketControllerIntegrationTests {
     @Mock
     private SimpMessagingTemplate simpMessagingTemplate;
     @Mock
@@ -59,7 +59,7 @@ public class MancalaWebSocketControllerIntegrationTests {
     }
 
     @Test
-    public void WebSocketController_WhenChatMessage_RoutesWithoutException() throws Exception {
+    void WebSocketController_WhenChatMessage_RoutesWithoutException() throws Exception {
         Message text = new Message("Hello", "Test");
         byte[] payload = new ObjectMapper().writeValueAsBytes(text);
         StompHeaderAccessor headers = StompHeaderAccessor.create(StompCommand.SEND);
@@ -71,7 +71,7 @@ public class MancalaWebSocketControllerIntegrationTests {
     }
 
     @Test
-    public void WebSocketController_WhenGamePlay_ServiceExecutesRules() throws Exception {
+    void WebSocketController_WhenGamePlay_ServiceExecutesRules() throws Exception {
         game.initialiseBoardToStartNewGame();
         game.setGamePlayStatus(GameStatus.IN_PROGRESS);
         doReturn(game).when(mancalaRepository).findGame(any(String.class));

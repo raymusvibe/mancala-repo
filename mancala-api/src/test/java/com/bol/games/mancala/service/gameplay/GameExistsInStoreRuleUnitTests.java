@@ -1,7 +1,7 @@
 package com.bol.games.mancala.service.gameplay;
 
 import com.bol.games.mancala.controller.dto.GamePlay;
-import com.bol.games.mancala.exception.NotFoundException;
+import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.MancalaGame;
@@ -33,12 +33,12 @@ class GameExistsInStoreRuleUnitTests {
     }
 
     @Test
-    void GameExistsInStoreRule_WhenIncorrectGameId_NotFoundException () {
+    void GameExistsInStoreRule_WhenIncorrectGameId_ValidationException () {
         GamePlay gamePlay = new GamePlay(someInvalidGameId, GameStatus.IN_PROGRESS, 11);
 
-        assertThrows(NotFoundException.class, () -> gameExistsInStoreRule
+        assertThrows(ValidationException.class, () -> gameExistsInStoreRule
                 .executeRule(gamePlay, null, mancalaRepository),
-                "NotFoundException was expected");
+                "ValidationException was expected");
     }
 
     @Test
@@ -50,6 +50,6 @@ class GameExistsInStoreRuleUnitTests {
 
         assertDoesNotThrow(() -> gameExistsInStoreRule
                 .executeRule(gamePlay, null, mancalaRepository),
-                "NotFoundException not thrown");
+                "ValidationException not thrown");
     }
 }
