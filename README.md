@@ -1,5 +1,5 @@
 # Interactive Mancala Online Game
-An interactive Mancala game developed using the Spring framework and websockets. Instructions on how to play the game can be found [here](https://www.youtube.com/watch?v=OX7rj93m6o8).
+An interactive Mancala game developed using the Spring framework and websockets for demonstration purposes. Instructions on how to play the game can be found [here](https://www.youtube.com/watch?v=OX7rj93m6o8).
 
 ## Author 
 Ray Musvibe
@@ -7,11 +7,13 @@ Ray Musvibe
 ## Description
 This web based game allows people from anywhere in the world to play Mancala with friends on-line from the comfort of their homes. 
 
-To play the game, players must log in with OAuth2 providers GitHub, Google or Facebook. Once logged in, a player needs to start a game. This action returns a game ID that can be a shared with a friend over a messaging platform like WhatsApp. The friend can then enter the game ID on the site in the "Connect to game" text field and press enter to join the game creator for a game. A game ID can only be used once. When players have connected to a game, a chat interface is opened in the UI for the players to communicate. 
+To play the game, players must log in with OAuth2 providers GitHub, Google or Facebook. Once logged in, a player needs to start a game. This action returns a game ID that can be a shared with a friend over a messaging platform like WhatsApp. The friend can then enter the game ID on the site in the "Connect to game" text field and press enter to join the game creator for a game. 
+
+A game ID can only be used once. When players have connected to a game, a chat interface is opened in the UI for the players to communicate during game-play. 
 
 After the game is finished, the two players can either choose to re-start the current game on the same game ID, create a new game and share that with another player, or connect to another game ID.
 
-To play on one machine, you'll need to open to two browser pages/tabs. The start of game-play looks as follows once logged in:
+To play on one machine, you'll need to open two browser pages/tabs. The start of game-play looks as follows once logged in:
 
 ![Image of Mancala](documentation-images/mancala.gif)
 
@@ -32,7 +34,7 @@ To play on one machine, you'll need to open to two browser pages/tabs. The start
 - `Prometheus`, used to gather application metrics for monitoring.
 - `GitHub/Google/Facebook`, OAuth2 login providers.
 - `PMD`, for Java code analysis. 
-- `Mockito/Junit 5/TestContainers`, for mancala-api unit and integration testing. 
+- `Mockito/Junit 5/TestContainers`, for mancala-api microservice's unit and integration testing. 
 - `Jacoco`, for mancala-api test coverage analysis. 
 - `Artillery`, for load testing REST endpoints.
 - `Gatling`, for load testing websocket endpoints. See [Aemaem](https://github.com/aemaem/gatling-websocket-stomp) for details.
@@ -43,7 +45,7 @@ To play on one machine, you'll need to open to two browser pages/tabs. The start
 ![Service Architecture](documentation-images/mancala-architecture.png)
 
 ## How to run
-The application can be run on a local machine using following the command, executed in the projects root directory through a terminal:
+The application can be run on a local machine using the following command, executed in the projects root directory through a terminal:
 
 ```docker-compose up```
 
@@ -54,12 +56,13 @@ Once the application is running, the game UI and supporting services can all be 
 - The grafana UI can be accessed over HTTP on [localhost](http://localhost:3000) [Additional work is required to set up the data source and the dashboard for a new installation]
 - The prometheus UI can be accessed over HTTP on [localhost](http://localhost:9090)
 - The rabbitMQ interface can be accessed over HTTP on [localhost](http://localhost:15672)
+- Swagger-ui interface can be accessed over HTTP on [localhost](http://localhost:8080/swagger-ui/index.html) when the service is exposed.
 
-To run Mancala-API tests, cd into the mancala-api directory and run:
+To run Mancala-API tests, cd into the mancala-api microservice directory and run:
 
 ```./mvnw clean test```
 
-To run artillery load tests against the mancala-api, run the following from a terminal (OAuth login would need to be disabled for this test and the gatling test to work, or pass credentials to these applications):
+To run artillery load tests against the mancala-api microservice, run the following from a terminal (OAuth login would need to be disabled for this test and the gatling test to work, or pass credentials to these applications):
 
 ```artillery quick -c 10 -n 50 --insecure https://localhost/mancala/v1/start``` #creates 10 users, each will send 50 requests. Artillery can be installed using npm.
 
@@ -95,6 +98,10 @@ If at any time the connection to the service is lost (e.g. server restart), the 
 ### Prometheus Targets:
 
 ![Image of Prometheus](documentation-images/prometheus.png)
+
+### Swagger-UI:
+
+![Image of Grafana](documentation-images/swagger-ui.png)
 
 ### Eureka Service Registry:
 
