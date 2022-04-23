@@ -5,7 +5,7 @@ import { Pot, colors, place_new_stone, position_stone, remove_action_handlers } 
 
 'use strict';
 
-function clear_chat_messages() {
+function clear_chat_messages () {
     $("div.message").remove();
 }
 
@@ -21,19 +21,19 @@ function set_game_status_message (msg) {
     Constants.game_status_message.innerHTML = msg;
 }
 
-function player_one_restart_message() {
+function player_one_restart_message () {
     Constants.game_status_message.innerHTML = Constants.player_one_restart_string;
 }
 
-function missing_game_id_message() {
+function missing_game_id_message () {
     Constants.game_status_message.innerHTML = Constants.missing_game_id_string;
 }
 
-function game_error_message() {
+function game_error_message () {
     Constants.game_status_message.innerHTML = Constants.game_error_string;
 }
 
-function connect_retry_message() {
+function connect_retry_message () {
     Constants.game_status_message.innerHTML = Constants.connect_retry_string;
 }
 
@@ -53,7 +53,7 @@ function construct_game_loser_message (winning_total) {
     return Constants.losing_message_string + winning_total + ".";
 }
 
-function ui_start_new_game(game_id) {;
+function ui_start_new_game (game_id) {;
     Constants.new_game_button.classList.add("disable");
     Constants.connect_to_game_button.classList.add("disable");
     Constants.game_restart_button.classList.add("disable");
@@ -72,7 +72,7 @@ function ui_connect_to_game () {
     clear_chat_messages();
 }
 
-function populate_row(row) {
+function populate_row (row) {
     let n = 0;
     for(let c = 0; c < 6; c++) {
         for(let i = 1; i <= 6; i++,n++) {
@@ -81,14 +81,14 @@ function populate_row(row) {
     }
 }
 
-function update_house_counters(player_one_house_count, player_two_house_count) {
+function update_house_counters (player_one_house_count, player_two_house_count) {
     if(player_one_house_count) {
         document.getElementById("player_one_house_count").innerHTML = "Player one house count: " + player_one_house_count;
         document.getElementById("player_two_house_count").innerHTML = "Player two house count: " + player_two_house_count;
     }
 }
 
-function reset_ui_board(player_one_house_count, player_two_house_count) {
+function reset_ui_board (player_one_house_count, player_two_house_count) {
     $("div.stone").remove();
     update_house_counters(player_one_house_count, player_two_house_count);
     populate_row("pt");
@@ -103,7 +103,7 @@ function ui_restart_game (player_one_house_count, player_two_house_count) {
     reset_ui_board(player_one_house_count, player_two_house_count);
 }
 
-function handle_game_restart_request(player_one_house_count, player_two_house_count) {
+function handle_game_restart_request (player_one_house_count, player_two_house_count) {
     Constants.new_game_button.classList.add("disable");
     Constants.connect_to_game_button.classList.add("disable");
     Constants.game_restart_button.classList.add("disable");
@@ -112,7 +112,7 @@ function handle_game_restart_request(player_one_house_count, player_two_house_co
     reset_ui_board(player_one_house_count, player_two_house_count);
 }
 
-function game_over_ui_updates(player_one_house_count, player_two_house_count) {
+function game_over_ui_updates (player_one_house_count, player_two_house_count) {
     Constants.new_game_button.classList.remove("disable");
     Constants.connect_to_game_button.classList.remove("disable");
     Constants.game_restart_button.classList.remove("disable");
@@ -120,7 +120,7 @@ function game_over_ui_updates(player_one_house_count, player_two_house_count) {
     reset_ui_board(player_one_house_count, player_two_house_count);
 }
 
-function game_error_ui_updates(player_one_house_count, player_two_house_count) {
+function game_error_ui_updates (player_one_house_count, player_two_house_count) {
     $("div.message").remove();
     Constants.new_game_button.classList.remove("disable");
     Constants.connect_to_game_button.classList.remove("disable");
@@ -130,7 +130,7 @@ function game_error_ui_updates(player_one_house_count, player_two_house_count) {
     game_error_message();
 }
 
-function map_pots_to_board(src_pot) {
+function map_pots_to_board (src_pot) {
     if (src_pot.isMan()) {
         throw "Invalid selection made";
     }
@@ -141,7 +141,7 @@ function map_pots_to_board(src_pot) {
     }
 }
 
-function append_chat_message(response) {
+function append_chat_message (response) {
     let display_name = (response.sender == Player.ONE)? "Player One#" : "Player Two#";
     let content = '<div class="message">'
                   + '<p class="chat_display">' + display_name + ' :> ' + response.textMessage + '</p>'
@@ -174,7 +174,7 @@ function sync_board_with_ui_stones (game) {
 }
 
 /* Moves stones */
-function move_stone(stone, dest_pot)
+function move_stone (stone, dest_pot)
 {
     position_stone(stone, dest_pot);
     $(stone).appendTo(dest_pot.$());
@@ -191,7 +191,7 @@ function steal(last_pot, selected_stone, is_player_one) {
     move_stone(selected_stone, house_pot);
  }
 
- function display_game_outcome(game, player_name) {
+ function display_game_outcome (game, player_name) {
     let player_one_stones = game.mancalaBoard[Constants.player_one_house_index].stones;
     let player_two_stones = game.mancalaBoard[Constants.player_two_house_index].stones;
     let winning_total = (game.winner == GameWinner.PLAYER_ONE)? player_one_stones : player_two_stones;
@@ -215,7 +215,7 @@ function steal(last_pot, selected_stone, is_player_one) {
     Constants.game_status_message.innerHTML = game_outcome_string;
 }
 
-function add_listeners(class_list, send_game_play_message, game_id, stomp_client) {
+function add_listeners (class_list, send_game_play_message, game_id, stomp_client) {
   $(class_list).on("mouseenter", function()
   {
       $(this).css( {
@@ -238,7 +238,7 @@ function add_listeners(class_list, send_game_play_message, game_id, stomp_client
   });
 }
 
-function add_pot_handlers(send_game_play_message, game_id, stomp_client, is_player_one, player_name) {
+function add_pot_handlers (send_game_play_message, game_id, stomp_client, is_player_one, player_name) {
   if (is_player_one) {
       if (player_name === Player.ONE) {
       remove_action_handlers (".topmid .pot");

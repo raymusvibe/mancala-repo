@@ -13,7 +13,7 @@ const colors = [
     new Color(255,51,153,0.7), new Color(0,102,0,0.7)
 ];
 
-function Point(x,y)
+function Point (x,y)
 {
     this.x = x;
     this.y = y;
@@ -34,7 +34,7 @@ function Point(x,y)
     }
 }
 
-function Color(r,g,b,a)
+function Color (r,g,b,a)
 {
     this.r = r;
     this.g = g;
@@ -54,7 +54,7 @@ function Color(r,g,b,a)
     }
 }
 
-function Pot(id_in)
+function Pot (id_in)
 {
     if(!(
       (id_in.charAt(0) === 'p' || id_in.charAt(0) === 'm') &&
@@ -127,7 +127,7 @@ function Pot(id_in)
     }
 }
 
-function setbg_rgba(e,c)
+function setbg_rgba (e,c)
 {
     const hi = c.lerpTo(new Color(255,255,255,0),0.8);
     hi.a = 0.85;
@@ -139,7 +139,7 @@ function setbg_rgba(e,c)
     e.css("background-image",grad );
 }
 
-function read_pos(stone)
+function read_pos (stone)
 {
     return new Point(
         parseInt($(stone).css("left").slice(0,-2)),
@@ -147,7 +147,7 @@ function read_pos(stone)
     );
 }
 
-function generate_pot_offset( radius )
+function generate_pot_offset ( radius )
 {
     const theta = Math.PI * (2 * Math.random() - 1);
     const r = radius * Math.random();
@@ -157,7 +157,7 @@ function generate_pot_offset( radius )
     );
 }
 
-function pos_proximity_test(test_pos,dest_pot,dist)
+function pos_proximity_test (test_pos,dest_pot,dist)
 {
     let too_close = false;
     dest_pot.$().children().each(function(idx,stone)
@@ -171,13 +171,13 @@ function pos_proximity_test(test_pos,dest_pot,dist)
     return !too_close;
 }
 
-function set_stone_pos(stone,pos) {
+function set_stone_pos (stone,pos) {
     $(stone).css( {
         "top":pos.y + "px","left":pos.x + "px"
     } );
 }
 
-function position_stone(stone, dest_pot) {
+function position_stone (stone, dest_pot) {
     let dsq = proximity_threshold;
     let done = false;
     while( !done ) {
@@ -192,7 +192,7 @@ function position_stone(stone, dest_pot) {
     }
 }
 
-function place_new_stone(id, c)
+function place_new_stone (id, c)
 {
     const stone = $("<div>",{"class":"stone"});
     $(stone).attr ('hasMoved', false);
@@ -202,7 +202,7 @@ function place_new_stone(id, c)
     dest_pot.$().append(stone);
 }
 
-function toggle_player_buttons_selection(is_player_one, player_name) {
+function toggle_player_buttons_selection (is_player_one, player_name) {
     if (is_player_one) {
         if (player_name == Player.ONE) {
             Constants.player_one_button.classList.remove("button_two");
@@ -226,18 +226,18 @@ function toggle_player_buttons_selection(is_player_one, player_name) {
     }
 }
 
-function remove_action_handlers(class_list) {
+function remove_action_handlers (class_list) {
     $(class_list).off('mouseenter');
     $(class_list).off('mouseleave');
     $(class_list).off('click');
 }
 
-function remove_pot_handlers() {
+function remove_pot_handlers () {
     remove_action_handlers (".topmid .pot");
     remove_action_handlers (".botmid .pot");
 }
 
-function enable_chat(chat_key_down) {
+function enable_chat (chat_key_down) {
     Constants.chat_heading.classList.remove("hidden");
     Constants.chat_controls.classList.remove("hidden");
     Constants.chat_messages.classList.remove("hidden");
@@ -245,7 +245,7 @@ function enable_chat(chat_key_down) {
     Constants.chat_message_input.addEventListener("keydown", chat_key_down);
 }
 
-function disable_chat(chat_key_down) {
+function disable_chat (chat_key_down) {
     Constants.chat_heading.classList.add("hidden");
     Constants.chat_controls.classList.add("hidden");
     Constants.chat_messages.classList.add("hidden");

@@ -7,16 +7,15 @@ const retry_back_off = 2000;
 const player_one_house_index = 6;
 const player_two_house_index = 13;
 
+const sowing_interval = 350;
+
 const game_status_message = document.getElementById("game_status");
 const game_id_input = document.getElementById("game_id");
-
 const new_game_button = document.getElementById("new_game_button");
 const connect_to_game_button = document.getElementById("connect_to_game_button");
 const game_restart_button = document.getElementById("game_restart_button");
-
 const player_one_button = document.getElementById("player_one_button");
 const player_two_button = document.getElementById("player_two_button");
-
 const chat_heading = document.getElementById("chat_heading");
 const chat_controls = document.getElementById("chat_controls");
 const chat_messages = document.getElementById("chat_messages");
@@ -37,9 +36,7 @@ const player_two_turn_message_string = "It is your turn, player two.";
 const opponent_turn_message_string = "Waiting on the other player to complete their turn.";
 const on_page_load_string = "Please start a new game or enter a game id from a friend to play.";
 
-const sowing_interval = 350;
-const map_board_to_pots = [
-    "pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", 
+const map_board_to_pots = [ "pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "mt", 
     "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "mb"];
 
 export {

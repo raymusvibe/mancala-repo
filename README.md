@@ -19,7 +19,7 @@ To play on one machine, you'll need to open two browser pages/tabs. The start of
 
 ## Technologies
 - `Spring Boot` , rapid application development framework used for building microservices applications in Java.
-- `JQuery/StompJS/SockJS/CSS/HTML` , Technologies used to build the front-end and communicate with the backend.
+- `JQuery/StompJS/SockJS/CSS/HTML/webpack` , Technologies used to build the front-end and communicate with the backend.
 - `Spring Cloud Gateway`, gateway application used for rate limiting, securing microservices and distributing request load.
 - `Eureka Service Discovery`, application used by microservices for registration and service discovery.
 - `RabbitMQ`, application used to scale websockets using the pub/sub architecture and the STOMP protocol.
@@ -48,6 +48,12 @@ To play on one machine, you'll need to open two browser pages/tabs. The start of
 The application can be run on a local machine using the following command, executed in the projects root directory through a terminal:
 
 ```docker-compose up```
+
+To rebuild the front-end static files, cd into the mancala-frontend directory and execute:
+
+```npm run build```
+
+The frontend build is configured to deploy files to the gateway's static directory "gateway/src/main/resources/static/dist". [See](https://nodejs.org/en/download/) for npm install instructions. 
 
 Visit [Docker](https://docs.docker.com/get-docker/) for docker installation instructions.
 
@@ -131,7 +137,7 @@ Feel free to contact the author on [LinkedIn](https://www.linkedin.com/in/ray-mu
 - `Adding a circuit breaker pattern`, to ensure that the application fails-fast, a circuit breaker pattern can be implemented.
 - `Add distributed tracing service to backend`, a distributed tracing service like zipkin or dynatrace can be added that allows cause-and-effect connections to be discovered quickly between services.
 - `Application personalisation`, rather than uses titles like "player one" and "player two", the application could use the clients actual name after sign-in.
-- `Frontend`, the frontend can be re-written using a modern framework with better state management, like ReactJS. Tests, a linter and code minification can also be implemented to improve code quality and page load speed. 
+- `Frontend`, the frontend can be re-written using a modern framework with better state management, like ReactJS. Tests and a linter can also be added to improve code quality. 
 - `CDN`, static frontend files should ideally be served through a CDN, and not from the gateway. 
 - `Implement a CQRS pattern`, the application is write-heavy, so a CQRS pattern (Command and Query Responsibility Segregation) can be considered. CQRS allows data writes and reads to be scalled separately and prevent data contention.
 - `Add BDD tests`, BDD (Behaviour-Driven Development) tests can be added to test the application from the client perspective.

@@ -3,7 +3,7 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import * as Constants from './constants.js';
 import { Player, GameStatus } from './enums.js';
-import { Pot, toggle_player_buttons_selection, remove_action_handlers, 
+import { Pot, toggle_player_buttons_selection, 
     remove_pot_handlers, enable_chat, disable_chat } from './presentation_library.js';
 import * as utils from './game_helper.js';
 import '../css/style.css';
@@ -12,8 +12,8 @@ import '../css/style.css';
 
 let game;
 let game_id;
-let is_player_one = true;
 let player_name;
+let is_player_one = true;
 let player_initiated_game_restart = false;
 
 let stomp_client;
@@ -27,7 +27,7 @@ const chat_key_down = (event) => {
     }
 }
 
-function start_new_game() {
+function start_new_game () {
     $.ajax({
         url: Constants.api_url + "/mancala/v1/start",
         type: 'GET',
@@ -54,7 +54,7 @@ function start_new_game() {
     });
 }
 
-function connect_to_specific_game() {
+function connect_to_specific_game () {
     let interim_game_id = document.getElementById("game_id").value;
     if (interim_game_id == null || interim_game_id === '') {
         utils.missing_game_id_message();
@@ -84,7 +84,7 @@ function connect_to_specific_game() {
     });
 }
 
-function restart_game() {
+function restart_game () {
     utils.ui_restart_game();
     is_player_one = false;
     game.activePlayer = Player.TWO;
@@ -94,7 +94,7 @@ function restart_game() {
     send_game_play_message ();
 }
 
-function send_game_play_message(g_id, selected_index, stmp_client) {
+function send_game_play_message (g_id, selected_index, stmp_client) {
     if (g_id) {
         stmp_client.send(
             "/app/gameplay." + g_id,
@@ -141,7 +141,7 @@ function send_chat_message () {
     );
 }
 
-function connect_to_socket() {
+function connect_to_socket () {
     if (stomp_client) {
         stomp_client.disconnect();
     }
@@ -183,7 +183,7 @@ function connect_to_socket() {
     };
 }
 
-function error_connect_retry() {
+function error_connect_retry () {
     if (retry_count < Constants.retry_limit && game.gamePlayStatus != GameStatus.NEW) {
         disable_chat(chat_key_down);
         remove_pot_handlers();
@@ -200,7 +200,7 @@ function error_connect_retry() {
 }
 
 /* Main method for sowing */
-function sow_stones(src_pot, last_pot) {
+function sow_stones (src_pot, last_pot) {
     const children = src_pot.$().children();
     if(children.length === 0) {
         setTimeout(complete_turn, Constants.sowing_interval)
@@ -259,7 +259,7 @@ function sow_stones(src_pot, last_pot) {
 }
   
 /* Runs at the end of each player's turn */
-function complete_turn() {
+function complete_turn () {
     if (utils.is_board_and_game_ui_misaligned (game)) {
         utils.sync_board_with_ui_stones (game);
     }
@@ -270,7 +270,7 @@ function complete_turn() {
 }
   
 /* Executed when there is an update from the server */
-function handle_gameplay_websocket_response() {
+function handle_gameplay_websocket_response () {
     let player_one_house_count = game.mancalaBoard[Constants.player_one_house_index].stones;
     let player_two_house_count = game.mancalaBoard[Constants.player_two_house_index].stones;
     if (game.gamePlayStatus === GameStatus.FINISHED) {
@@ -298,7 +298,7 @@ function handle_gameplay_websocket_response() {
     sow_stones (new Pot(Constants.map_board_to_pots[game.selectedStoneContainerIndex]), null);
   }
 
-function update_game_parameters() {
+function update_game_parameters () {
     if(game.gamePlayStatus != GameStatus.FINISHED) {
         let message;
     
@@ -323,7 +323,7 @@ const game_connect_key_down = (event) => {
     }
 }
 
-function on_page_load() {
+function on_page_load () {
     utils.set_game_status_message(Constants.on_page_load_string);
     Constants.game_id_input.addEventListener("keydown", game_connect_key_down);
     if (window.location.hash == "#_=_") {
@@ -331,7 +331,7 @@ function on_page_load() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function()
+document.addEventListener ("DOMContentLoaded", function()
 {
     on_page_load();
     utils.populate_row("pt");
