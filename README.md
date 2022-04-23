@@ -137,7 +137,7 @@ Feel free to contact the author on [LinkedIn](https://www.linkedin.com/in/ray-mu
 - `Adding a circuit breaker pattern`, to ensure that the application fails-fast, a circuit breaker pattern can be implemented.
 - `Add distributed tracing service to backend`, a distributed tracing service like zipkin or dynatrace can be added that allows cause-and-effect connections to be discovered quickly between services.
 - `Application personalisation`, rather than uses titles like "player one" and "player two", the application could use the clients actual name after sign-in.
-- `Frontend`, the frontend can be re-written using a modern framework with better state management, like ReactJS. Tests and a linter can also be added to improve code quality. 
+- `Frontend`, the frontend can be re-written using a modern framework with better state management, like ReactJS. Tests and a linter can also be added to improve code quality. The game state can be persisted through local storage or cookies.
 - `CDN`, static frontend files should ideally be served through a CDN, and not from the gateway. 
 - `Implement a CQRS pattern`, the application is write-heavy, so a CQRS pattern (Command and Query Responsibility Segregation) can be considered. CQRS allows data writes and reads to be scalled separately and prevent data contention.
 - `Add BDD tests`, BDD (Behaviour-Driven Development) tests can be added to test the application from the client perspective.

@@ -22,7 +22,7 @@ const chat_messages = document.getElementById("chat_messages");
 const chat_message_input = document.getElementById("chat_message");
 
 const player_one_restart_string = "Restarting the game. Player two will start.";
-const missing_game_id_string = "Please enter game id to connect.";
+const missing_game_id_string = "Please enter a game id to connect.";
 const game_error_string = "Connection failed. Please start a new game or join another.";
 const connect_retry_string = "Connection to service lost. Trying to reconnect, please wait...";
 const connect_to_game_string = "Success! Waiting for player one to start, you're player two.";

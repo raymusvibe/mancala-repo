@@ -13,7 +13,7 @@ module.exports = {
             $: "jquery/src/jquery",
         }
     },
-    mode: 'production',
+    mode: 'development',
 module: {
         rules: [{
             test: /\.js$/,
@@ -29,7 +29,11 @@ module: {
         {
             test: /\.(css)$/,
             use: [ MiniCssExtractPlugin.loader, 'css-loader' ],
-        }]
+        },
+        {
+            test: /\.(png|svg|jpg|jpeg|gif)$/i,
+            type: 'asset/resource',
+          }]
     },
     plugins: [new MiniCssExtractPlugin()]
 };

@@ -7,6 +7,7 @@ import { Pot, toggle_player_buttons_selection,
     remove_pot_handlers, enable_chat, disable_chat } from './presentation_library.js';
 import * as utils from './game_helper.js';
 import '../css/style.css';
+import '../images/background.png';
 
 'use strict';
 
