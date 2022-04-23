@@ -49,13 +49,13 @@ The application can be run on a local machine using the following command, execu
 
 ```docker-compose up```
 
+Visit [Docker](https://docs.docker.com/get-docker/) for docker installation instructions.
+
 To rebuild the front-end static files, cd into the mancala-frontend directory and execute:
 
 ```npm run build```
 
-The frontend build is configured to deploy files to the gateway's static directory "gateway/src/main/resources/static/dist". [See](https://nodejs.org/en/download/) for npm install instructions. 
-
-Visit [Docker](https://docs.docker.com/get-docker/) for docker installation instructions.
+The frontend build is configured to deploy files to the gateway's static directory "gateway/src/main/resources/static/dist". [See](https://nodejs.org/en/download/) for npm install instructions.
 
 Once the application is running, the game UI and supporting services can all be accessed on different ports on localhost.
 - The web application or game can be accessed over HTTPS on [localhost](https://localhost) after login
