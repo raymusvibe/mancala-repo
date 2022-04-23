@@ -1,6 +1,6 @@
 html, body
 {
-  margin:5px;
+  margin: 5px;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -94,7 +94,7 @@ label {
   overflow: hidden;
 }
 
-.button1 {
+.button_one {
   border-radius: 6px;
   padding: 5px 0px 5px 0px;
   background-color: #1D428A;
@@ -112,13 +112,13 @@ label {
    border: 2px solid #C8C8C8;
 }
 
-.button1:hover {
+.button_one:hover {
   background-color: white;
   color: black;
   font-weight: bold;
 }
 
-.button2 {
+.button_two {
   border-radius: 3px;
   padding: 5px 16px;
   background-color: white;
@@ -129,7 +129,7 @@ label {
   font-weight: bold;
 }
 
-.button2_selected {
+.button_two_selected {
   border-radius: 2px;
   padding: 4px 10px;
   background-color: #4CAF50;
