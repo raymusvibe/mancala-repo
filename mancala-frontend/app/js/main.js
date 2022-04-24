@@ -150,7 +150,7 @@ function connect_to_socket () {
     stomp_client = Stomp.over(socket);
     stomp_client.heartbeat.outgoing = stomp_client_heart_beat_rate;
     stomp_client.heartbeat.incoming = stomp_client_heart_beat_rate;
-    stomp_client.debug = f => f;
+    //stomp_client.debug = f => f;
     stomp_client.connect({}, function (frame) {
         stomp_client.subscribe("/topic/game-messaging." + game_id, function (response) {
             let responseMessage = JSON.parse(response.body);
@@ -204,7 +204,7 @@ function error_connect_retry () {
 function sow_stones (src_pot, last_pot) {
     const children = src_pot.$().children();
     if(children.length === 0) {
-        setTimeout(complete_turn, Constants.sowing_interval)
+        setTimeout(complete_turn, Constants.sowing_interval);
         return;
     }
     if(last_pot === null) {
@@ -227,18 +227,18 @@ function sow_stones (src_pot, last_pot) {
             //cater for last stone in the event it has already been moved
             if ($(selected_stone).attr('hasMoved') == "true") {
                 $(selected_stone).attr('hasMoved', false);
-                complete_turn();
+                setTimeout(complete_turn, Constants.sowing_interval);
                 return;
             } else {
-            if (last_pot.id == src_pot.id) {
-                if (is_player_one === last_pot.isTop() &&
-                !last_pot.isMan())
-                {
-                    utils.steal(last_pot, selected_stone, is_player_one);
-                }
-                    complete_turn();
+                if (last_pot.id == src_pot.id) {
+                    if (is_player_one === last_pot.isTop() &&
+                    !last_pot.isMan())
+                    {
+                        utils.steal(last_pot, selected_stone, is_player_one);
+                    }
+                    setTimeout(complete_turn, Constants.sowing_interval);
                     return;
-            }
+                }
                 utils.move_stone(selected_stone, last_pot);
             }
         } else {
@@ -251,7 +251,6 @@ function sow_stones (src_pot, last_pot) {
             } else {
                 if ($(selected_stone).attr('hasMoved') != "true") {
                     utils.move_stone(selected_stone, last_pot);
-                    //keep track of variable in case player turn goes all way round
                 }
             }
         }

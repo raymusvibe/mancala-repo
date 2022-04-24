@@ -19,7 +19,7 @@ public class StoneSowingRule extends GameRule {
                                   MancalaRepository mancalaRepository) throws ValidationException {
         int containerIndex = gamePlay.getSelectedStoneContainerIndex();
         game.setSelectedStoneContainerIndex(containerIndex);
-        sow(game, MancalaConstants.LAST_SOWN_STARTING_VALUE);
+        sow(game);
         mancalaRepository.saveGame(game);
         successor.executeRule(gamePlay, game, mancalaRepository);
     }
@@ -30,34 +30,30 @@ public class StoneSowingRule extends GameRule {
      * has stones, a player can steal from the opposite container.
      * @param game Mancala game object from the database
      */
-    private void sow (MancalaGame game, int lastSown) {
+    private void sow (MancalaGame game) {
         int selectedContainerIndex = game.getSelectedStoneContainerIndex();
-        int stoneCount = game.getStoneContainer(selectedContainerIndex).getStones();
-        if (lastSown == MancalaConstants.LAST_SOWN_STARTING_VALUE) {
-            lastSown = selectedContainerIndex;
-        }
-        if (stoneCount == MancalaConstants.EMPTY_STONE_COUNT) {
-            changeTurn(game, lastSown);
-            return;
-        }
-        int targetContainerIndex = (lastSown + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
-        StoneContainer targetContainer = nextContainerSowed(game, targetContainerIndex);
-        if (stoneCount == MancalaConstants.LAST_STONE_COUNT) {
+        int stoneCount = game.getStoneContainer(selectedContainerIndex).getAllStonesAndEmptyContainer();
+
+        int targetContainerIndex = (selectedContainerIndex + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
+        while (stoneCount > MancalaConstants.EMPTY_STONE_COUNT) {
+            StoneContainer targetContainer = nextContainerSowed(game, targetContainerIndex);
             int oppositeContainerIndex = MancalaConstants.PLAYER_TWO_HOUSE_INDEX - targetContainer.getMancalaGameIndex() - 1;
-            if (targetContainer.isEmpty()
-                    && targetContainer.getMancalaGameIndex() != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
-                    && targetContainer.getMancalaGameIndex() != MancalaConstants.PLAYER_TWO_HOUSE_INDEX
-                    && isOpponentsContainer(game.getActivePlayer(), oppositeContainerIndex)) {
-                steal(game, oppositeContainerIndex);
+            if (stoneCount == MancalaConstants.LAST_STONE_COUNT) {
+                if (targetContainer.isEmpty()
+                        && targetContainer.getMancalaGameIndex() != MancalaConstants.PLAYER_ONE_HOUSE_INDEX
+                        && targetContainer.getMancalaGameIndex() != MancalaConstants.PLAYER_TWO_HOUSE_INDEX
+                        && isOpponentsContainer(game.getActivePlayer(), oppositeContainerIndex)) {
+                    steal(game, oppositeContainerIndex);
+                } else {
+                    game.getStoneContainer(targetContainer.getMancalaGameIndex()).addStone();
+                }
             } else {
                 game.getStoneContainer(targetContainer.getMancalaGameIndex()).addStone();
+                targetContainerIndex = (targetContainer.getMancalaGameIndex() + 1) % (MancalaConstants.PLAYER_TWO_HOUSE_INDEX + 1);
             }
-        } else {
-            game.getStoneContainer(targetContainer.getMancalaGameIndex()).addStone();
+            stoneCount--;
         }
-        lastSown = targetContainerIndex;
-        game.getStoneContainer(selectedContainerIndex).removeStone();
-        sow (game, lastSown);
+        changeTurn(game, targetContainerIndex);
     }
 
     /**
