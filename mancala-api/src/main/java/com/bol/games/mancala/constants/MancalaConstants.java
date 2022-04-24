@@ -11,4 +11,5 @@ public class MancalaConstants {
     public static final int PLAYER_TWO_HOUSE_INDEX = 13;
     public static final int LAST_STONE_COUNT = 1;
     public static final int EMPTY_STONE_COUNT = 0;
+    public static final int LAST_SOWN_STARTING_VALUE = -1;
 }

@@ -70,7 +70,7 @@ To run Mancala-API tests, cd into the mancala-api microservice directory and run
 
 To run code analysis with SonarQube/Jacoco, first install SonarQube from [here](https://www.sonarqube.org/). After setting up SonarQube on its admin UI (see SonarQube link for set-up details), you can run the following command in the mancala-api directory to generate a code quality report on the microservice:
 
-```./mvnw clean verify sonar:sonar {args}```
+```./mvnw clean verify sonar:sonar \ -Dsonar.projectKey={project-name-from-dashboard} \ -Dsonar.host.url=http://localhost:9000 \ -Dsonar.login={login-key-from-dashboard}```
 
 To run artillery load tests against the mancala-api microservice, run the following from a terminal (OAuth login would need to be disabled for this test and the gatling test to work, or pass credentials to these applications):
 

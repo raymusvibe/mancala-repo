@@ -23,6 +23,11 @@ public class StoneContainer implements Serializable {
     }
 
     @JsonIgnore
+    public void removeStone () {
+        this.stones--;
+    }
+
+    @JsonIgnore
     public void addStones (Integer stones){
         this.stones+= stones;
     }
