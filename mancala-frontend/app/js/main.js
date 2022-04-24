@@ -150,7 +150,7 @@ function connect_to_socket () {
     stomp_client = Stomp.over(socket);
     stomp_client.heartbeat.outgoing = stomp_client_heart_beat_rate;
     stomp_client.heartbeat.incoming = stomp_client_heart_beat_rate;
-    //stomp_client.debug = f => f;
+    stomp_client.debug = f => f;
     stomp_client.connect({}, function (frame) {
         stomp_client.subscribe("/topic/game-messaging." + game_id, function (response) {
             let responseMessage = JSON.parse(response.body);
