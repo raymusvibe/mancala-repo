@@ -9,10 +9,12 @@ import com.bol.games.mancala.exception.ValidationException;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.StoneContainer;
 import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
+import org.springframework.stereotype.Component;
 
 /**
  * Rule used to validate the selected container/pot index.
  */
+@Component
 public class SelectedContainerIndexRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,

@@ -241,17 +241,17 @@ function add_listeners (class_list, send_game_play_message, game_id, stomp_clien
 function add_pot_handlers (send_game_play_message, game_id, stomp_client, is_player_one, player_name) {
   if (is_player_one) {
       if (player_name === Player.ONE) {
-      remove_action_handlers (".topmid .pot");
-      add_listeners (".topmid .pot", send_game_play_message, game_id, stomp_client);
+        remove_action_handlers (".topmid .pot");
+        add_listeners (".topmid .pot", send_game_play_message, game_id, stomp_client);
       } else {
       remove_action_handlers (".botmid .pot");
       }
   } else {
       if (player_name === Player.TWO) {
-      remove_action_handlers (".botmid .pot");
-      add_listeners (".botmid .pot", send_game_play_message, game_id, stomp_client);
+        remove_action_handlers (".botmid .pot");
+        add_listeners (".botmid .pot", send_game_play_message, game_id, stomp_client);
       } else {
-      remove_action_handlers (".topmid .pot");
+        remove_action_handlers (".topmid .pot");
       }
   }
 }

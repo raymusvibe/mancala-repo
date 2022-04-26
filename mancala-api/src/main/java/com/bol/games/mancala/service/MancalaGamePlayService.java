@@ -7,7 +7,6 @@ import com.bol.games.mancala.model.*;
 import com.bol.games.mancala.repository.abstractions.MancalaRepositoryAPI;
 import com.bol.games.mancala.service.abstractions.MancalaGamePlayAPI;
 import com.bol.games.mancala.service.gameplay.*;
-import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,16 @@ public class MancalaGamePlayService implements MancalaGamePlayAPI {
 
     @Autowired
     private MancalaRepositoryAPI mancalaRepository;
+    @Autowired
+    private GameExistsInStoreRule gameExistsInStoreRule;
+    @Autowired
+    private GameRestartRequestRule gameRestartRequestRule;
+    @Autowired
+    private SelectedContainerIndexRule selectedContainerIndexRule;
+    @Autowired
+    private StoneSowingRule stoneSowingRule;
+    @Autowired
+    private GameWinnerRule gameWinnerRule;
 
     /**
      * This method executes game rules using the game play object send by the frontend.
@@ -38,11 +47,6 @@ public class MancalaGamePlayService implements MancalaGamePlayAPI {
     public final MancalaGame executeGameRules(GamePlay gamePlay) throws ValidationException {
         mancalaRepository.insertEvent(gamePlay);
 
-        GameRule gameExistsInStoreRule = new GameExistsInStoreRule();
-        GameRule gameRestartRequestRule = new GameRestartRequestRule();
-        GameRule selectedContainerIndexRule = new SelectedContainerIndexRule();
-        GameRule stoneSowingRule = new StoneSowingRule();
-        GameRule gameWinnerRule = new GameWinnerRule();
         gameExistsInStoreRule.setSuccessor(gameRestartRequestRule);
         gameRestartRequestRule.setSuccessor(selectedContainerIndexRule);
         selectedContainerIndexRule.setSuccessor(stoneSowingRule);

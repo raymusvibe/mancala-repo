@@ -6,6 +6,7 @@ import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
+import org.springframework.stereotype.Component;
 
 /**
  * Rule used to verify the incoming game id with the database.
@@ -13,6 +14,7 @@ import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
  * status is DISRUPTED. The DISRUPTED game status is only a transitive status,
  * used when the client has experienced a problem and needs to sync with the service.
  */
+@Component
 public class GameExistsInStoreRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,

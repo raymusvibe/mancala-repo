@@ -6,6 +6,7 @@ import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
+import com.bol.games.mancala.service.gameplay.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.test.context.ContextConfiguration;
 
 import static com.bol.games.mancala.util.ResourceReader.resourceAsInputStream;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = GameExistsInStoreRule.class)
 class MancalaGamePlayServiceIntegrationTests {
     private MancalaGamePlayService gamePlayService;
     @Mock
@@ -39,7 +42,12 @@ class MancalaGamePlayServiceIntegrationTests {
     @BeforeEach
     public void setUp () {
         MancalaRepository mancalaRepository = new MancalaRepository(mancalaGamesMongoTemplate, mancalaEventsMongoTemplate);
-        gamePlayService = new MancalaGamePlayService(mancalaRepository);
+        GameExistsInStoreRule gameExistsInStoreRule = new GameExistsInStoreRule();
+        GameRestartRequestRule gameRestartRequestRule = new GameRestartRequestRule();
+        SelectedContainerIndexRule selectedContainerIndexRule = new SelectedContainerIndexRule();
+        StoneSowingRule stoneSowingRule = new StoneSowingRule();
+        GameWinnerRule gameWinnerRule = new GameWinnerRule();
+        gamePlayService = new MancalaGamePlayService(mancalaRepository, gameExistsInStoreRule, gameRestartRequestRule, selectedContainerIndexRule, stoneSowingRule, gameWinnerRule);
         newGame.initialiseBoardToStartNewGame();
         newGame.setGamePlayStatus(GameStatus.IN_PROGRESS);
     }

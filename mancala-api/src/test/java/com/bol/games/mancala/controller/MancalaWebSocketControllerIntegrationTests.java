@@ -3,6 +3,7 @@ package com.bol.games.mancala.controller;
 import com.bol.games.mancala.controller.dto.GamePlay;
 import com.bol.games.mancala.controller.dto.Message;
 import com.bol.games.mancala.service.MancalaGamePlayService;
+import com.bol.games.mancala.service.gameplay.*;
 import com.bol.games.mancala.util.TestMessageChannel;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
@@ -40,14 +41,21 @@ class MancalaWebSocketControllerIntegrationTests {
     private SimpMessagingTemplate simpMessagingTemplate;
     @Mock
     private MancalaRepository mancalaRepository;
-    @InjectMocks
     private MancalaGamePlayService gamePlayService;
     private TestAnnotationMethodHandler annotationMethodHandler;
     private final MancalaGame game = new MancalaGame();
 
     @BeforeEach
     public void setup() {
+        GameExistsInStoreRule gameExistsInStoreRule = new GameExistsInStoreRule();
+        GameRestartRequestRule gameRestartRequestRule = new GameRestartRequestRule();
+        SelectedContainerIndexRule selectedContainerIndexRule = new SelectedContainerIndexRule();
+        StoneSowingRule stoneSowingRule = new StoneSowingRule();
+        GameWinnerRule gameWinnerRule = new GameWinnerRule();
+        gamePlayService = new MancalaGamePlayService(mancalaRepository, gameExistsInStoreRule, gameRestartRequestRule, selectedContainerIndexRule, stoneSowingRule, gameWinnerRule);
+
         MancalaWebSocketController controller = new MancalaWebSocketController(gamePlayService, simpMessagingTemplate);
+
         TestMessageChannel clientOutboundChannel = new TestMessageChannel();
         annotationMethodHandler = new TestAnnotationMethodHandler(
                 new TestMessageChannel(), clientOutboundChannel, new SimpMessagingTemplate(new TestMessageChannel()));

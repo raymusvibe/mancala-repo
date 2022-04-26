@@ -8,10 +8,12 @@ import com.bol.games.mancala.repository.MancalaRepository;
 import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
+import org.springframework.stereotype.Component;
 
 /**
  * Rule used to determine the winner.
  */
+@Component
 public class GameWinnerRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,

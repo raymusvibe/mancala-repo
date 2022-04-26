@@ -8,6 +8,7 @@ import com.bol.games.mancala.model.GameStatus;
 import com.bol.games.mancala.model.MancalaGame;
 import com.bol.games.mancala.model.Player;
 import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
+import org.springframework.stereotype.Component;
 
 /**
  * Rule used to restart a game. The rule simply updates the game object in the
@@ -16,6 +17,7 @@ import com.bol.games.mancala.service.gameplay.abstractions.GameRule;
  * FINISHED status. And from RESTARTING it can only transition to IN_PROGRESS.
  * All other persisted game statuses are initiated by the backend.
  */
+@Component
 public class GameRestartRequestRule extends GameRule {
     @Override
     public final void executeRule(GamePlay gamePlay,
