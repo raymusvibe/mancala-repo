@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import * as Constants from './constants.js';
 import { Player } from './enums.js';
+import { send_chat_message } from './api.js';
 
 'use strict';
 
@@ -202,6 +203,36 @@ function place_new_stone (id, c)
     dest_pot.$().append(stone);
 }
 
+const chat_key_down = (event) => {
+    if (event.key === "Enter") {
+        send_chat_message();
+    }
+}
+
+function enable_chat () {
+    Constants.chat_heading.classList.remove("hidden");
+    Constants.chat_controls.classList.remove("hidden");
+    Constants.chat_messages.classList.remove("hidden");
+    Constants.chat_message_input.removeEventListener("keydown", chat_key_down);
+    Constants.chat_message_input.addEventListener("keydown", chat_key_down);
+}
+
+function disable_chat () {
+    Constants.chat_heading.classList.add("hidden");
+    Constants.chat_controls.classList.add("hidden");
+    Constants.chat_messages.classList.add("hidden");
+    Constants.chat_message_input.removeEventListener("keydown", chat_key_down);
+}
+
+function append_chat_message (response) {
+    let display_name = (response.sender == Player.ONE)? "Player One#" : "Player Two#";
+    let content = '<div class="message">'
+                  + '<p class="chat_display">' + display_name + ' :> ' + response.textMessage + '</p>'
+                  + '</div>'
+
+    $("#chat_messages").append(content);
+}
+
 function toggle_player_buttons_selection (is_player_one, player_name) {
     if (is_player_one) {
         if (player_name == Player.ONE) {
@@ -226,10 +257,10 @@ function toggle_player_buttons_selection (is_player_one, player_name) {
     }
 }
 
-function remove_action_handlers (class_list) {
-    $(class_list).off('mouseenter');
-    $(class_list).off('mouseleave');
-    $(class_list).off('click');
+function remove_action_handlers (classes) {
+    $(classes).off('mouseenter');
+    $(classes).off('mouseleave');
+    $(classes).off('click');
 }
 
 function remove_pot_handlers () {
@@ -237,19 +268,38 @@ function remove_pot_handlers () {
     remove_action_handlers (".botmid .pot");
 }
 
-function enable_chat (chat_key_down) {
-    Constants.chat_heading.classList.remove("hidden");
-    Constants.chat_controls.classList.remove("hidden");
-    Constants.chat_messages.classList.remove("hidden");
-    Constants.chat_message_input.removeEventListener("keydown", chat_key_down);
-    Constants.chat_message_input.addEventListener("keydown", chat_key_down);
-}
+function add_listeners (classes, send_game_play_message, game_id, stomp_client) {
+    $(classes).on("mouseenter", function()
+    {
+        $(this).css( {
+        "background-color":"rgba(255, 255, 255, 0.40)",
+        "cursor":"pointer"
+        });
+    }).on("mouseleave", function()
+    {
+        $(this).css( {
+        "background-color":"rgba(255, 255, 255, 0.15)",
+        "cursor":"arrow"
+        });
+    }).on("click", function()
+    {
+        // check if move is valid
+        $(classes).off();
+        let src_pot = new Pot($(this).attr("id"));
+        src_pot.$().css("background-color","rgba(255, 255, 255, 0.15)");
+        send_game_play_message (game_id, map_pots_to_board(src_pot), stomp_client);
+    });
+  }
 
-function disable_chat (chat_key_down) {
-    Constants.chat_heading.classList.add("hidden");
-    Constants.chat_controls.classList.add("hidden");
-    Constants.chat_messages.classList.add("hidden");
-    Constants.chat_message_input.removeEventListener("keydown", chat_key_down);
+  function map_pots_to_board (src_pot) {
+    if (src_pot.isMan()) {
+        throw "Invalid selection made";
+    }
+    if (src_pot.isTop()) {
+        return src_pot.getNumber() - 1;
+    } else {
+        return src_pot.getNumber() + Constants.player_one_house_index;
+    }
 }
 
 export {
@@ -261,5 +311,7 @@ export {
     remove_action_handlers,
     remove_pot_handlers,
     enable_chat,
-    disable_chat
+    disable_chat,
+    add_listeners,
+    append_chat_message
 }

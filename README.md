@@ -45,7 +45,11 @@ To play on one machine, you'll need to open two browser pages/tabs. The start of
 ![Service Architecture](documentation-images/mancala-architecture.png)
 
 ## How to run
-The application can be run on a local machine using the following command, executed in the projects root directory through a terminal:
+The application can be run on a local machine by first using the following command to build the docker images, executed in the projects root directory through a terminal:
+
+```docker-compose build```
+
+Then executed the following command to run the game's backend:
 
 ```docker-compose up```
 

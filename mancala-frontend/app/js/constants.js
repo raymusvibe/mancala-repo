@@ -4,10 +4,12 @@ const retry_limit = 10;
 const retry_nominal_back_off = 500;
 const retry_back_off = 2000;
 
+let stomp_client_heart_beat_rate = 30000
+
 const player_one_house_index = 6;
 const player_two_house_index = 13;
 
-const sowing_interval = 350;
+const sowing_interval = 300;
 
 const game_status_message = document.getElementById("game_status");
 const game_id_input = document.getElementById("game_id");
@@ -44,6 +46,7 @@ export {
     retry_limit,
     retry_nominal_back_off,
     retry_back_off,
+    stomp_client_heart_beat_rate,
     player_one_house_index,
     player_two_house_index,
     game_status_message,
