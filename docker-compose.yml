@@ -1,0 +1,163 @@
+version: '3.9'
+
+services:
+  eureka:
+    container_name: eureka
+    build: ./eureka
+    hostname: eureka
+    networks:
+      - service-discovery-network
+
+  redisdb:
+    restart: on-failure
+    container_name: redis
+    image: redis
+    hostname: redisdb
+    networks:
+      - service-discovery-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - 'mongodb_data_container:/data/db'
+    command: mongod --quiet --logpath=/dev/null
+    hostname: mongodb
+    networks:
+      - service-discovery-network
+
+  rabbitmq:
+    container_name: rabbitmq
+    build: ./rabbitmq
+    labels:
+      kompose.service.type: nodeport
+    volumes:
+      - 'rabbitmq_data:/bitnami'
+    hostname: rabbitmq
+    networks:
+      - service-discovery-network
+
+  gateway:
+    container_name: gateway
+    build: ./gateway
+    ports:
+      - '443:443'
+    depends_on:
+      - eureka
+      - redisdb
+    links:
+      - eureka
+      - redisdb
+    environment:
+      - EUREKA_URI=${EUREKA_URI}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
+      - SPRING_REDIS_REPLENISH_RATE=${SPRING_REDIS_REPLENISH_RATE}
+      - SPRING_REDIS_BURST_CAPACITY=${SPRING_REDIS_BURST_CAPACITY}
+    hostname: gateway
+    networks:
+      - service-discovery-network
+    restart: on-failure
+
+  mancala-api-1:
+    container_name: mancala-api-1
+    build: ./mancala-api
+    depends_on:
+      - eureka
+      - mongodb
+      - rabbitmq
+      - redisdb
+    links:
+      - eureka
+      - mongodb
+      - rabbitmq
+      - redisdb
+    environment:
+      - EUREKA_URI=${EUREKA_URI}
+      - BROKER_RELAY_HOST=${BROKER_RELAY_HOST}
+      - BROKER_RELAY_PORT=${BROKER_RELAY_PORT}
+      - SPRING_DATA_MONGODB_HOST=${SPRING_DATA_MONGODB_HOST}
+      - SPRING_DATA_MONGODB_PORT=${SPRING_DATA_MONGODB_PORT}
+      - SPRING_DATA_MONGODB_NAME=${SPRING_DATA_MONGODB_NAME}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_APPLICATION_NAME=mancala-api
+    hostname: mancala-api-1
+    networks:
+      - service-discovery-network
+    restart: on-failure
+
+  mancala-api-2:
+    container_name: mancala-api-2
+    build: ./mancala-api
+    depends_on:
+      - eureka
+      - mongodb
+      - rabbitmq
+      - redisdb
+    links:
+      - eureka
+      - mongodb
+      - rabbitmq
+      - redisdb
+    environment:
+      - EUREKA_URI=${EUREKA_URI}
+      - BROKER_RELAY_HOST=${BROKER_RELAY_HOST}
+      - BROKER_RELAY_PORT=${BROKER_RELAY_PORT}
+      - SPRING_DATA_MONGODB_HOST=${SPRING_DATA_MONGODB_HOST}
+      - SPRING_DATA_MONGODB_PORT=${SPRING_DATA_MONGODB_PORT}
+      - SPRING_DATA_MONGODB_NAME=${SPRING_DATA_MONGODB_NAME}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_APPLICATION_NAME=mancala-api
+    hostname: mancala-api-2
+    networks:
+      - service-discovery-network
+    restart: on-failure
+
+  prometheus:
+    build: ./prometheus
+    depends_on:
+      - mancala-api-1
+      - mancala-api-2
+      - gateway
+    links:
+      - mancala-api-1
+      - mancala-api-2
+      - gateway
+    ports:
+      - "9090:9090"
+    networks:
+      - service-discovery-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    links:
+      - prometheus
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - service-discovery-network
+
+volumes:
+  mongodb_data_container:
+  grafana-data:
+  rabbitmq_data:
+
+networks:
+  service-discovery-network:
+    name: service-discovery-network
+    attachable: true
+    driver: bridge

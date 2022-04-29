@@ -1,0 +1,65 @@
+{
+  "gameId": "3d7cdee7-b2f7-4b63-9d5f-55f262f6737f",
+  "gamePlayStatus": "IN_PROGRESS",
+  "mancalaBoard": [
+    {
+      "mancalaGameIndex": 0,
+      "stones": 4
+    },
+    {
+      "mancalaGameIndex": 1,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 2,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 3,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 4,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 5,
+      "stones": 2
+    },
+    {
+      "mancalaGameIndex": 6,
+      "stones": 30
+    },
+    {
+      "mancalaGameIndex": 7,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 8,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 9,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 10,
+      "stones": 1
+    },
+    {
+      "mancalaGameIndex": 11,
+      "stones": 1
+    },
+    {
+      "mancalaGameIndex": 12,
+      "stones": 0
+    },
+    {
+      "mancalaGameIndex": 13,
+      "stones": 34
+    }
+  ],
+  "activePlayer": "PLAYER_TWO",
+  "winner": null,
+  "selectedStoneContainerIndex": 11
+}

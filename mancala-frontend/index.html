@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Mancala Interactive</title>
+  <link rel="stylesheet" href="dist/main.css"/>
+</head>
+<body>
+<div class="header-img"></div>
+<div>
+  <div class="main-content-side-panel"></div>
+  <div class="main-content">
+    <div class="player_updates">
+      <label id="player_one_house_count" class = "player_house_count">Player one house count: 0</label>
+      <button id = "player_one_button" class="button button_two" type="button"><i id = "player_one_button_arrow" class="arrow left"></i> Player One</button>
+
+    </div>
+    <div class="board">
+      <div class="section endsection">
+        <div class="pot" id="mt"></div>
+      </div>
+      <div class="section midsection">
+        <div class="midrow topmid">
+          <div class="pot" id="pt6"></div>
+          <div class="pot" id="pt5"></div>
+          <div class="pot" id="pt4"></div>
+          <div class="pot" id="pt3"></div>
+          <div class="pot" id="pt2"></div>
+          <div class="pot" id="pt1"></div>
+        </div>
+        <div class="midrow botmid">
+          <div class="pot" id="pb1"></div>
+          <div class="pot" id="pb2"></div>
+          <div class="pot" id="pb3"></div>
+          <div class="pot" id="pb4"></div>
+          <div class="pot" id="pb5"></div>
+          <div class="pot" id="pb6"></div>
+        </div>
+      </div>
+      <div class="section endsection">
+        <div class="pot" id="mb"></div>
+      </div>
+    </div>
+    <div class="player_updates">
+      <button id = "player_two_button" class="button button_two"  type="button">Player Two <i id = "player_two_button_arrow" class="arrow right"></i></button>
+      <label id="player_two_house_count" class="player_house_count">Player two house count: 0</label>
+    </div>
+    <div class="input_area">
+      <button id="new_game_button" class="button button_one" type="button">Start new game</button>
+      <label class = "game_status_label"><b>Game status</b>:</label>
+      <label id="game_status" class = "game_status"></label>
+    </div>
+    <div class="game_connect_area">
+      <button id="connect_to_game_button" class="button button_one" type="button">Connect to game</button>
+      <input id="game_id" class="w3-input w3-border" type="text" placeholder="Paste a valid game ID here and press connect button/Enter key. Or start a new game">
+    </div>
+    <div id = "restart_game_area" class="input_area">
+      <button id="game_restart_button" class="button button_one disable" type="button">Restart this game</button>
+    </div>
+    <div id = "chat_heading" class ="chat_input_area_heading hidden">
+      <h3>Game chat</h3>
+    </div>
+    <div id ="chat_controls" class="input_area hidden">
+      <button id="chat_message_button" class="button button_one" type="button" onclick="send_chat_message()">Send</button>
+      <input id="chat_message" class="w3-input w3-border" type="text" placeholder="Type chat messages here to speak to opponent. Click or press Enter to send">
+    </div>
+    <div id="chat_messages" class = "input_area hidden">
+    </div>
+  </div>
+  </div>
+  <script src="dist/bundle.js" type="text/javascript"></script>
+</body>
+</html>

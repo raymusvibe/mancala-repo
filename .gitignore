@@ -1,0 +1,7 @@
+**/HELP.md
+**/.DS_Store
+**/.idea
+**/target
+**/node_modules
+**/logs
+!**/.mvn/wrapper/maven-wrapper.jar

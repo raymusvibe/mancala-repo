@@ -1,0 +1,256 @@
+html, body
+{
+  margin: 5px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+label {
+  border: none;
+  font-size: 15px;
+}
+
+.header-img {
+  width: 100%;
+  height: 65px;
+  background-size: cover;
+}
+
+.main-content-side-panel {
+  display: inline-block;
+  width: 15%;
+}
+
+.main-content {
+  display: inline-block;
+  width: 800px;
+}
+
+.board
+{
+  display:flex;
+  background: url('../images/background.png') no-repeat 0 0 scroll;
+  background-color:#0C0C0C;
+  background-size: 100% 100%;
+  height:200px;
+  width:800px;
+  border-radius:50px;
+  padding:30px;
+}
+
+.section
+{
+  background-color:rgba(255, 255, 255, 0.03);
+  margin:5px;
+}
+
+.endsection
+{
+  display:flex;
+  flex-grow:1;
+}
+
+.midsection
+{
+  display:flex;
+  flex-direction:column;
+  flex-grow:6;
+}
+
+.midrow
+{
+  display:flex;
+  flex-grow:1;
+}
+
+.pot
+{
+  position:relative;
+  background-color:rgba(255, 255, 255, 0.15);
+  flex-grow:1;
+  margin:5px;
+  border-radius:50px;
+}
+
+.stone
+{
+  position:absolute;
+	border-radius: 50%;
+	width: 25px;
+	height: 25px;
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 3px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.button_one {
+  border-radius: 6px;
+  padding: 5px 0px 5px 0px;
+  background-color: #1D428A;
+  color: white;
+  border: 2px solid #1D428A;
+  width: 142px;
+}
+
+.disable {
+   cursor: not-allowed;
+   pointer-events: none;
+   border: 2px outset ButtonFace;
+   background-color: #E0FFFF;
+   color: grey;
+   border: 2px solid #C8C8C8;
+}
+
+.button_one:hover {
+  background-color: white;
+  color: black;
+  font-weight: bold;
+}
+
+.button_two {
+  border-radius: 3px;
+  padding: 5px 16px;
+  background-color: white;
+  color: black;
+  border: 2px solid #4CAF50;
+  margin: 12px 0px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.button_two_selected {
+  border-radius: 2px;
+  padding: 4px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: 2px solid #4CAF50;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+.input_area {
+  margin: 11px 0px;
+  display: block;
+}
+
+.game_connect_area {
+  margin: 18px 0px;
+  display: inline-block;
+}
+
+.player_updates {
+  display: flex;
+  justify-content: space-between;
+  vertical-align: middle;
+}
+
+.player_house_count {
+  padding: 15px 0px;
+}
+
+.game_status_label {
+    margin-left: 42px;
+    font-size: 15px;
+    color: #505050;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.chat_input_area_heading {
+  margin: 35px 0px 24px 5px;
+  display: block;
+}
+
+.game_status {
+    margin-left: 10px;
+    font-size: 15px;
+    color: #303030;
+}
+
+.game_restart {
+    display: none;
+}
+
+.w3-input {
+    padding:8px;
+    border:none;
+    border-bottom:1px solid #ccc;width:100%
+}
+
+.w3-border {
+    border:1px solid #ccc!important
+}
+
+.message {
+  font-size: 13px;
+  color:rgb(0, 0, 0);
+  border-radius: 12px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+.message::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.chat_display {
+    margin-block-end: 2px;
+    margin-block-start: 2px;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+#new_game_button {
+    margin-top: 18px;
+}
+
+#chat_messages {
+    height: 150px;
+    overflow: scroll;
+}
+
+#game_id {
+    margin-left: 42px;
+    height: 12px;
+    width: 515px;
+}
+
+#chat_message {
+    margin-left: 42px;
+    height: 12px;
+    width: 515px;
+}
