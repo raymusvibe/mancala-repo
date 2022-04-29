@@ -19,6 +19,7 @@ function steal(last_pot, selected_stone, is_player_one) {
  }
 
 function is_board_and_game_ui_misaligned (game) {
+    //just check houses (index 6 and 13)
     for (let i = 6; i <= Constants.player_two_house_index; i+=7 ) {
         let src_pot = new Pot(Constants.map_board_to_pots[i]);
         let children = src_pot.$().children();

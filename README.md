@@ -62,11 +62,11 @@ To rebuild the front-end static files, cd into the mancala-frontend directory an
 The frontend build is configured to deploy files to the gateway's static directory "gateway/src/main/resources/static/dist". [See](https://nodejs.org/en/download/) for npm install instructions.
 
 Once the application is running, the game UI and supporting services can all be accessed on different ports on localhost.
-- The web application or game can be accessed over HTTPS on [localhost](https://localhost) after login
+- The web application or game can be accessed over HTTPS on [localhost](https://localhost) after login. The game uses a self-signed certificate so an exception will need to be added to the browser to access the site. You can view the certificate @gateway/src/main/resources/keystore.
 - The grafana UI can be accessed over HTTP on [localhost](http://localhost:3000) [Additional work is required to set up the data source and the dashboard for a new installation]
 - The prometheus UI can be accessed over HTTP on [localhost](http://localhost:9090)
-- The rabbitMQ interface can be accessed over HTTP on [localhost](http://localhost:15672)
-- Swagger-ui interface can be accessed over HTTP on [localhost](http://localhost:8080/swagger-ui/index.html) when the service is exposed.
+- The rabbitMQ interface can be accessed over HTTP on [localhost](http://localhost:15672) when the service is exposed through the docker-compose file.
+- Swagger-ui interface can be accessed over HTTP on [localhost](http://localhost:8080/swagger-ui/index.html) when the service is exposed through the docker-compose file.
 
 To run Mancala-API tests, cd into the mancala-api microservice directory and run:
 

@@ -4,8 +4,6 @@ services:
   eureka:
     container_name: eureka
     build: ./eureka
-    ports:
-      - '8761:8761'
     hostname: eureka
     networks:
       - service-discovery-network
@@ -14,8 +12,6 @@ services:
     restart: on-failure
     container_name: redis
     image: redis
-    ports:
-      - "6379:6379"
     hostname: redisdb
     networks:
       - service-discovery-network
@@ -23,8 +19,6 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
-    ports:
-      - "27017:27017"
     volumes:
       - 'mongodb_data_container:/data/db'
     command: mongod --quiet --logpath=/dev/null
@@ -37,9 +31,6 @@ services:
     build: ./rabbitmq
     labels:
       kompose.service.type: nodeport
-    ports:
-      - '61613:61613'
-      - '15672:15672'
     volumes:
       - 'rabbitmq_data:/bitnami'
     hostname: rabbitmq

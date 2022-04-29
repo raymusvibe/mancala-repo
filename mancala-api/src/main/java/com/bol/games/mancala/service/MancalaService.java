@@ -25,17 +25,17 @@ public class MancalaService implements MancalaAPI {
      */
     @Override
     public final MancalaGame createGame() {
-        MancalaGame mancala = new MancalaGame();
-        mancala.initialiseBoardToStartNewGame();
-        mancalaRepository.insertGame(mancala);
-        return mancala;
+        MancalaGame game = new MancalaGame();
+        game.initialiseBoardToStartNewGame();
+        mancalaRepository.insertGame(game);
+        return game;
     }
 
     /**
      * Service method called through controller when a second player
      * wants to join an existing game through a link send to them by a
      * friend. A game ID can only be used to connect to a game only
-     * once and when the game is in a NEW state.
+     * once and when the game is in a NEW status.
      * @param gameId the id of the game they'll connect to
      * @return MancalaGame, the new game instance client has connected to.
      */

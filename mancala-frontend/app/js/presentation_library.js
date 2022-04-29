@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import * as Constants from './constants.js';
-import { Player } from './enums.js';
+import { Player, GameStatus } from './enums.js';
 import { send_chat_message } from './api.js';
 
 'use strict';
@@ -268,7 +268,7 @@ function remove_pot_handlers () {
     remove_action_handlers (".botmid .pot");
 }
 
-function add_listeners (classes, send_game_play_message, game_id, stomp_client) {
+function add_listeners (game_id, classes, stomp_client, send_game_play_message) {
     $(classes).on("mouseenter", function()
     {
         $(this).css( {
@@ -287,7 +287,7 @@ function add_listeners (classes, send_game_play_message, game_id, stomp_client) 
         $(classes).off();
         let src_pot = new Pot($(this).attr("id"));
         src_pot.$().css("background-color","rgba(255, 255, 255, 0.15)");
-        send_game_play_message (game_id, map_pots_to_board(src_pot), stomp_client);
+        send_game_play_message (game_id, map_pots_to_board(src_pot), GameStatus.IN_PROGRESS, stomp_client);
     });
   }
 
