@@ -4,7 +4,7 @@ const retry_limit = 10;
 const retry_nominal_back_off = 500;
 const retry_back_off = 2000;
 
-let stomp_client_heart_beat_rate = 30000
+const stomp_client_heart_beat_rate = 30000
 
 const player_one_house_index = 6;
 const player_two_house_index = 13;
